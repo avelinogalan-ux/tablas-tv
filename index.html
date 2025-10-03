@@ -146,7 +146,7 @@
 <body>
     <!-- Badge de Auto-Refresh -->
     <div class="auto-refresh-badge" id="autoRefreshBadge">
-        🔄 Auto-Refresh: 5min
+        🔄 Auto-Refresh: 1 min
     </div>
 
     <!-- Header TV -->
@@ -223,7 +223,7 @@
             cargarDatosAutomaticamente();
             
             // Configurar auto-refresh cada 5 minutos (300,000 ms)
-            autoRefreshInterval = setInterval(cargarDatosAutomaticamente, 300000);
+            autoRefreshInterval = setInterval(cargarDatosAutomaticamente, 60000);
             
             console.log('📺 TV Universal iniciada - Lista para recibir datos');
         });
@@ -462,3 +462,4 @@
     </script>
 </body>
 </html>
+
