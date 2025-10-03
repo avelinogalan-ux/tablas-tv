@@ -141,12 +141,29 @@
             font-size: 0.8rem;
             z-index: 1000;
         }
+
+        .debug-info {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: #333;
+            color: #0f0;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
     <!-- Badge de Auto-Refresh -->
     <div class="auto-refresh-badge" id="autoRefreshBadge">
-        🔄 Auto-Refresh: 1 min
+        🔄 Auto-Refresh: 20s
+    </div>
+
+    <!-- Info Debug -->
+    <div class="debug-info" id="debugInfo">
+        Estado: Iniciando...
     </div>
 
     <!-- Header TV -->
@@ -164,7 +181,9 @@
             <h2>Esperando datos de la competición</h2>
             <p class="fs-5">Los resultados aparecerán aquí automáticamente</p>
             <div class="mt-4">
-                <small class="text-muted">Auto-refresh cada 5 minutos</small>
+                <small class="text-muted">Auto-refresh cada 20 segundos</small>
+                <br>
+                <small class="text-muted" id="debugStatus">Estado: Esperando datos...</small>
             </div>
         </div>
 
@@ -216,50 +235,88 @@
         let datosActuales = null;
         let autoRefreshInterval = null;
         let lastUpdateTime = null;
+        let refreshCount = 0;
         
         // Al cargar la página, configurar auto-refresh
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 TV Iniciada - DOM Cargado');
+            actualizarDebug('DOM Cargado - Iniciando sistema...');
+            
             iniciarAutoRefresh();
             cargarDatosAutomaticamente();
             
-            // Configurar auto-refresh cada 5 minutos (300,000 ms)
-            autoRefreshInterval = setInterval(cargarDatosAutomaticamente, 20000);
+            // Configurar auto-refresh cada 20 segundos (20,000 ms)
+            autoRefreshInterval = setInterval(function() {
+                refreshCount++;
+                console.log(`🔄 Auto-refresh #${refreshCount} ejecutándose...`);
+                actualizarDebug(`Auto-refresh #${refreshCount}`);
+                cargarDatosAutomaticamente();
+            }, 20000);
             
-            console.log('📺 TV Universal iniciada - Lista para recibir datos');
+            console.log('✅ Intervalo configurado cada 20 segundos');
+            actualizarDebug('Sistema iniciado - Esperando datos...');
         });
         
+        function actualizarDebug(mensaje) {
+            const debugElement = document.getElementById('debugInfo');
+            const debugStatus = document.getElementById('debugStatus');
+            if (debugElement) debugElement.textContent = mensaje;
+            if (debugStatus) debugStatus.textContent = mensaje;
+        }
+        
         function iniciarAutoRefresh() {
-            // Mostrar próximo refresh
+            console.log('⏰ Iniciando auto-refresh...');
             actualizarContadorRefresh();
             
-            // Actualizar contador cada minuto
-            setInterval(actualizarContadorRefresh, 20000);
+            // Actualizar contador cada segundo
+            setInterval(actualizarContadorRefresh, 1000);
         }
         
         function actualizarContadorRefresh() {
             const ahora = new Date();
             const siguienteRefresh = new Date(ahora.getTime() + 20000);
-            const minutosRestantes = Math.round((siguienteRefresh - ahora) / 20000);
+            const segundosRestantes = Math.round((siguienteRefresh - ahora) / 1000);
             
             document.getElementById('autoRefreshBadge').innerHTML = 
-                `🔄 Refresh: ${minutosRestantes}min`;
+                `🔄 Refresh: ${segundosRestantes}s`;
         }
         
         function cargarDatosAutomaticamente() {
-            console.log('🔄 Buscando datos actualizados...');
+            console.log('🔍 Buscando datos en localStorage...');
+            actualizarDebug('Buscando datos...');
             
             // Intentar cargar desde localStorage primero (datos más recientes)
             const datosLocal = localStorage.getItem('tvData');
+            console.log('📦 Datos en localStorage:', datosLocal);
+            
             if (datosLocal) {
                 try {
+                    console.log('✅ Datos encontrados, procesando...');
                     const datos = JSON.parse(datosLocal);
+                    
+                    // VALIDAR que los datos tengan la estructura mínima
+                    if (!datos || typeof datos !== 'object') {
+                        throw new Error('Datos no son un objeto válido');
+                    }
+                    
+                    // Asegurar que tenga los campos requeridos
+                    if (!datos.tipo) datos.tipo = 'finales';
+                    if (!datos.disciplina) datos.disciplina = 'Competición';
+                    if (!datos.timestamp) datos.timestamp = new Date().toISOString();
+                    if (!datos.datos) datos.datos = [];
+                    
                     mostrarDatos(datos);
                     lastUpdateTime = new Date();
                     actualizarInfoTiempo();
+                    actualizarDebug('Datos mostrados correctamente');
                     return;
                 } catch (error) {
-                    console.error('Error cargando datos locales:', error);
+                    console.error('❌ Error procesando datos:', error);
+                    actualizarDebug('Error: ' + error.message);
                 }
+            } else {
+                console.log('❌ No hay datos en localStorage');
+                actualizarDebug('No hay datos disponibles');
             }
             
             // Si no hay datos, mostrar estado vacío
@@ -267,12 +324,20 @@
         }
         
         function mostrarDatos(datos) {
+            console.log('🎯 Mostrando datos:', datos);
             datosActuales = datos;
             
+            // VALIDAR que los datos tengan la estructura correcta
+            if (!datos || !datos.disciplina || !datos.tipo) {
+                console.error('❌ Datos incompletos:', datos);
+                mostrarEstadoVacio();
+                return;
+            }
+            
             // Actualizar información del header
-            document.getElementById('tituloPrincipal').textContent = `🎯 ${datos.disciplina}`;
+            document.getElementById('tituloPrincipal').textContent = `🎯 ${datos.disciplina || 'Competición'}`;
             document.getElementById('infoDisciplina').textContent = 
-                `${datos.tipo.toUpperCase()} • ${formatearFecha(datos.timestamp)}`;
+                `${(datos.tipo || 'finales').toUpperCase()} • ${formatearFecha(datos.timestamp)}`;
             
             // Mostrar la sección correspondiente
             mostrarSeccionPorTipo(datos.tipo, datos.disciplina);
@@ -289,7 +354,7 @@
             lastUpdateTime = new Date();
             actualizarInfoTiempo();
             
-            console.log(`✅ Datos mostrados: ${datos.disciplina} - ${datos.tipo}`);
+            console.log(`✅ Datos mostrados correctamente: ${datos.disciplina} - ${datos.tipo}`);
         }
         
         function mostrarSeccionPorTipo(tipo, disciplina) {
@@ -297,21 +362,35 @@
             document.getElementById('resultadosFinalesCard').style.display = 'none';
             document.getElementById('resultadosParcialesCard').style.display = 'none';
             
+            // VALIDAR que tipo y disciplina existan
+            if (!tipo) {
+                console.error('❌ Error: tipo es undefined');
+                tipo = 'finales'; // Valor por defecto
+            }
+            
+            if (!disciplina) {
+                console.error('❌ Error: disciplina es undefined');
+                disciplina = 'Competición';
+            }
+            
             // Configurar títulos según la disciplina
             const titulos = {
                 'finales': `🏆 RESULTADOS FINALES - ${disciplina.toUpperCase()}`,
                 'parciales': `📈 RESULTADOS PARCIALES - ${disciplina.toUpperCase()}`
             };
             
-            switch(tipo) {
+            // Usar el tipo o valor por defecto
+            const tipoUsar = titulos[tipo] ? tipo : 'finales';
+            
+            switch(tipoUsar) {
                 case 'finales':
-                    document.getElementById('tituloFinales').textContent = titulos[tipo];
+                    document.getElementById('tituloFinales').textContent = titulos.finales;
                     mostrarResultadosFinales();
                     document.getElementById('resultadosFinalesCard').style.display = 'block';
                     break;
                     
                 case 'parciales':
-                    document.getElementById('tituloParciales').textContent = titulos[tipo];
+                    document.getElementById('tituloParciales').textContent = titulos.parciales;
                     mostrarResultadosParciales();
                     document.getElementById('resultadosParcialesCard').style.display = 'block';
                     break;
@@ -439,28 +518,30 @@
         }
         
         function formatearFecha(timestamp) {
-            const fecha = new Date(timestamp);
-            return fecha.toLocaleString('es-ES', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            try {
+                const fecha = new Date(timestamp);
+                return fecha.toLocaleString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (error) {
+                return new Date().toLocaleString('es-ES');
+            }
         }
         
         function actualizarInfoTiempo() {
             if (lastUpdateTime) {
                 const ahora = new Date();
                 const diffMs = ahora - lastUpdateTime;
-                const diffMins = Math.floor(diffMs / 60000);
+                const diffSegundos = Math.floor(diffMs / 1000);
                 
                 document.getElementById('ultimaActualizacion').textContent = 
-                    `Última actualización: hace ${diffMins} minuto${diffMins !== 1 ? 's' : ''}`;
+                    `Última actualización: hace ${diffSegundos} segundo${diffSegundos !== 1 ? 's' : ''}`;
             }
         }
     </script>
 </body>
 </html>
-
-
