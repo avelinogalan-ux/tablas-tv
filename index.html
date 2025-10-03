@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="15">
+    <title>Resultados en Vivo - Tiro Deportivo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color:#910A0A;
+            color: #fff;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .container-fluid {
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+        .titulo-principal {
+            font-size: 3.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 0;
+            color: #ffc107;
+        }
+        .table {
+            border-color: #444;
+        }
+        .table th, .table td {
+            font-size: 2.2rem;
+            text-align: center;
+            vertical-align: middle;
+            padding: 15px;
+            border-color: #444;
+        }
+        .table thead th {
+            background-color: #0d6efd;
+            color: #fff;
+            border-color: #000;
+        }
+        tbody tr:nth-child(odd) {
+            background-color: #212529;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #343a40;
+        }
+        .total-cell {
+            background-color: #ffc107 !important;
+            color: #000 !important;
+            font-weight: bold;
+            font-size: 2.5rem;
+        }
+        #info-actualizacion {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1rem;
+            color: #888;
+        }
+        /* Estilos para los logos */
+        .header-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        .logo-img {
+            height: 80px; /* Ajusta tamaño según necesites */
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <!-- Cabecera con logo, título y logo -->
+    <div class="header-container">
+        <img src="shooting_logo.png" alt="Logo Izquierdo" class="logo-img">
+        <h1 class="titulo-principal" id="tituloPrincipal">- Resultados en Vivo -</h1>
+        <img src="shooting_logo.png" alt="Logo Derecho" class="logo-img">
+    </div>
+
+    <!-- Tabla de resultados -->
+    <div id="tabl
