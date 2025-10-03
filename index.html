@@ -11,89 +11,69 @@
             --color-exito: #198754;
             --color-advertencia: #ffc107;
             --color-peligro: #dc3545;
-            --color-info: #0dcaf0;
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1a1a1a;
+            color: white;
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 0;
+            margin: 0;
         }
         
         .tv-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            margin: 20px;
-            overflow: hidden;
+            padding: 20px;
+            max-width: 100%;
+            overflow-x: auto;
         }
         
         .tv-header {
             background: linear-gradient(45deg, #0d6efd, #0b5ed7);
             color: white;
-            padding: 20px;
+            padding: 25px 20px;
             text-align: center;
-        }
-        
-        .tv-content {
-            padding: 20px;
-            max-height: 80vh;
-            overflow-y: auto;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         
         .card-tv {
+            background: #2d2d2d;
             border: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            margin-bottom: 25px;
+            overflow: hidden;
         }
         
-        .card-tv:hover {
-            transform: translateY(-5px);
+        .card-header-tv {
+            background: linear-gradient(45deg, #495057, #6c757d);
+            color: white;
+            padding: 20px;
+            border-bottom: 3px solid var(--color-primario);
         }
         
         .table-tv {
-            font-size: 0.9rem;
+            background: white;
+            color: #333;
+            font-size: 1.1rem;
+            margin: 0;
         }
         
         .table-tv th {
-            background-color: var(--color-primario);
+            background: var(--color-primario);
             color: white;
             text-align: center;
             font-weight: 600;
+            padding: 15px 10px;
+            font-size: 1rem;
         }
         
         .table-tv td {
             text-align: center;
             vertical-align: middle;
-        }
-        
-        .badge-tv {
-            font-size: 0.8rem;
-            padding: 5px 10px;
-        }
-        
-        .progress-tv {
-            height: 20px;
-            border-radius: 10px;
-        }
-        
-        .loading-spinner {
-            display: none;
-            text-align: center;
-            padding: 40px;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #6c757d;
-        }
-        
-        .empty-state .icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
+            padding: 12px 8px;
+            font-weight: 500;
         }
         
         .puesto-destacado {
@@ -107,262 +87,237 @@
             text-decoration: line-through;
         }
         
-        @media (max-width: 768px) {
-            .table-tv {
-                font-size: 0.8rem;
-            }
-            
-            .tv-content {
-                padding: 10px;
-            }
+        .empty-state {
+            text-align: center;
+            padding: 100px 20px;
+            color: #ccc;
         }
         
-        @media (min-width: 1200px) {
+        .empty-state .icon {
+            font-size: 5rem;
+            margin-bottom: 30px;
+            opacity: 0.7;
+        }
+        
+        .fase-precision { background-color: #cfe2ff !important; }
+        .fase-rapido { background-color: #fff3cd !important; }
+        
+        @media (max-width: 768px) {
             .table-tv {
-                font-size: 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .table-tv th,
+            .table-tv td {
+                padding: 8px 4px;
             }
         }
         
         .fade-in {
-            animation: fadeIn 0.5s ease-in;
+            animation: fadeIn 0.8s ease-in;
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .total-destacado {
+            background: linear-gradient(45deg, #198754, #20c997) !important;
+            color: white !important;
+            font-weight: bold;
+            font-size: 1.2rem;
         }
     </style>
 </head>
 <body>
-    <div class="container-fluid p-0">
-        <!-- Header TV -->
-        <div class="tv-header">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1 class="display-5 fw-bold mb-2">🎯 RESULTADOS DE COMPETICIÓN</h1>
-                    <p class="lead mb-0" id="infoDisciplina">Esperando datos...</p>
-                </div>
-                <div class="col-md-4 text-md-end">
-                    <div class="btn-group">
-                        <button class="btn btn-outline-light btn-sm" onclick="cargarArchivo()">
-                            📁 Cargar Archivo
-                        </button>
-                        <button class="btn btn-outline-light btn-sm" onclick="recargarDatos()">
-                            🔄 Actualizar
-                        </button>
-                    </div>
-                </div>
-            </div>
+    <!-- Header TV -->
+    <div class="tv-header">
+        <h1 class="display-4 fw-bold mb-3">🎯 RESULTADOS DE COMPETICIÓN</h1>
+        <p class="lead mb-0" id="infoDisciplina">Cargando datos...</p>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="tv-container">
+        <!-- Estado vacío -->
+        <div id="emptyState" class="empty-state">
+            <div class="icon">📊</div>
+            <h2>Esperando datos de la competición</h2>
+            <p class="fs-5">Los resultados aparecerán aquí automáticamente</p>
         </div>
 
-        <!-- Contenido Principal -->
-        <div class="tv-content">
-            <!-- Estado de carga -->
-            <div id="loadingState" class="loading-spinner">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Cargando...</span>
+        <!-- Contenedor de resultados -->
+        <div id="resultsContainer" style="display: none;">
+            
+            <!-- Resultados Finales -->
+            <div class="card card-tv fade-in" id="resultadosFinalesCard" style="display: none;">
+                <div class="card-header-tv">
+                    <h3 class="mb-0">🏆 RESULTADOS FINALES - 12 SERIES</h3>
                 </div>
-                <p class="mt-3">Cargando datos...</p>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-tv mb-0" id="tablaFinales">
+                            <thead>
+                                <tr>
+                                    <th>POS</th>
+                                    <th>PUESTO</th>
+                                    <th>S1<br><small>PRECISIÓN</small></th>
+                                    <th>S2<br><small>PRECISIÓN</small></th>
+                                    <th>S3<br><small>PRECISIÓN</small></th>
+                                    <th>S4<br><small>PRECISIÓN</small></th>
+                                    <th>S5<br><small>PRECISIÓN</small></th>
+                                    <th>S6<br><small>PRECISIÓN</small></th>
+                                    <th>S7<br><small>TIRO RÁPIDO</small></th>
+                                    <th>S8<br><small>TIRO RÁPIDO</small></th>
+                                    <th>S9<br><small>TIRO RÁPIDO</small></th>
+                                    <th>S10<br><small>TIRO RÁPIDO</small></th>
+                                    <th>S11<br><small>TIRO RÁPIDO</small></th>
+                                    <th>S12<br><small>TIRO RÁPIDO</small></th>
+                                    <th>TOTAL</th>
+                                    <th>X</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cuerpoTablaFinales">
+                                <!-- Se llena automáticamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-            <!-- Estado vacío -->
-            <div id="emptyState" class="empty-state">
-                <div class="icon">📊</div>
-                <h3>No hay datos cargados</h3>
-                <p class="mb-4">Carga un archivo JSON exportado desde la aplicación de registro</p>
-                <button class="btn btn-primary btn-lg" onclick="cargarArchivo()">
-                    📁 Cargar Archivo de Resultados
-                </button>
+            <!-- Resultados Parciales -->
+            <div class="card card-tv fade-in" id="resultadosParcialesCard" style="display: none;">
+                <div class="card-header-tv">
+                    <h3 class="mb-0">📈 RESULTADOS PARCIALES - 6 SERIES</h3>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-tv mb-0" id="tablaParciales">
+                            <thead>
+                                <tr>
+                                    <th>POS</th>
+                                    <th>PUESTO</th>
+                                    <th>S1+S2<br><small>PRECISIÓN</small></th>
+                                    <th>S3+S4<br><small>PRECISIÓN</small></th>
+                                    <th>S5+S6<br><small>PRECISIÓN</small></th>
+                                    <th>S7+S8<br><small>TIRO RÁPIDO</small></th>
+                                    <th>S9+S10<br><small>TIRO RÁPIDO</small></th>
+                                    <th>S11+S12<br><small>TIRO RÁPIDO</small></th>
+                                    <th>TOTAL</th>
+                                    <th>X</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cuerpoTablaParciales">
+                                <!-- Se llena automáticamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-            <!-- Contenedor de resultados -->
-            <div id="resultsContainer" style="display: none;">
-                
-                <!-- Tarjeta de información general -->
-                <div class="card card-tv fade-in" id="infoGeneralCard">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0" id="tituloResultados">Información General</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row" id="infoGeneralContent">
-                            <!-- Se llena dinámicamente -->
-                        </div>
-                    </div>
+            <!-- Estado Actual -->
+            <div class="card card-tv fade-in" id="estadoActualCard" style="display: none;">
+                <div class="card-header-tv">
+                    <h3 class="mb-0">🔄 ESTADO ACTUAL DE LA COMPETICIÓN</h3>
                 </div>
-
-                <!-- Resultados Finales -->
-                <div class="card card-tv fade-in" id="resultadosFinalesCard" style="display: none;">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0">🏆 Resultados Finales - 12 Series</h5>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-tv mb-0" id="tablaFinales">
-                                <thead>
-                                    <tr>
-                                        <th>Pos</th>
-                                        <th>Puesto</th>
-                                        <th>S1<br><small>Precisión</small></th>
-                                        <th>S2<br><small>Precisión</small></th>
-                                        <th>S3<br><small>Precisión</small></th>
-                                        <th>S4<br><small>Precisión</small></th>
-                                        <th>S5<br><small>Precisión</small></th>
-                                        <th>S6<br><small>Precisión</small></th>
-                                        <th>S7<br><small>Tiro Rápido</small></th>
-                                        <th>S8<br><small>Tiro Rápido</small></th>
-                                        <th>S9<br><small>Tiro Rápido</small></th>
-                                        <th>S10<br><small>Tiro Rápido</small></th>
-                                        <th>S11<br><small>Tiro Rápido</small></th>
-                                        <th>S12<br><small>Tiro Rápido</small></th>
-                                        <th>Total</th>
-                                        <th>X</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="cuerpoTablaFinales">
-                                    <!-- Se llena dinámicamente -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Resultados Parciales -->
-                <div class="card card-tv fade-in" id="resultadosParcialesCard" style="display: none;">
-                    <div class="card-header bg-warning text-dark">
-                        <h5 class="mb-0">📈 Resultados Parciales - 6 Series</h5>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-tv mb-0" id="tablaParciales">
-                                <thead>
-                                    <tr>
-                                        <th>Pos</th>
-                                        <th>Puesto</th>
-                                        <th>S1+S2<br><small>Precisión</small></th>
-                                        <th>S3+S4<br><small>Precisión</small></th>
-                                        <th>S5+S6<br><small>Precisión</small></th>
-                                        <th>S7+S8<br><small>Tiro Rápido</small></th>
-                                        <th>S9+S10<br><small>Tiro Rápido</small></th>
-                                        <th>S11+S12<br><small>Tiro Rápido</small></th>
-                                        <th>Total</th>
-                                        <th>X</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="cuerpoTablaParciales">
-                                    <!-- Se llena dinámicamente -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Estado Actual -->
-                <div class="card card-tv fade-in" id="estadoActualCard" style="display: none;">
-                    <div class="card-header bg-info text-white">
-                        <h5 class="mb-0">🔄 Estado Actual de la Competición</h5>
-                    </div>
-                    <div class="card-body">
-                        <!-- Información de progreso -->
-                        <div class="row mb-4" id="infoProgreso">
-                            <!-- Se llena dinámicamente -->
-                        </div>
-                        
-                        <!-- Tabla de estado actual -->
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-tv" id="tablaEstadoActual">
-                                <thead>
-                                    <tr>
-                                        <th>Puesto</th>
-                                        <th>S1</th>
-                                        <th>S2</th>
-                                        <th>S3</th>
-                                        <th>S4</th>
-                                        <th>S5</th>
-                                        <th>S6</th>
-                                        <th>S7</th>
-                                        <th>S8</th>
-                                        <th>S9</th>
-                                        <th>S10</th>
-                                        <th>S11</th>
-                                        <th>S12</th>
-                                        <th>Total</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="cuerpoTablaEstadoActual">
-                                    <!-- Se llena dinámicamente -->
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-tv" id="tablaEstadoActual">
+                            <thead>
+                                <tr>
+                                    <th>PUESTO</th>
+                                    <th>S1</th>
+                                    <th>S2</th>
+                                    <th>S3</th>
+                                    <th>S4</th>
+                                    <th>S5</th>
+                                    <th>S6</th>
+                                    <th>S7</th>
+                                    <th>S8</th>
+                                    <th>S9</th>
+                                    <th>S10</th>
+                                    <th>S11</th>
+                                    <th>S12</th>
+                                    <th>TOTAL</th>
+                                    <th>ESTADO</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cuerpoTablaEstadoActual">
+                                <!-- Se llena automáticamente -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Input oculto para cargar archivos -->
+    <!-- Input oculto para cargar archivos automáticamente -->
     <input type="file" id="fileInput" accept=".json" style="display: none" onchange="procesarArchivo(this.files[0])">
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let datosActuales = null;
         
-        // Mostrar estado vacío al cargar
+        // Configurar detección automática de archivos
         document.addEventListener('DOMContentLoaded', function() {
-            mostrarEstadoVacio();
+            // Simular clic en el input file después de un breve delay
+            setTimeout(() => {
+                document.getElementById('fileInput').click();
+            }, 1000);
             
-            // Intentar cargar datos guardados
-            const datosGuardados = localStorage.getItem('tvUltimosDatos');
-            if (datosGuardados) {
-                try {
-                    const datos = JSON.parse(datosGuardados);
-                    procesarDatos(datos);
-                } catch (error) {
-                    console.error('Error al cargar datos guardados:', error);
+            // También permitir arrastrar y soltar archivos
+            document.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                document.body.style.backgroundColor = '#2d2d2d';
+            });
+            
+            document.addEventListener('drop', function(e) {
+                e.preventDefault();
+                document.body.style.backgroundColor = '#1a1a1a';
+                if (e.dataTransfer.files.length > 0) {
+                    procesarArchivo(e.dataTransfer.files[0]);
                 }
-            }
+            });
         });
-        
-        function cargarArchivo() {
-            document.getElementById('fileInput').click();
-        }
         
         function procesarArchivo(archivo) {
             if (!archivo) return;
-            
-            mostrarCargando();
             
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const datos = JSON.parse(e.target.result);
-                    procesarDatos(datos);
-                    
-                    // Guardar datos para futuras recargas
-                    localStorage.setItem('tvUltimosDatos', JSON.stringify(datos));
+                    mostrarDatos(datos);
                 } catch (error) {
-                    alert('Error al procesar el archivo: ' + error.message);
-                    mostrarEstadoVacio();
+                    console.error('Error al procesar el archivo:', error);
+                    // Reintentar después de 2 segundos
+                    setTimeout(() => {
+                        document.getElementById('fileInput').click();
+                    }, 2000);
                 }
             };
             reader.onerror = function() {
-                alert('Error al leer el archivo');
-                mostrarEstadoVacio();
+                // Reintentar después de 2 segundos
+                setTimeout(() => {
+                    document.getElementById('fileInput').click();
+                }, 2000);
             };
             reader.readAsText(archivo);
         }
         
-        function procesarDatos(datos) {
+        function mostrarDatos(datos) {
             datosActuales = datos;
             
-            // Actualizar información general
+            // Actualizar información del header
             document.getElementById('infoDisciplina').textContent = 
-                `${datos.disciplina} - ${formatearFecha(datos.timestamp)}`;
+                `${datos.disciplina} • ${formatearFecha(datos.timestamp)}`;
             
-            // Mostrar la sección correspondiente según el tipo de datos
+            // Mostrar la sección correspondiente
             mostrarSeccionPorTipo(datos.tipo);
             
-            mostrarResultados();
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'block';
         }
         
         function mostrarSeccionPorTipo(tipo) {
@@ -373,57 +328,20 @@
             
             switch(tipo) {
                 case 'finales':
-                    document.getElementById('tituloResultados').textContent = '🏆 Resultados Finales';
-                    mostrarInformacionGeneral('Completado - 12 Series');
                     mostrarResultadosFinales();
                     document.getElementById('resultadosFinalesCard').style.display = 'block';
                     break;
                     
                 case 'parciales':
-                    document.getElementById('tituloResultados').textContent = '📈 Resultados Parciales';
-                    mostrarInformacionGeneral('Parcial - 6 Series');
                     mostrarResultadosParciales();
                     document.getElementById('resultadosParcialesCard').style.display = 'block';
                     break;
                     
                 case 'actual':
-                    document.getElementById('tituloResultados').textContent = '🔄 Estado Actual';
-                    mostrarInformacionGeneral('En Progreso');
                     mostrarEstadoActual();
                     document.getElementById('estadoActualCard').style.display = 'block';
                     break;
             }
-        }
-        
-        function mostrarInformacionGeneral(estado) {
-            const infoHTML = `
-                <div class="col-md-3">
-                    <div class="text-center">
-                        <h6 class="text-muted mb-1">Disciplina</h6>
-                        <h4 class="text-primary">${datosActuales.disciplina}</h4>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="text-center">
-                        <h6 class="text-muted mb-1">Estado</h6>
-                        <span class="badge bg-success fs-6">${estado}</span>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="text-center">
-                        <h6 class="text-muted mb-1">Puestos</h6>
-                        <h4 class="text-info">${datosActuales.datos.length}</h4>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="text-center">
-                        <h6 class="text-muted mb-1">Actualizado</h6>
-                        <small class="text-muted">${formatearFecha(datosActuales.timestamp)}</small>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('infoGeneralContent').innerHTML = infoHTML;
         }
         
         function mostrarResultadosFinales() {
@@ -436,15 +354,15 @@
                 if (resultado.abandonado) row.classList.add('puesto-abandonado');
                 
                 row.innerHTML = `
-                    <td class="fw-bold">${index + 1}º</td>
-                    <td class="fw-bold">Puesto ${resultado.puesto}</td>
+                    <td class="fw-bold fs-5">${index + 1}º</td>
+                    <td class="fw-bold">PUESTO ${resultado.puesto}</td>
                     ${resultado.series.map((serie, i) => `
-                        <td class="${i < 6 ? 'table-primary' : 'table-warning'} fw-bold">
+                        <td class="${i < 6 ? 'fase-precision' : 'fase-rapido'} fw-bold">
                             ${serie}
                         </td>
                     `).join('')}
-                    <td class="table-success fw-bold fs-5">${resultado.total}</td>
-                    <td class="table-info fw-bold">${resultado.xTotal}</td>
+                    <td class="total-destacado">${resultado.total}</td>
+                    <td class="fw-bold table-info">${resultado.xTotal}</td>
                 `;
                 
                 tbody.appendChild(row);
@@ -461,15 +379,15 @@
                 if (resultado.abandonado) row.classList.add('puesto-abandonado');
                 
                 row.innerHTML = `
-                    <td class="fw-bold">${index + 1}º</td>
-                    <td class="fw-bold">Puesto ${resultado.puesto}</td>
+                    <td class="fw-bold fs-5">${index + 1}º</td>
+                    <td class="fw-bold">PUESTO ${resultado.puesto}</td>
                     ${resultado.parciales.map((parcial, i) => `
-                        <td class="${i < 3 ? 'table-primary' : 'table-warning'} fw-bold">
+                        <td class="${i < 3 ? 'fase-precision' : 'fase-rapido'} fw-bold">
                             ${parcial}
                         </td>
                     `).join('')}
-                    <td class="table-success fw-bold fs-5">${resultado.total}</td>
-                    <td class="table-info fw-bold">${resultado.xTotal}</td>
+                    <td class="total-destacado">${resultado.total}</td>
+                    <td class="fw-bold table-info">${resultado.xTotal}</td>
                 `;
                 
                 tbody.appendChild(row);
@@ -477,38 +395,6 @@
         }
         
         function mostrarEstadoActual() {
-            // Información de progreso
-            const progreso = datosActuales.datos.progreso;
-            const infoProgresoHTML = `
-                <div class="col-md-4">
-                    <div class="card bg-light">
-                        <div class="card-body text-center">
-                            <h6>Puestos Activos</h6>
-                            <h3 class="text-primary">${progreso.puestosActivos}</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card bg-light">
-                        <div class="card-body text-center">
-                            <h6>Series Completadas</h6>
-                            <h3 class="text-success">${progreso.seriesCompletadas}</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card bg-light">
-                        <div class="card-body text-center">
-                            <h6>Fase Actual</h6>
-                            <h3 class="text-warning">${datosActuales.datos.faseActual === 1 ? 'Precisión' : 'Tiro Rápido'}</h3>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('infoProgreso').innerHTML = infoProgresoHTML;
-            
-            // Tabla de estado actual
             const tbody = document.getElementById('cuerpoTablaEstadoActual');
             tbody.innerHTML = '';
             
@@ -521,10 +407,15 @@
                     totalGeneral += serie.total;
                     
                     let claseCelda = '';
-                    if (serie.completada) claseCelda = 'table-success';
-                    else if (index + 1 === puesto.serieActual) claseCelda = 'table-warning';
+                    let contenido = serie.total || '-';
                     
-                    let contenido = serie.total;
+                    if (serie.completada) {
+                        claseCelda = 'table-success';
+                    } else if (index + 1 === puesto.serieActual) {
+                        claseCelda = 'table-warning';
+                        contenido += ' ▶';
+                    }
+                    
                     if (serie.interrupcion) contenido += ' ⚡';
                     
                     return `<td class="${claseCelda}">${contenido}</td>`;
@@ -532,55 +423,22 @@
                 
                 let estadoHTML = '';
                 if (puesto.abandonado) {
-                    estadoHTML = '<span class="badge bg-secondary">ABANDONADO</span>';
+                    estadoHTML = '<span class="badge bg-danger fs-6">ABANDONADO</span>';
                 } else if (puesto.serieActual > 12) {
-                    estadoHTML = '<span class="badge bg-success">COMPLETADO</span>';
+                    estadoHTML = '<span class="badge bg-success fs-6">COMPLETADO</span>';
                 } else {
-                    estadoHTML = `<span class="badge bg-info">S${puesto.serieActual}</span>`;
+                    estadoHTML = `<span class="badge bg-primary fs-6">SERIE ${puesto.serieActual}</span>`;
                 }
                 
                 row.innerHTML = `
-                    <td class="fw-bold">Puesto ${puesto.id}</td>
+                    <td class="fw-bold">PUESTO ${puesto.id}</td>
                     ${celdasSeries}
-                    <td class="fw-bold text-primary">${totalGeneral}</td>
+                    <td class="fw-bold text-primary fs-5">${totalGeneral}</td>
                     <td>${estadoHTML}</td>
                 `;
                 
                 tbody.appendChild(row);
             });
-        }
-        
-        function mostrarCargando() {
-            document.getElementById('emptyState').style.display = 'none';
-            document.getElementById('resultsContainer').style.display = 'none';
-            document.getElementById('loadingState').style.display = 'block';
-        }
-        
-        function mostrarEstadoVacio() {
-            document.getElementById('loadingState').style.display = 'none';
-            document.getElementById('resultsContainer').style.display = 'none';
-            document.getElementById('emptyState').style.display = 'block';
-        }
-        
-        function mostrarResultados() {
-            document.getElementById('loadingState').style.display = 'none';
-            document.getElementById('emptyState').style.display = 'none';
-            document.getElementById('resultsContainer').style.display = 'block';
-            
-            // Aplicar animación de entrada
-            const cards = document.querySelectorAll('.fade-in');
-            cards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.1}s`;
-            });
-        }
-        
-        function recargarDatos() {
-            if (datosActuales) {
-                procesarDatos(datosActuales);
-                mostrarInfoControl('Datos actualizados', 'success');
-            } else {
-                mostrarEstadoVacio();
-            }
         }
         
         function formatearFecha(timestamp) {
@@ -594,35 +452,10 @@
             });
         }
         
-        function mostrarInfoControl(mensaje, tipo) {
-            // Crear toast de Bootstrap
-            const toast = document.createElement('div');
-            toast.className = `toast align-items-center text-bg-${tipo} border-0`;
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">
-                        ${mensaje}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            `;
-            
-            document.body.appendChild(toast);
-            const bsToast = new bootstrap.Toast(toast);
-            bsToast.show();
-            
-            // Remover después de cerrar
-            toast.addEventListener('hidden.bs.toast', () => {
-                document.body.removeChild(toast);
-            });
-        }
-        
-        // Recargar automáticamente cada 30 segundos si hay datos
+        // Repetir automáticamente cada 5 segundos para cargar nuevos archivos
         setInterval(() => {
-            if (datosActuales) {
-                recargarDatos();
-            }
-        }, 30000);
+            document.getElementById('fileInput').click();
+        }, 5000);
     </script>
 </body>
 </html>
