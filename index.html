@@ -1,447 +1,85 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados de Competición - TV</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --color-primario: #0d6efd;
-            --color-exito: #198754;
-            --color-advertencia: #ffc107;
-            --color-peligro: #dc3545;
-            --color-info: #0dcaf0;
-        }
-        
-        body {
-            background: #1a1a1a;
-            color: white;
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .tv-container {
-            padding: 20px;
-            max-width: 100%;
-            overflow-x: auto;
-        }
-        
-        .tv-header {
-            background: linear-gradient(45deg, #0d6efd, #0b5ed7);
-            color: white;
-            padding: 25px 20px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        
-        .card-tv {
-            background: #2d2d2d;
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-            margin-bottom: 25px;
-            overflow: hidden;
-        }
-        
-        .card-header-tv {
-            background: linear-gradient(45deg, #495057, #6c757d);
-            color: white;
-            padding: 20px;
-            border-bottom: 3px solid var(--color-primario);
-        }
-        
-        .table-tv {
-            background: white;
-            color: #333;
-            font-size: 1.1rem;
-            margin: 0;
-        }
-        
-        .table-tv th {
-            background: var(--color-primario);
-            color: white;
-            text-align: center;
-            font-weight: 600;
-            padding: 15px 10px;
-            font-size: 1rem;
-        }
-        
-        .table-tv td {
-            text-align: center;
-            vertical-align: middle;
-            padding: 12px 8px;
-            font-weight: 500;
-        }
-        
-        .puesto-destacado {
-            background-color: #e8f5e8 !important;
-            border-left: 4px solid var(--color-exito);
-        }
-        
-        .puesto-abandonado {
-            background-color: #f8f9fa !important;
-            color: #6c757d !important;
-            text-decoration: line-through;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 100px 20px;
-            color: #ccc;
-        }
-        
-        .empty-state .icon {
-            font-size: 5rem;
-            margin-bottom: 30px;
-            opacity: 0.7;
-        }
-        
-        .fase-precision { background-color: #cfe2ff !important; }
-        .fase-rapido { background-color: #fff3cd !important; }
-        
-        @media (max-width: 768px) {
-            .table-tv {
-                font-size: 0.9rem;
-            }
-            
-            .table-tv th,
-            .table-tv td {
-                padding: 8px 4px;
-            }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.8s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .total-destacado {
-            background: linear-gradient(45deg, #198754, #20c997) !important;
-            color: white !important;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-    </style>
-</head>
-<body>
-    <!-- Header TV -->
-    <div class="tv-header">
-        <h1 class="display-4 fw-bold mb-3">🎯 RESULTADOS DE COMPETICIÓN</h1>
-        <p class="lead mb-0" id="infoDisciplina">Cargando datos...</p>
-    </div>
+// =============================================
+// FUNCIÓN SIMPLE PARA ENVIAR A TV
+// =============================================
 
-    <!-- Contenido Principal -->
-    <div class="tv-container">
-        <!-- Estado vacío -->
-        <div id="emptyState" class="empty-state">
-            <div class="icon">📊</div>
-            <h2>Esperando datos de la competición</h2>
-            <p class="fs-5">Los resultados aparecerán aquí automáticamente</p>
-        </div>
+function enviarDatosTV(tipo) {
+    if (puestoes.length === 0) {
+        mostrarInfoControl('No hay datos para enviar', 'warning');
+        return;
+    }
 
-        <!-- Contenedor de resultados -->
-        <div id="resultsContainer" style="display: none;">
-            
-            <!-- Resultados Finales -->
-            <div class="card card-tv fade-in" id="resultadosFinalesCard" style="display: none;">
-                <div class="card-header-tv">
-                    <h3 class="mb-0">🏆 RESULTADOS FINALES - 12 SERIES</h3>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-tv mb-0" id="tablaFinales">
-                            <thead>
-                                <tr>
-                                    <th>POS</th>
-                                    <th>PUESTO</th>
-                                    <th>S1<br><small>PRECISIÓN</small></th>
-                                    <th>S2<br><small>PRECISIÓN</small></th>
-                                    <th>S3<br><small>PRECISIÓN</small></th>
-                                    <th>S4<br><small>PRECISIÓN</small></th>
-                                    <th>S5<br><small>PRECISIÓN</small></th>
-                                    <th>S6<br><small>PRECISIÓN</small></th>
-                                    <th>S7<br><small>TIRO RÁPIDO</small></th>
-                                    <th>S8<br><small>TIRO RÁPIDO</small></th>
-                                    <th>S9<br><small>TIRO RÁPIDO</small></th>
-                                    <th>S10<br><small>TIRO RÁPIDO</small></th>
-                                    <th>S11<br><small>TIRO RÁPIDO</small></th>
-                                    <th>S12<br><small>TIRO RÁPIDO</small></th>
-                                    <th>TOTAL</th>
-                                    <th>X</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cuerpoTablaFinales">
-                                <!-- Se llena automáticamente -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    try {
+        let datos;
+        
+        if (tipo === 'finales') {
+            // Calcular resultados finales para Pistola Libre
+            datos = puestoes
+                .filter(t => !t.abandonado)
+                .map(t => {
+                    let total = 0;
+                    const seriesData = [];
+                    let totalX = 0;
 
-            <!-- Resultados Parciales -->
-            <div class="card card-tv fade-in" id="resultadosParcialesCard" style="display: none;">
-                <div class="card-header-tv">
-                    <h3 class="mb-0">📈 RESULTADOS PARCIALES - 6 SERIES</h3>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-tv mb-0" id="tablaParciales">
-                            <thead>
-                                <tr>
-                                    <th>POS</th>
-                                    <th>PUESTO</th>
-                                    <th>S1+S2<br><small>PRECISIÓN</small></th>
-                                    <th>S3+S4<br><small>PRECISIÓN</small></th>
-                                    <th>S5+S6<br><small>PRECISIÓN</small></th>
-                                    <th>S7+S8<br><small>TIRO RÁPIDO</small></th>
-                                    <th>S9+S10<br><small>TIRO RÁPIDO</small></th>
-                                    <th>S11+S12<br><small>TIRO RÁPIDO</small></th>
-                                    <th>TOTAL</th>
-                                    <th>X</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cuerpoTablaParciales">
-                                <!-- Se llena automáticamente -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Estado Actual -->
-            <div class="card card-tv fade-in" id="estadoActualCard" style="display: none;">
-                <div class="card-header-tv">
-                    <h3 class="mb-0">🔄 ESTADO ACTUAL DE LA COMPETICIÓN</h3>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-tv" id="tablaEstadoActual">
-                            <thead>
-                                <tr>
-                                    <th>PUESTO</th>
-                                    <th>S1</th>
-                                    <th>S2</th>
-                                    <th>S3</th>
-                                    <th>S4</th>
-                                    <th>S5</th>
-                                    <th>S6</th>
-                                    <th>S7</th>
-                                    <th>S8</th>
-                                    <th>S9</th>
-                                    <th>S10</th>
-                                    <th>S11</th>
-                                    <th>S12</th>
-                                    <th>TOTAL</th>
-                                    <th>ESTADO</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cuerpoTablaEstadoActual">
-                                <!-- Se llena automáticamente -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Input oculto para cargar archivos automáticamente -->
-    <input type="file" id="fileInput" accept=".json" style="display: none" onchange="procesarArchivo(this.files[0])">
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        let datosActuales = null;
-        
-        // Al cargar la página, abrir el selector UNA sola vez
-        document.addEventListener('DOMContentLoaded', function() {
-            // Esperar 2 segundos y abrir el selector
-            setTimeout(() => {
-                document.getElementById('fileInput').click();
-            }, 2000);
-        });
-        
-        function procesarArchivo(archivo) {
-            if (!archivo) {
-                // Si no se selecciona archivo, mostrar estado vacío
-                mostrarEstadoVacio();
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const datos = JSON.parse(e.target.result);
-                    mostrarDatos(datos);
-                } catch (error) {
-                    console.error('Error al procesar el archivo:', error);
-                    mostrarEstadoVacio();
-                }
-            };
-            reader.onerror = function() {
-                mostrarEstadoVacio();
-            };
-            reader.readAsText(archivo);
-        }
-        
-        function mostrarDatos(datos) {
-            datosActuales = datos;
-            
-            // Actualizar información del header
-            document.getElementById('infoDisciplina').textContent = 
-                `${datos.disciplina} • ${formatearFecha(datos.timestamp)}`;
-            
-            // Mostrar la sección correspondiente
-            mostrarSeccionPorTipo(datos.tipo);
-            
-            document.getElementById('emptyState').style.display = 'none';
-            document.getElementById('resultsContainer').style.display = 'block';
-        }
-        
-        function mostrarSeccionPorTipo(tipo) {
-            // Ocultar todas las secciones primero
-            document.getElementById('resultadosFinalesCard').style.display = 'none';
-            document.getElementById('resultadosParcialesCard').style.display = 'none';
-            document.getElementById('estadoActualCard').style.display = 'none';
-            
-            switch(tipo) {
-                case 'finales':
-                    mostrarResultadosFinales();
-                    document.getElementById('resultadosFinalesCard').style.display = 'block';
-                    break;
-                    
-                case 'parciales':
-                    mostrarResultadosParciales();
-                    document.getElementById('resultadosParcialesCard').style.display = 'block';
-                    break;
-                    
-                case 'actual':
-                    mostrarEstadoActual();
-                    document.getElementById('estadoActualCard').style.display = 'block';
-                    break;
-            }
-        }
-        
-        function mostrarResultadosFinales() {
-            const tbody = document.getElementById('cuerpoTablaFinales');
-            tbody.innerHTML = '';
-            
-            datosActuales.datos.forEach((resultado, index) => {
-                const row = document.createElement('tr');
-                if (index === 0) row.classList.add('puesto-destacado');
-                if (resultado.abandonado) row.classList.add('puesto-abandonado');
-                
-                row.innerHTML = `
-                    <td class="fw-bold fs-5">${index + 1}º</td>
-                    <td class="fw-bold">PUESTO ${resultado.puesto}</td>
-                    ${resultado.series.map((serie, i) => `
-                        <td class="${i < 6 ? 'fase-precision' : 'fase-rapido'} fw-bold">
-                            ${serie}
-                        </td>
-                    `).join('')}
-                    <td class="total-destacado">${resultado.total}</td>
-                    <td class="fw-bold table-info">${resultado.xTotal}</td>
-                `;
-                
-                tbody.appendChild(row);
-            });
-        }
-        
-        function mostrarResultadosParciales() {
-            const tbody = document.getElementById('cuerpoTablaParciales');
-            tbody.innerHTML = '';
-            
-            datosActuales.datos.forEach((resultado, index) => {
-                const row = document.createElement('tr');
-                if (index === 0) row.classList.add('puesto-destacado');
-                if (resultado.abandonado) row.classList.add('puesto-abandonado');
-                
-                row.innerHTML = `
-                    <td class="fw-bold fs-5">${index + 1}º</td>
-                    <td class="fw-bold">PUESTO ${resultado.puesto}</td>
-                    ${resultado.parciales.map((parcial, i) => `
-                        <td class="${i < 3 ? 'fase-precision' : 'fase-rapido'} fw-bold">
-                            ${parcial}
-                        </td>
-                    `).join('')}
-                    <td class="total-destacado">${resultado.total}</td>
-                    <td class="fw-bold table-info">${resultado.xTotal}</td>
-                `;
-                
-                tbody.appendChild(row);
-            });
-        }
-        
-        function mostrarEstadoActual() {
-            const tbody = document.getElementById('cuerpoTablaEstadoActual');
-            tbody.innerHTML = '';
-            
-            datosActuales.datos.puestos.forEach(puesto => {
-                const row = document.createElement('tr');
-                if (puesto.abandonado) row.classList.add('puesto-abandonado');
-                
-                let totalGeneral = 0;
-                const celdasSeries = puesto.series.map((serie, index) => {
-                    totalGeneral += serie.total;
-                    
-                    let claseCelda = '';
-                    let contenido = serie.total || '-';
-                    
-                    if (serie.completada) {
-                        claseCelda = 'table-success';
-                    } else if (index + 1 === puesto.serieActual) {
-                        claseCelda = 'table-warning';
-                        contenido += ' ▶';
+                    for (let s = 1; s <= 6; s++) {
+                        const totalSerie = calcularTotalSerie(t.series[s]);
+                        const xSerie = contarXSerie(t.series[s]);
+                        seriesData.push(totalSerie);
+                        total += totalSerie;
+                        totalX += xSerie;
                     }
-                    
-                    if (serie.interrupcion) contenido += ' ⚡';
-                    
-                    return `<td class="${claseCelda}">${contenido}</td>`;
-                }).join('');
+
+                    return {
+                        puesto: t.id,
+                        series: seriesData,
+                        total: total,
+                        xTotal: totalX,
+                        abandonado: t.abandonado
+                    };
+                })
+                .sort((a, b) => b.total - a.total);
                 
-                let estadoHTML = '';
-                if (puesto.abandonado) {
-                    estadoHTML = '<span class="badge bg-danger fs-6">ABANDONADO</span>';
-                } else if (puesto.serieActual > 12) {
-                    estadoHTML = '<span class="badge bg-success fs-6">COMPLETADO</span>';
-                } else {
-                    estadoHTML = `<span class="badge bg-primary fs-6">SERIE ${puesto.serieActual}</span>`;
-                }
-                
-                row.innerHTML = `
-                    <td class="fw-bold">PUESTO ${puesto.id}</td>
-                    ${celdasSeries}
-                    <td class="fw-bold text-primary fs-5">${totalGeneral}</td>
-                    <td>${estadoHTML}</td>
-                `;
-                
-                tbody.appendChild(row);
-            });
+        } else {
+            // Estado actual para Pistola Libre
+            datos = {
+                puestos: puestoes.map(t => ({
+                    id: t.id,
+                    abandonado: t.abandonado,
+                    serieActual: serieActual,
+                    series: Object.keys(t.series).reduce((acc, s) => {
+                        acc[s] = {
+                            total: calcularTotalSerie(t.series[s]),
+                            completada: t.series[s].every(d => d !== null),
+                            disparos: t.series[s]
+                        };
+                        return acc;
+                    }, {})
+                }))
+            };
         }
+
+        const datosEnvio = {
+            tipo: tipo,
+            disciplina: 'Pistola Libre',
+            timestamp: new Date().toISOString(),
+            datos: datos
+        };
+
+        // Guardar en localStorage para que la TV lo recoja
+        localStorage.setItem('tvData', JSON.stringify(datosEnvio));
+        sessionStorage.setItem('currentTVData', JSON.stringify(datosEnvio));
         
-        function mostrarEstadoVacio() {
-            document.getElementById('emptyState').style.display = 'block';
-            document.getElementById('resultsContainer').style.display = 'none';
-            document.getElementById('infoDisciplina').textContent = 'Selecciona un archivo .json';
-        }
+        mostrarInfoControl(`✅ Datos enviados a TV (${tipo})`, 'success');
         
-        function formatearFecha(timestamp) {
-            const fecha = new Date(timestamp);
-            return fecha.toLocaleString('es-ES', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-    </script>
-</body>
-</html>
+    } catch (error) {
+        mostrarInfoControl('Error al enviar datos: ' + error.message, 'danger');
+    }
+}
+
+// Reemplazar las funciones existentes
+function enviarResultadosFinalesTV() {
+    enviarDatosTV('finales');
+}
+
+function enviarResumenActualTV() {
+    enviarDatosTV('actual');
+}
