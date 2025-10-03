@@ -174,7 +174,7 @@
             <!-- Resultados Finales -->
             <div class="card card-tv fade-in" id="resultadosFinalesCard" style="display: none;">
                 <div class="card-header-tv">
-                    <h3 class="mb-0" id="tituloFinales">🏆 RESULTADOS FINALES</h3>
+                    <h3 class="mb-0" id="tituloFinales">🏆 RESULTADOS FINALES - 12 SERIES</h3>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -193,7 +193,7 @@
             <!-- Resultados Parciales -->
             <div class="card card-tv fade-in" id="resultadosParcialesCard" style="display: none;">
                 <div class="card-header-tv">
-                    <h3 class="mb-0" id="tituloParciales">📈 RESULTADOS PARCIALES</h3>
+                    <h3 class="mb-0" id="tituloParciales">📈 RESULTADOS PARCIALES - 6 AGRUPACIONES</h3>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -332,46 +332,27 @@
                 return;
             }
             
-            // Configurar cabecera según la disciplina
-            let headersHTML = '';
-            if (datosActuales.disciplina.includes('9mm')) {
-                headersHTML = `
-                    <tr>
-                        <th>POS</th>
-                        <th>PUESTO</th>
-                        <th>S1<br><small>PRECISIÓN</small></th>
-                        <th>S2<br><small>PRECISIÓN</small></th>
-                        <th>S3<br><small>PRECISIÓN</small></th>
-                        <th>S4<br><small>PRECISIÓN</small></th>
-                        <th>S5<br><small>PRECISIÓN</small></th>
-                        <th>S6<br><small>PRECISIÓN</small></th>
-                        <th>S7<br><small>TIRO RÁPIDO</small></th>
-                        <th>S8<br><small>TIRO RÁPIDO</small></th>
-                        <th>S9<br><small>TIRO RÁPIDO</small></th>
-                        <th>S10<br><small>TIRO RÁPIDO</small></th>
-                        <th>S11<br><small>TIRO RÁPIDO</small></th>
-                        <th>S12<br><small>TIRO RÁPIDO</small></th>
-                        <th>TOTAL</th>
-                        <th>X</th>
-                    </tr>
-                `;
-            } else {
-                // Pistola Libre y Standard (6 series)
-                headersHTML = `
-                    <tr>
-                        <th>POS</th>
-                        <th>PUESTO</th>
-                        <th>S1</th>
-                        <th>S2</th>
-                        <th>S3</th>
-                        <th>S4</th>
-                        <th>S5</th>
-                        <th>S6</th>
-                        <th>TOTAL</th>
-                        <th>X</th>
-                    </tr>
-                `;
-            }
+            // CABECERA PARA 12 SERIES (TODAS LAS DISCIPLINAS)
+            const headersHTML = `
+                <tr>
+                    <th>POS</th>
+                    <th>PUESTO</th>
+                    <th>S1</th>
+                    <th>S2</th>
+                    <th>S3</th>
+                    <th>S4</th>
+                    <th>S5</th>
+                    <th>S6</th>
+                    <th>S7</th>
+                    <th>S8</th>
+                    <th>S9</th>
+                    <th>S10</th>
+                    <th>S11</th>
+                    <th>S12</th>
+                    <th>TOTAL</th>
+                    <th>X</th>
+                </tr>
+            `;
             thead.innerHTML = headersHTML;
             
             // Generar filas de datos
@@ -386,22 +367,12 @@
                     <td class="fw-bold">PUESTO ${resultado.puesto}</td>
                 `;
                 
-                // Series (dependiendo de la disciplina)
-                if (datosActuales.disciplina.includes('9mm') && resultado.series.length === 12) {
-                    // 12 series para 9mm
-                    rowHTML += resultado.series.map((serie, i) => `
-                        <td class="${i < 6 ? 'fase-precision' : 'fase-rapido'} fw-bold">
-                            ${serie}
-                        </td>
-                    `).join('');
-                } else {
-                    // 6 series para Libre y Standard
-                    rowHTML += resultado.series.map((serie, i) => `
-                        <td class="fw-bold">
-                            ${serie}
-                        </td>
-                    `).join('');
-                }
+                // 12 series individuales
+                rowHTML += resultado.series.map((serie, i) => `
+                    <td class="${i < 6 ? 'fase-precision' : 'fase-rapido'} fw-bold">
+                        ${serie}
+                    </td>
+                `).join('');
                 
                 rowHTML += `
                     <td class="total-destacado">${resultado.total}</td>
@@ -422,18 +393,22 @@
                 return;
             }
             
-            // Configurar cabecera para parciales
-            thead.innerHTML = `
+            // CABECERA PARA PARCIALES (6 AGRUPACIONES)
+            const headersHTML = `
                 <tr>
                     <th>POS</th>
                     <th>PUESTO</th>
                     <th>S1+S2</th>
                     <th>S3+S4</th>
                     <th>S5+S6</th>
+                    <th>S7+S8</th>
+                    <th>S9+S10</th>
+                    <th>S11+S12</th>
                     <th>TOTAL</th>
                     <th>X</th>
                 </tr>
             `;
+            thead.innerHTML = headersHTML;
             
             tbody.innerHTML = '';
             datosActuales.datos.forEach((resultado, index) => {
@@ -445,7 +420,7 @@
                     <td class="fw-bold fs-5">${index + 1}º</td>
                     <td class="fw-bold">PUESTO ${resultado.puesto}</td>
                     ${resultado.parciales.map((parcial, i) => `
-                        <td class="fw-bold">
+                        <td class="${i < 3 ? 'fase-precision' : 'fase-rapido'} fw-bold">
                             ${parcial}
                         </td>
                     `).join('')}
