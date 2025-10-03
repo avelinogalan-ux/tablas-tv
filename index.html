@@ -11,6 +11,7 @@
             --color-exito: #198754;
             --color-advertencia: #ffc107;
             --color-peligro: #dc3545;
+            --color-info: #0dcaf0;
         }
         
         body {
@@ -259,30 +260,20 @@
     <script>
         let datosActuales = null;
         
-        // Configurar detección automática de archivos
+        // Al cargar la página, abrir el selector UNA sola vez
         document.addEventListener('DOMContentLoaded', function() {
-            // Simular clic en el input file después de un breve delay
+            // Esperar 2 segundos y abrir el selector
             setTimeout(() => {
                 document.getElementById('fileInput').click();
-            }, 1000);
-            
-            // También permitir arrastrar y soltar archivos
-            document.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                document.body.style.backgroundColor = '#2d2d2d';
-            });
-            
-            document.addEventListener('drop', function(e) {
-                e.preventDefault();
-                document.body.style.backgroundColor = '#1a1a1a';
-                if (e.dataTransfer.files.length > 0) {
-                    procesarArchivo(e.dataTransfer.files[0]);
-                }
-            });
+            }, 2000);
         });
         
         function procesarArchivo(archivo) {
-            if (!archivo) return;
+            if (!archivo) {
+                // Si no se selecciona archivo, mostrar estado vacío
+                mostrarEstadoVacio();
+                return;
+            }
             
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -291,17 +282,11 @@
                     mostrarDatos(datos);
                 } catch (error) {
                     console.error('Error al procesar el archivo:', error);
-                    // Reintentar después de 2 segundos
-                    setTimeout(() => {
-                        document.getElementById('fileInput').click();
-                    }, 2000);
+                    mostrarEstadoVacio();
                 }
             };
             reader.onerror = function() {
-                // Reintentar después de 2 segundos
-                setTimeout(() => {
-                    document.getElementById('fileInput').click();
-                }, 2000);
+                mostrarEstadoVacio();
             };
             reader.readAsText(archivo);
         }
@@ -441,6 +426,12 @@
             });
         }
         
+        function mostrarEstadoVacio() {
+            document.getElementById('emptyState').style.display = 'block';
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('infoDisciplina').textContent = 'Selecciona un archivo .json';
+        }
+        
         function formatearFecha(timestamp) {
             const fecha = new Date(timestamp);
             return fecha.toLocaleString('es-ES', {
@@ -451,11 +442,6 @@
                 minute: '2-digit'
             });
         }
-        
-        // Repetir automáticamente cada 5 segundos para cargar nuevos archivos
-        setInterval(() => {
-            document.getElementById('fileInput').click();
-        }, 5000);
     </script>
 </body>
 </html>
