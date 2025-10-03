@@ -223,7 +223,7 @@
             cargarDatosAutomaticamente();
             
             // Configurar auto-refresh cada 5 minutos (300,000 ms)
-            autoRefreshInterval = setInterval(cargarDatosAutomaticamente, 60000);
+            autoRefreshInterval = setInterval(cargarDatosAutomaticamente, 20000);
             
             console.log('📺 TV Universal iniciada - Lista para recibir datos');
         });
@@ -233,13 +233,13 @@
             actualizarContadorRefresh();
             
             // Actualizar contador cada minuto
-            setInterval(actualizarContadorRefresh, 60000);
+            setInterval(actualizarContadorRefresh, 20000);
         }
         
         function actualizarContadorRefresh() {
             const ahora = new Date();
-            const siguienteRefresh = new Date(ahora.getTime() + 300000);
-            const minutosRestantes = Math.round((siguienteRefresh - ahora) / 60000);
+            const siguienteRefresh = new Date(ahora.getTime() + 20000);
+            const minutosRestantes = Math.round((siguienteRefresh - ahora) / 20000);
             
             document.getElementById('autoRefreshBadge').innerHTML = 
                 `🔄 Refresh: ${minutosRestantes}min`;
@@ -462,4 +462,5 @@
     </script>
 </body>
 </html>
+
 
