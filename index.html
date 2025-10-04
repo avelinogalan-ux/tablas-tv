@@ -68,6 +68,16 @@
             color: white !important;
             font-weight: bold;
         }
+        .status-connected {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+        }
+        .status-waiting {
+            background: rgba(241, 196, 15, 0.2);
+            border: 1px solid #f1c40f;
+            color: #f1c40f;
+        }
     </style>
 </head>
 <body>
@@ -76,16 +86,24 @@
             <h1 class="display-4 mb-3">🎯 SISTEMA DE COMPETICIÓN</h1>
             <h2 class="mb-4">Pistola 9mm / Fuego Central</h2>
             
-            <div id="infoActualizacion" class="mt-3">
-                🔍 Verificando datos de la URL...
+            <div id="infoActualizacion" class="status-waiting p-3 rounded">
+                <div class="d-flex align-items-center justify-content-center">
+                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                    <span>🔄 Esperando datos del sistema...</span>
+                </div>
             </div>
         </div>
 
         <div id="contenido">
             <div class="esperando-datos" id="esperando">
-                <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
-                <br>
-                Cargando datos del sistema...
+                <div class="mb-3">
+                    <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
+                </div>
+                <h4>Listo para recibir resultados</h4>
+                <p class="text-muted">Los datos aparecerán automáticamente cuando el sistema los envíe</p>
+                <div class="mt-4">
+                    <small class="text-info">💡 Usa el código QR en el sistema principal para enviar datos</small>
+                </div>
             </div>
             <div id="tablasContainer" style="display: none;"></div>
         </div>
@@ -93,8 +111,10 @@
 
     <script>
         // =============================================
-        // SISTEMA TV CON URL PARAMETERS
+        // SISTEMA TV MEJORADO
         // =============================================
+        
+        let datosActuales = null;
         
         function cargarDatosDesdeURL() {
             console.log("🔍 Verificando parámetros URL...");
@@ -109,18 +129,23 @@
                     mostrarResultadosTV(datos);
                     
                     const ahora = new Date();
-                    document.getElementById('infoActualizacion').innerHTML = 
-                        `✅ <strong>CONECTADO</strong> - Última actualización: ${ahora.toLocaleTimeString()}`;
+                    const infoElement = document.getElementById('infoActualizacion');
+                    infoElement.className = 'status-connected p-3 rounded';
+                    infoElement.innerHTML = `
+                        <div class="text-center">
+                            <span class="fw-bold">✅ CONECTADO AL SISTEMA</span><br>
+                            <small>Actualizado: ${ahora.toLocaleTimeString()} | ${datos.tipo.toUpperCase()} | ${datos.datos.length} puestos</small>
+                        </div>
+                    `;
                         
                 } catch (error) {
                     console.error("❌ Error procesando datos:", error);
                     document.getElementById('infoActualizacion').innerHTML = 
-                        '❌ Error en los datos recibidos';
+                        '<div class="text-center">❌ Error en los datos recibidos</div>';
                 }
             } else {
-                console.log("❌ No hay datos en URL");
-                document.getElementById('infoActualizacion').innerHTML = 
-                    '⏳ Esperando datos... (No hay parámetros en la URL)';
+                console.log("🔄 Modo espera activado");
+                // No hay datos, mantener modo espera
             }
         }
         
@@ -147,6 +172,7 @@
             titulo.innerHTML = `
                 <h1 class="display-5 text-warning">🏆 RESULTADOS FINALES</h1>
                 <h3 class="text-info">${disciplina}</h3>
+                <div class="badge bg-success fs-6 mt-2">${resultados.length} puestos</div>
             `;
             container.appendChild(titulo);
 
@@ -205,6 +231,7 @@
             titulo.innerHTML = `
                 <h1 class="display-5 text-info">📊 RESULTADOS PARCIALES</h1>
                 <h3 class="text-warning">${disciplina}</h3>
+                <div class="badge bg-success fs-6 mt-2">${resultados.length} puestos</div>
             `;
             container.appendChild(titulo);
 
@@ -253,8 +280,11 @@
 
         // Cargar datos automáticamente al abrir la página
         document.addEventListener('DOMContentLoaded', function() {
-            console.log("✅ Sistema TV iniciado");
+            console.log("✅ Sistema TV mejorado iniciado");
             cargarDatosDesdeURL();
+            
+            // Verificar cada 10 segundos por nuevos datos (por si se recarga la página con datos)
+            setInterval(cargarDatosDesdeURL, 10000);
         });
     </script>
 </body>
