@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados en TV - Tiro Deportivo</title>
+    <title>TV - Resultados Tiro Deportivo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -51,9 +51,6 @@
         .tabla-resultados-tv tr:nth-child(even) {
             background-color: #f8f9fa;
         }
-        .tabla-resultados-tv tr:hover {
-            background-color: #e3f2fd;
-        }
         .esperando-datos {
             text-align: center;
             font-size: 2em;
@@ -84,17 +81,6 @@
             color: white !important;
             font-weight: bold;
         }
-        .fase-precisión {
-            background: #d6eaf8 !important;
-        }
-        .fase-rapido {
-            background: #fcf3cf !important;
-        }
-        .badge-estado {
-            font-size: 0.8em;
-            padding: 4px 8px;
-            border-radius: 20px;
-        }
     </style>
 </head>
 <body>
@@ -103,7 +89,7 @@
             <h1 class="display-4 mb-3">🎯 SISTEMA DE COMPETICIÓN</h1>
             <h2 class="mb-4">Pistola 9mm / Fuego Central</h2>
             <div id="infoActualizacion" class="actualizado">
-                ⏳ Conectando con el sistema de competición...
+                🔍 Verificando datos...
             </div>
         </div>
 
@@ -113,7 +99,7 @@
                 <br>
                 ⏳ Esperando datos del sistema de competición...
                 <br>
-                <small class="text-muted">La página se actualizará automáticamente</small>
+                <small class="text-muted">Esta página se actualiza automáticamente cada 3 segundos</small>
             </div>
             <div id="tablasContainer" style="display: none;">
                 <!-- Aquí se mostrarán las tablas dinámicamente -->
@@ -123,73 +109,42 @@
 
     <script>
         // =============================================
-        // SISTEMA DE ACTUALIZACIÓN AUTOMÁTICA
+        // SISTEMA SIMPLIFICADO - SOLO URL PARAMETERS
         // =============================================
-
-        let ultimosDatos = null;
         
-        // Verificar datos cada 2 segundos
-        setInterval(cargarDatosTV, 2000);
-        
-        // Cargar datos inmediatamente al abrir
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📺 Pantalla TV iniciada - Esperando datos...');
-            cargarDatosTV();
-        });
+        console.log("📺 Iniciando sistema TV...");
 
-        function cargarDatosTV() {
-            // Intentar obtener datos de localStorage (misma sesión)
-            const datosTV = localStorage.getItem('tvData');
+        function verificarDatos() {
+            console.log("🔍 Verificando datos en URL...");
             
-            if (datosTV) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const dataParam = urlParams.get('data');
+            
+            if (dataParam) {
+                console.log("✅ Datos encontrados en URL");
                 try {
-                    const datos = JSON.parse(datosTV);
+                    const datos = JSON.parse(decodeURIComponent(dataParam));
+                    mostrarResultadosTV(datos);
                     
-                    // Solo actualizar si los datos son diferentes
-                    if (!ultimosDatos || JSON.stringify(datos) !== JSON.stringify(ultimosDatos)) {
-                        ultimosDatos = datos;
-                        mostrarResultadosTV(datos);
+                    const ahora = new Date();
+                    document.getElementById('infoActualizacion').innerHTML = 
+                        `✅ <strong>CONECTADO</strong> - Última actualización: ${ahora.toLocaleTimeString()}`;
                         
-                        const ahora = new Date();
-                        document.getElementById('infoActualizacion').innerHTML = 
-                            `✅ <strong>CONECTADO</strong> - Última actualización: ${ahora.toLocaleTimeString()}`;
-                    }
                 } catch (error) {
-                    console.error('❌ Error al procesar datos:', error);
+                    console.error("❌ Error procesando datos:", error);
                     document.getElementById('infoActualizacion').innerHTML = 
                         '❌ Error en los datos recibidos';
                 }
             } else {
-                // Si no hay datos en localStorage, verificar URL parameters
-                const urlParams = new URLSearchParams(window.location.search);
-                const dataParam = urlParams.get('data');
-                
-                if (dataParam) {
-                    try {
-                        const datos = JSON.parse(decodeURIComponent(dataParam));
-                        ultimosDatos = datos;
-                        mostrarResultadosTV(datos);
-                        
-                        // Guardar en localStorage para futuras actualizaciones
-                        localStorage.setItem('tvData', JSON.stringify(datos));
-                        
-                        const ahora = new Date();
-                        document.getElementById('infoActualizacion').innerHTML = 
-                            `✅ <strong>CONECTADO</strong> - Última actualización: ${ahora.toLocaleTimeString()}`;
-                    } catch (error) {
-                        console.error('❌ Error al procesar datos de URL:', error);
-                        document.getElementById('infoActualizacion').innerHTML = 
-                            '❌ Error en los datos de la URL';
-                    }
-                } else {
-                    // No hay datos disponibles
-                    document.getElementById('infoActualizacion').innerHTML = 
-                        '⏳ Esperando datos del sistema de competición...';
-                }
+                console.log("❌ No hay parámetro 'data' en la URL");
+                document.getElementById('infoActualizacion').innerHTML = 
+                    '⏳ Esperando datos... (No hay parámetro "data" en la URL)';
             }
         }
 
         function mostrarResultadosTV(datos) {
+            console.log("📊 Mostrando resultados:", datos);
+            
             const esperando = document.getElementById('esperando');
             const tablasContainer = document.getElementById('tablasContainer');
             
@@ -205,7 +160,6 @@
         }
 
         function crearTablaFinales(resultados, container, disciplina) {
-            // Título
             const titulo = document.createElement('div');
             titulo.className = 'text-center mb-4';
             titulo.innerHTML = `
@@ -214,42 +168,21 @@
             `;
             container.appendChild(titulo);
 
-            // Crear tabla
             const tabla = document.createElement('table');
             tabla.className = 'tabla-resultados-tv table table-striped';
             
-            // Cabecera
             let thead = `
             <thead>
                 <tr>
                     <th width="80">POS</th>
                     <th width="100">PUESTO</th>
-                    <th colspan="6" class="fase-precisión">FASE PRECISIÓN</th>
-                    <th colspan="6" class="fase-rapido">FASE TIRO RÁPIDO</th>
+                    <th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th>
+                    <th>S7</th><th>S8</th><th>S9</th><th>S10</th><th>S11</th><th>S12</th>
                     <th width="100" class="total-destacado">TOTAL</th>
                     <th width="80" class="x-destacado">X</th>
                 </tr>
-                <tr>
-                    <th></th>
-                    <th></th>
-                    <th class="fase-precisión">S1</th>
-                    <th class="fase-precisión">S2</th>
-                    <th class="fase-precisión">S3</th>
-                    <th class="fase-precisión">S4</th>
-                    <th class="fase-precisión">S5</th>
-                    <th class="fase-precisión">S6</th>
-                    <th class="fase-rapido">S7</th>
-                    <th class="fase-rapido">S8</th>
-                    <th class="fase-rapido">S9</th>
-                    <th class="fase-rapido">S10</th>
-                    <th class="fase-rapido">S11</th>
-                    <th class="fase-rapido">S12</th>
-                    <th class="total-destacado">TOTAL</th>
-                    <th class="x-destacado">X</th>
-                </tr>
             </thead>`;
             
-            // Cuerpo de la tabla
             let tbody = '<tbody>';
             
             resultados.forEach((resultado, index) => {
@@ -260,14 +193,9 @@
                 tbody += `<td><strong>${index + 1}º</strong></td>`;
                 tbody += `<td><strong>${resultado.puesto}</strong></td>`;
                 
-                // Series 1-6 (Precisión)
-                for (let i = 0; i < 6; i++) {
-                    tbody += `<td class="fase-precisión">${resultado.series[i] || 0}</td>`;
-                }
-                
-                // Series 7-12 (Tiro Rápido)
-                for (let i = 6; i < 12; i++) {
-                    tbody += `<td class="fase-rapido">${resultado.series[i] || 0}</td>`;
+                // Todas las series
+                for (let i = 0; i < 12; i++) {
+                    tbody += `<td>${resultado.series[i] || 0}</td>`;
                 }
                 
                 tbody += `<td class="total-destacado">${resultado.total}</td>`;
@@ -276,34 +204,11 @@
             });
             
             tbody += '</tbody>';
-            
             tabla.innerHTML = thead + tbody;
             container.appendChild(tabla);
-
-            // Añadir información adicional
-            const infoExtra = document.createElement('div');
-            infoExtra.className = 'text-center mt-4';
-            infoExtra.innerHTML = `
-                <div class="row justify-content-center">
-                    <div class="col-auto">
-                        <span class="badge badge-estado" style="background: #d6eaf8; color: #000;">Fase Precisión</span>
-                    </div>
-                    <div class="col-auto">
-                        <span class="badge badge-estado" style="background: #fcf3cf; color: #000;">Fase Tiro Rápido</span>
-                    </div>
-                    <div class="col-auto">
-                        <span class="badge badge-estado bg-primary">Total Puntos</span>
-                    </div>
-                    <div class="col-auto">
-                        <span class="badge badge-estado bg-danger">Conteo X</span>
-                    </div>
-                </div>
-            `;
-            container.appendChild(infoExtra);
         }
 
         function crearTablaParciales(resultados, container, disciplina) {
-            // Título
             const titulo = document.createElement('div');
             titulo.className = 'text-center mb-4';
             titulo.innerHTML = `
@@ -312,36 +217,20 @@
             `;
             container.appendChild(titulo);
 
-            // Crear tabla
             const tabla = document.createElement('table');
             tabla.className = 'tabla-resultados-tv table table-striped';
             
-            // Cabecera
             let thead = `
             <thead>
                 <tr>
                     <th width="80">POS</th>
                     <th width="100">PUESTO</th>
-                    <th colspan="3" class="fase-precisión">PRECISIÓN</th>
-                    <th colspan="3" class="fase-rapido">TIRO RÁPIDO</th>
+                    <th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>P6</th>
                     <th width="100" class="total-destacado">TOTAL</th>
                     <th width="80" class="x-destacado">X</th>
                 </tr>
-                <tr>
-                    <th></th>
-                    <th></th>
-                    <th class="fase-precisión">S1+S2</th>
-                    <th class="fase-precisión">S3+S4</th>
-                    <th class="fase-precisión">S5+S6</th>
-                    <th class="fase-rapido">S7+S8</th>
-                    <th class="fase-rapido">S9+S10</th>
-                    <th class="fase-rapido">S11+S12</th>
-                    <th class="total-destacado">TOTAL</th>
-                    <th class="x-destacado">X</th>
-                </tr>
             </thead>`;
             
-            // Cuerpo de la tabla
             let tbody = '<tbody>';
             
             resultados.forEach((resultado, index) => {
@@ -352,14 +241,9 @@
                 tbody += `<td><strong>${index + 1}º</strong></td>`;
                 tbody += `<td><strong>${resultado.puesto}</strong></td>`;
                 
-                // Parciales 1-3 (Precisión)
-                for (let i = 0; i < 3; i++) {
-                    tbody += `<td class="fase-precisión">${resultado.parciales[i] || 0}</td>`;
-                }
-                
-                // Parciales 4-6 (Tiro Rápido)
-                for (let i = 3; i < 6; i++) {
-                    tbody += `<td class="fase-rapido">${resultado.parciales[i] || 0}</td>`;
+                // Parciales
+                for (let i = 0; i < 6; i++) {
+                    tbody += `<td>${resultado.parciales[i] || 0}</td>`;
                 }
                 
                 tbody += `<td class="total-destacado">${resultado.total}</td>`;
@@ -368,18 +252,20 @@
             });
             
             tbody += '</tbody>';
-            
             tabla.innerHTML = thead + tbody;
             container.appendChild(tabla);
         }
 
-        // Forzar recarga periódica para mantener sincronización
-        setInterval(() => {
-            if (ultimosDatos) {
-                localStorage.removeItem('tvData');
-                setTimeout(cargarDatosTV, 100);
-            }
-        }, 30000); // Cada 30 segundos forzar recarga
+        // Verificar cada 3 segundos
+        setInterval(verificarDatos, 3000);
+        
+        // Verificar inmediatamente al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("📺 Página TV cargada - Iniciando verificación...");
+            verificarDatos();
+        });
+
+        console.log("✅ Sistema TV configurado - Esperando datos...");
     </script>
 </body>
 </html>
