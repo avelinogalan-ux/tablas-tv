@@ -3,440 +3,383 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados de Competición - TV</title>
+    <title>Resultados en TV - Tiro Deportivo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
     <style>
-        :root {
-            --color-primario: #0d6efd;
-            --color-exito: #198754;
-            --color-advertencia: #ffc107;
-            --color-peligro: #dc3545;
-            --color-info: #0dcaf0;
-        }
-        
         body {
-            background: #1a1a1a;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
             color: white;
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 0;
-            margin: 0;
         }
-        
-        .tv-container {
+        .container-tv {
+            max-width: 1400px;
+            margin: 0 auto;
             padding: 20px;
-            max-width: 100%;
-            overflow-x: auto;
         }
-        
-        .tv-header {
-            background: linear-gradient(45deg, #0d6efd, #0b5ed7);
-            color: white;
-            padding: 25px 20px;
+        .header-tv {
             text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            border: 2px solid rgba(255,255,255,0.2);
         }
-        
-        .card-tv {
-            background: #2d2d2d;
-            border: none;
+        .tabla-resultados-tv {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            color: black;
+            font-size: 1.1em;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             border-radius: 10px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-            margin-bottom: 25px;
             overflow: hidden;
         }
-        
-        .card-header-tv {
-            background: linear-gradient(45deg, #495057, #6c757d);
+        .tabla-resultados-tv th {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             color: white;
-            padding: 20px;
-            border-bottom: 3px solid var(--color-primario);
-        }
-        
-        .table-tv {
-            background: white;
-            color: #333;
-            font-size: 1.1rem;
-            margin: 0;
-        }
-        
-        .table-tv th {
-            background: var(--color-primario);
-            color: white;
-            text-align: center;
-            font-weight: 600;
             padding: 15px 10px;
-            font-size: 1rem;
-        }
-        
-        .table-tv td {
+            font-weight: 600;
             text-align: center;
-            vertical-align: middle;
+            border: none;
+        }
+        .tabla-resultados-tv td {
             padding: 12px 8px;
-            font-weight: 500;
-        }
-        
-        .puesto-destacado {
-            background-color: #e8f5e8 !important;
-            border-left: 4px solid var(--color-exito);
-        }
-        
-        .puesto-abandonado {
-            background-color: #f8f9fa !important;
-            color: #6c757d !important;
-            text-decoration: line-through;
-        }
-        
-        .empty-state {
             text-align: center;
-            padding: 100px 20px;
-            color: #ccc;
+            border: 1px solid #e0e0e0;
         }
-        
-        .empty-state .icon {
-            font-size: 5rem;
-            margin-bottom: 30px;
-            opacity: 0.7;
+        .tabla-resultados-tv tr:nth-child(even) {
+            background-color: #f8f9fa;
         }
-        
-        .fase-precision { background-color: #cfe2ff !important; }
-        .fase-rapido { background-color: #fff3cd !important; }
-        
-        @media (max-width: 768px) {
-            .table-tv {
-                font-size: 0.9rem;
-            }
-            
-            .table-tv th,
-            .table-tv td {
-                padding: 8px 4px;
-            }
+        .tabla-resultados-tv tr:hover {
+            background-color: #e3f2fd;
         }
-        
-        .fade-in {
-            animation: fadeIn 0.8s ease-in;
+        .esperando-datos {
+            text-align: center;
+            font-size: 2em;
+            margin-top: 100px;
+            color: #bdc3c7;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        .actualizado {
+            text-align: center;
+            font-size: 1em;
+            color: #95a5a6;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 10px;
         }
-        
+        .puesto-destacado {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%) !important;
+            font-weight: bold;
+        }
         .total-destacado {
-            background: linear-gradient(45deg, #198754, #20c997) !important;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%) !important;
             color: white !important;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.2em;
         }
-
-        .auto-refresh-badge {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--color-exito);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            z-index: 1000;
+        .x-destacado {
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%) !important;
+            color: white !important;
+            font-weight: bold;
+        }
+        .fase-precisión {
+            background: #d6eaf8 !important;
+        }
+        .fase-rapido {
+            background: #fcf3cf !important;
+        }
+        .badge-estado {
+            font-size: 0.8em;
+            padding: 4px 8px;
+            border-radius: 20px;
         }
     </style>
 </head>
 <body>
-    <!-- Badge de Auto-Refresh -->
-    <div class="auto-refresh-badge" id="autoRefreshBadge">
-        🔄 Auto-Refresh: 20s
-    </div>
-
-    <!-- Header TV -->
-    <div class="tv-header">
-        <h1 class="display-4 fw-bold mb-3" id="tituloPrincipal">🎯 RESULTADOS DE COMPETICIÓN</h1>
-        <p class="lead mb-0" id="infoDisciplina">Cargando datos...</p>
-        <small id="ultimaActualizacion" class="opacity-75"></small>
-    </div>
-
-    <!-- Contenido Principal -->
-    <div class="tv-container">
-        <!-- Estado vacío -->
-        <div id="emptyState" class="empty-state">
-            <div class="icon">📊</div>
-            <h2>Esperando datos de la competición</h2>
-            <p class="fs-5">Los resultados aparecerán aquí automáticamente</p>
-            <div class="mt-4">
-                <small class="text-muted">Auto-refresh cada 20 segundos</small>
+    <div class="container-tv">
+        <div class="header-tv">
+            <h1 class="display-4 mb-3">🎯 SISTEMA DE COMPETICIÓN</h1>
+            <h2 class="mb-4">Pistola 9mm / Fuego Central</h2>
+            <div id="infoActualizacion" class="actualizado">
+                ⏳ Conectando con el sistema de competición...
             </div>
         </div>
 
-        <!-- Contenedor de resultados -->
-        <div id="resultsContainer" style="display: none;">
-            
-            <!-- Resultados Finales -->
-            <div class="card card-tv fade-in" id="resultadosFinalesCard" style="display: none;">
-                <div class="card-header-tv">
-                    <h3 class="mb-0" id="tituloFinales">🏆 RESULTADOS FINALES - 12 SERIES</h3>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-tv mb-0" id="tablaFinales">
-                            <thead id="theadFinales">
-                                <!-- Se genera dinámicamente -->
-                            </thead>
-                            <tbody id="cuerpoTablaFinales">
-                                <!-- Se llena automáticamente -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        <div id="contenido">
+            <div class="esperando-datos" id="esperando">
+                <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
+                <br>
+                ⏳ Esperando datos del sistema de competición...
+                <br>
+                <small class="text-muted">La página se actualizará automáticamente</small>
             </div>
-
-            <!-- Resultados Parciales -->
-            <div class="card card-tv fade-in" id="resultadosParcialesCard" style="display: none;">
-                <div class="card-header-tv">
-                    <h3 class="mb-0" id="tituloParciales">📈 RESULTADOS PARCIALES - 6 AGRUPACIONES</h3>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-tv mb-0" id="tablaParciales">
-                            <thead id="theadParciales">
-                                <!-- Se genera dinámicamente -->
-                            </thead>
-                            <tbody id="cuerpoTablaParciales">
-                                <!-- Se llena automáticamente -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div id="tablasContainer" style="display: none;">
+                <!-- Aquí se mostrarán las tablas dinámicamente -->
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // =============================================
-        // CONFIGURACIÓN PUSHER - TV
+        // SISTEMA DE ACTUALIZACIÓN AUTOMÁTICA
         // =============================================
+
+        let ultimosDatos = null;
         
-        const PUSHER_CONFIG = {
-            key: 'b61a0aa63a568d7f7e59',
-            cluster: 'eu'
-        };
-
-        let datosActuales = null;
-        let pusher = null;
-        let channel = null;
-
-        // Esperar a que Pusher se cargue
-        function inicializarPusher() {
-            if (typeof Pusher === 'undefined') {
-                console.log('⏳ Pusher no cargado, reintentando...');
-                setTimeout(inicializarPusher, 100);
-                return;
-            }
-
-            console.log('📡 Inicializando Pusher...');
-            
-            pusher = new Pusher(PUSHER_CONFIG.key, {
-                cluster: PUSHER_CONFIG.cluster,
-                encrypted: true
-            });
-
-            channel = pusher.subscribe('tv-channel');
-
-            // Escuchar eventos
-            channel.bind('client-datos-actualizados', function(data) {
-                console.log('🎯 Datos recibidos:', data);
-                mostrarDatos(data);
-                mostrarNotificacion('📊 Datos actualizados en tiempo real!');
-            });
-
-            console.log('✅ Pusher listo - Esperando datos...');
-        }
-
-        // Función para mostrar notificación
-        function mostrarNotificacion(mensaje) {
-            const noti = document.createElement('div');
-            noti.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #198754;
-                color: white;
-                padding: 15px 20px;
-                border-radius: 10px;
-                z-index: 10000;
-                font-weight: bold;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            `;
-            noti.textContent = mensaje;
-            document.body.appendChild(noti);
-            
-            setTimeout(() => noti.remove(), 3000);
-        }
-
-        function mostrarDatos(datos) {
-            console.log('🎯 Mostrando datos:', datos);
-            datosActuales = datos;
-            
-            document.getElementById('tituloPrincipal').textContent = `🎯 ${datos.disciplina}`;
-            document.getElementById('infoDisciplina').textContent = 
-                `${datos.tipo.toUpperCase()} • ${formatearFecha(datos.timestamp)}`;
-            
-            mostrarSeccionPorTipo(datos.tipo, datos.disciplina);
-            
-            document.getElementById('emptyState').style.display = 'none';
-            document.getElementById('resultsContainer').style.display = 'block';
-            
-            document.querySelectorAll('.card-tv').forEach(card => {
-                card.classList.add('fade-in');
-            });
-            
-            actualizarInfoTiempo();
-        }
-
-        function mostrarSeccionPorTipo(tipo, disciplina) {
-            document.getElementById('resultadosFinalesCard').style.display = 'none';
-            document.getElementById('resultadosParcialesCard').style.display = 'none';
-            
-            if (tipo === 'finales') {
-                document.getElementById('tituloFinales').textContent = `🏆 RESULTADOS FINALES - ${disciplina}`;
-                mostrarResultadosFinales();
-                document.getElementById('resultadosFinalesCard').style.display = 'block';
-            } else if (tipo === 'parciales') {
-                document.getElementById('tituloParciales').textContent = `📈 RESULTADOS PARCIALES - ${disciplina}`;
-                mostrarResultadosParciales();
-                document.getElementById('resultadosParcialesCard').style.display = 'block';
-            }
-        }
-
-        function mostrarResultadosFinales() {
-            const thead = document.getElementById('theadFinales');
-            const tbody = document.getElementById('cuerpoTablaFinales');
-            
-            if (!datosActuales.datos || datosActuales.datos.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="20" class="text-center py-4">No hay datos disponibles</td></tr>';
-                return;
-            }
-            
-            thead.innerHTML = `
-                <tr>
-                    <th>POS</th>
-                    <th>PUESTO</th>
-                    <th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th>
-                    <th>S7</th><th>S8</th><th>S9</th><th>S10</th><th>S11</th><th>S12</th>
-                    <th>TOTAL</th>
-                    <th>X</th>
-                </tr>
-            `;
-            
-            tbody.innerHTML = '';
-            datosActuales.datos.forEach((resultado, index) => {
-                const row = document.createElement('tr');
-                if (index === 0) row.classList.add('puesto-destacado');
-                
-                row.innerHTML = `
-                    <td class="fw-bold fs-5">${index + 1}º</td>
-                    <td class="fw-bold">PUESTO ${resultado.puesto}</td>
-                    ${resultado.series.map((serie, i) => `
-                        <td class="${i < 6 ? 'fase-precision' : 'fase-rapido'} fw-bold">${serie}</td>
-                    `).join('')}
-                    <td class="total-destacado">${resultado.total}</td>
-                    <td class="fw-bold table-info">${resultado.xTotal}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function mostrarResultadosParciales() {
-            const thead = document.getElementById('theadParciales');
-            const tbody = document.getElementById('cuerpoTablaParciales');
-            
-            if (!datosActuales.datos || datosActuales.datos.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="20" class="text-center py-4">No hay datos disponibles</td></tr>';
-                return;
-            }
-            
-            thead.innerHTML = `
-                <tr>
-                    <th>POS</th>
-                    <th>PUESTO</th>
-                    <th>S1+S2</th><th>S3+S4</th><th>S5+S6</th>
-                    <th>S7+S8</th><th>S9+S10</th><th>S11+S12</th>
-                    <th>TOTAL</th>
-                    <th>X</th>
-                </tr>
-            `;
-            
-            tbody.innerHTML = '';
-            datosActuales.datos.forEach((resultado, index) => {
-                const row = document.createElement('tr');
-                if (index === 0) row.classList.add('puesto-destacado');
-                
-                row.innerHTML = `
-                    <td class="fw-bold fs-5">${index + 1}º</td>
-                    <td class="fw-bold">PUESTO ${resultado.puesto}</td>
-                    ${resultado.parciales.map((parcial, i) => `
-                        <td class="${i < 3 ? 'fase-precision' : 'fase-rapido'} fw-bold">${parcial}</td>
-                    `).join('')}
-                    <td class="total-destacado">${resultado.total}</td>
-                    <td class="fw-bold table-info">${resultado.xTotal}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function formatearFecha(timestamp) {
-            try {
-                const fecha = new Date(timestamp);
-                return fecha.toLocaleString('es-ES');
-            } catch (error) {
-                return new Date().toLocaleString('es-ES');
-            }
-        }
-
-        function actualizarInfoTiempo() {
-            document.getElementById('ultimaActualizacion').textContent = 
-                `Actualizado: ${new Date().toLocaleTimeString('es-ES')}`;
-        }
-
-        // Al cargar la página
+        // Verificar datos cada 2 segundos
+        setInterval(cargarDatosTV, 2000);
+        
+        // Cargar datos inmediatamente al abrir
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 TV Iniciada');
+            console.log('📺 Pantalla TV iniciada - Esperando datos...');
+            cargarDatosTV();
+        });
+
+        function cargarDatosTV() {
+            // Intentar obtener datos de localStorage (misma sesión)
+            const datosTV = localStorage.getItem('tvData');
             
-            // Inicializar Pusher después de un pequeño delay
-            setTimeout(inicializarPusher, 100);
-            
-            // También cargar datos iniciales si existen
-            const urlParams = new URLSearchParams(window.location.search);
-            const datosURL = urlParams.get('data');
-            if (datosURL) {
+            if (datosTV) {
                 try {
-                    const datos = JSON.parse(decodeURIComponent(datosURL));
-                    mostrarDatos(datos);
+                    const datos = JSON.parse(datosTV);
+                    
+                    // Solo actualizar si los datos son diferentes
+                    if (!ultimosDatos || JSON.stringify(datos) !== JSON.stringify(ultimosDatos)) {
+                        ultimosDatos = datos;
+                        mostrarResultadosTV(datos);
+                        
+                        const ahora = new Date();
+                        document.getElementById('infoActualizacion').innerHTML = 
+                            `✅ <strong>CONECTADO</strong> - Última actualización: ${ahora.toLocaleTimeString()}`;
+                    }
                 } catch (error) {
-                    console.log('No hay datos en URL');
+                    console.error('❌ Error al procesar datos:', error);
+                    document.getElementById('infoActualizacion').innerHTML = 
+                        '❌ Error en los datos recibidos';
+                }
+            } else {
+                // Si no hay datos en localStorage, verificar URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const dataParam = urlParams.get('data');
+                
+                if (dataParam) {
+                    try {
+                        const datos = JSON.parse(decodeURIComponent(dataParam));
+                        ultimosDatos = datos;
+                        mostrarResultadosTV(datos);
+                        
+                        // Guardar en localStorage para futuras actualizaciones
+                        localStorage.setItem('tvData', JSON.stringify(datos));
+                        
+                        const ahora = new Date();
+                        document.getElementById('infoActualizacion').innerHTML = 
+                            `✅ <strong>CONECTADO</strong> - Última actualización: ${ahora.toLocaleTimeString()}`;
+                    } catch (error) {
+                        console.error('❌ Error al procesar datos de URL:', error);
+                        document.getElementById('infoActualizacion').innerHTML = 
+                            '❌ Error en los datos de la URL';
+                    }
+                } else {
+                    // No hay datos disponibles
+                    document.getElementById('infoActualizacion').innerHTML = 
+                        '⏳ Esperando datos del sistema de competición...';
                 }
             }
-        });
-       // =============================================
-// SISTEMA DE RESPALDO - VERIFICAR DATOS CADA 2 SEGUNDOS
-// =============================================
-setInterval(() => {
-    const datosLocal = localStorage.getItem('tvData');
-    if (datosLocal) {
-        try {
-            const datos = JSON.parse(datosLocal);
-            console.log('💾 Datos recibidos via localStorage:', datos);
-            mostrarDatos(datos);
-            mostrarNotificacion('📊 Datos actualizados via respaldo!');
-        } catch (error) {
-            console.error('Error:', error);
         }
-    }
-}, 2000);
+
+        function mostrarResultadosTV(datos) {
+            const esperando = document.getElementById('esperando');
+            const tablasContainer = document.getElementById('tablasContainer');
+            
+            esperando.style.display = 'none';
+            tablasContainer.style.display = 'block';
+            tablasContainer.innerHTML = '';
+
+            if (datos.tipo === 'finales') {
+                crearTablaFinales(datos.datos, tablasContainer, datos.disciplina);
+            } else if (datos.tipo === 'parciales') {
+                crearTablaParciales(datos.datos, tablasContainer, datos.disciplina);
+            }
+        }
+
+        function crearTablaFinales(resultados, container, disciplina) {
+            // Título
+            const titulo = document.createElement('div');
+            titulo.className = 'text-center mb-4';
+            titulo.innerHTML = `
+                <h1 class="display-5 text-warning">🏆 RESULTADOS FINALES</h1>
+                <h3 class="text-info">${disciplina}</h3>
+            `;
+            container.appendChild(titulo);
+
+            // Crear tabla
+            const tabla = document.createElement('table');
+            tabla.className = 'tabla-resultados-tv table table-striped';
+            
+            // Cabecera
+            let thead = `
+            <thead>
+                <tr>
+                    <th width="80">POS</th>
+                    <th width="100">PUESTO</th>
+                    <th colspan="6" class="fase-precisión">FASE PRECISIÓN</th>
+                    <th colspan="6" class="fase-rapido">FASE TIRO RÁPIDO</th>
+                    <th width="100" class="total-destacado">TOTAL</th>
+                    <th width="80" class="x-destacado">X</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th class="fase-precisión">S1</th>
+                    <th class="fase-precisión">S2</th>
+                    <th class="fase-precisión">S3</th>
+                    <th class="fase-precisión">S4</th>
+                    <th class="fase-precisión">S5</th>
+                    <th class="fase-precisión">S6</th>
+                    <th class="fase-rapido">S7</th>
+                    <th class="fase-rapido">S8</th>
+                    <th class="fase-rapido">S9</th>
+                    <th class="fase-rapido">S10</th>
+                    <th class="fase-rapido">S11</th>
+                    <th class="fase-rapido">S12</th>
+                    <th class="total-destacado">TOTAL</th>
+                    <th class="x-destacado">X</th>
+                </tr>
+            </thead>`;
+            
+            // Cuerpo de la tabla
+            let tbody = '<tbody>';
+            
+            resultados.forEach((resultado, index) => {
+                const esTop3 = index < 3;
+                const claseFila = esTop3 ? 'puesto-destacado' : '';
+                
+                tbody += `<tr class="${claseFila}">`;
+                tbody += `<td><strong>${index + 1}º</strong></td>`;
+                tbody += `<td><strong>${resultado.puesto}</strong></td>`;
+                
+                // Series 1-6 (Precisión)
+                for (let i = 0; i < 6; i++) {
+                    tbody += `<td class="fase-precisión">${resultado.series[i] || 0}</td>`;
+                }
+                
+                // Series 7-12 (Tiro Rápido)
+                for (let i = 6; i < 12; i++) {
+                    tbody += `<td class="fase-rapido">${resultado.series[i] || 0}</td>`;
+                }
+                
+                tbody += `<td class="total-destacado">${resultado.total}</td>`;
+                tbody += `<td class="x-destacado">${resultado.xTotal}</td>`;
+                tbody += '</tr>';
+            });
+            
+            tbody += '</tbody>';
+            
+            tabla.innerHTML = thead + tbody;
+            container.appendChild(tabla);
+
+            // Añadir información adicional
+            const infoExtra = document.createElement('div');
+            infoExtra.className = 'text-center mt-4';
+            infoExtra.innerHTML = `
+                <div class="row justify-content-center">
+                    <div class="col-auto">
+                        <span class="badge badge-estado" style="background: #d6eaf8; color: #000;">Fase Precisión</span>
+                    </div>
+                    <div class="col-auto">
+                        <span class="badge badge-estado" style="background: #fcf3cf; color: #000;">Fase Tiro Rápido</span>
+                    </div>
+                    <div class="col-auto">
+                        <span class="badge badge-estado bg-primary">Total Puntos</span>
+                    </div>
+                    <div class="col-auto">
+                        <span class="badge badge-estado bg-danger">Conteo X</span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(infoExtra);
+        }
+
+        function crearTablaParciales(resultados, container, disciplina) {
+            // Título
+            const titulo = document.createElement('div');
+            titulo.className = 'text-center mb-4';
+            titulo.innerHTML = `
+                <h1 class="display-5 text-info">📊 RESULTADOS PARCIALES</h1>
+                <h3 class="text-warning">${disciplina}</h3>
+            `;
+            container.appendChild(titulo);
+
+            // Crear tabla
+            const tabla = document.createElement('table');
+            tabla.className = 'tabla-resultados-tv table table-striped';
+            
+            // Cabecera
+            let thead = `
+            <thead>
+                <tr>
+                    <th width="80">POS</th>
+                    <th width="100">PUESTO</th>
+                    <th colspan="3" class="fase-precisión">PRECISIÓN</th>
+                    <th colspan="3" class="fase-rapido">TIRO RÁPIDO</th>
+                    <th width="100" class="total-destacado">TOTAL</th>
+                    <th width="80" class="x-destacado">X</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th class="fase-precisión">S1+S2</th>
+                    <th class="fase-precisión">S3+S4</th>
+                    <th class="fase-precisión">S5+S6</th>
+                    <th class="fase-rapido">S7+S8</th>
+                    <th class="fase-rapido">S9+S10</th>
+                    <th class="fase-rapido">S11+S12</th>
+                    <th class="total-destacado">TOTAL</th>
+                    <th class="x-destacado">X</th>
+                </tr>
+            </thead>`;
+            
+            // Cuerpo de la tabla
+            let tbody = '<tbody>';
+            
+            resultados.forEach((resultado, index) => {
+                const esTop3 = index < 3;
+                const claseFila = esTop3 ? 'puesto-destacado' : '';
+                
+                tbody += `<tr class="${claseFila}">`;
+                tbody += `<td><strong>${index + 1}º</strong></td>`;
+                tbody += `<td><strong>${resultado.puesto}</strong></td>`;
+                
+                // Parciales 1-3 (Precisión)
+                for (let i = 0; i < 3; i++) {
+                    tbody += `<td class="fase-precisión">${resultado.parciales[i] || 0}</td>`;
+                }
+                
+                // Parciales 4-6 (Tiro Rápido)
+                for (let i = 3; i < 6; i++) {
+                    tbody += `<td class="fase-rapido">${resultado.parciales[i] || 0}</td>`;
+                }
+                
+                tbody += `<td class="total-destacado">${resultado.total}</td>`;
+                tbody += `<td class="x-destacado">${resultado.xTotal}</td>`;
+                tbody += '</tr>';
+            });
+            
+            tbody += '</tbody>';
+            
+            tabla.innerHTML = thead + tbody;
+            container.appendChild(tabla);
+        }
+
+        // Forzar recarga periódica para mantener sincronización
+        setInterval(() => {
+            if (ultimosDatos) {
+                localStorage.removeItem('tvData');
+                setTimeout(cargarDatosTV, 100);
+            }
+        }, 30000); // Cada 30 segundos forzar recarga
     </script>
 </body>
 </html>
-
-
