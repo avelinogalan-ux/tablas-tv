@@ -3,261 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TV - Resultados Tiro Deportivo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>TV - Resultados Tiro Deportivo</title>    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
-            color: white;
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .container-tv {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .header-tv {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            border: 2px solid rgba(255,255,255,0.2);
-        }
-        .tabla-resultados-tv {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            color: black;
-            font-size: 1.1em;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .tabla-resultados-tv th {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            padding: 15px 10px;
-            font-weight: 600;
-            text-align: center;
-            border: none;
-        }
-        .tabla-resultados-tv td {
-            padding: 12px 8px;
-            text-align: center;
-            border: 1px solid #e0e0e0;
-        }
-        .esperando-datos {
-            text-align: center;
-            font-size: 1.5em;
-            margin-top: 50px;
-            color: #bdc3c7;
-        }
-        .puesto-destacado {
-            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%) !important;
-            font-weight: bold;
-        }
-        .total-destacado {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%) !important;
-            color: white !important;
-            font-weight: bold;
-        }
-        .x-destacado {
-            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%) !important;
-            color: white !important;
-            font-weight: bold;
-        }
-        .status-connected {
-            background: rgba(46, 204, 113, 0.2);
-            border: 1px solid #2ecc71;
-            color: #2ecc71;
-        }
-        .status-waiting {
-            background: rgba(241, 196, 15, 0.2);
-            border: 1px solid #f1c40f;
-            color: #f1c40f;
-        }
+        body { background-color: #212529; color: white; min-height: 100vh; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .container-tv { max-width: 1600px; margin: 0 auto; padding: 15px; }
+        .table { font-size: 1.2rem; border-color: #454d55; vertical-align: middle; }
+        .table th, .table td { text-align: center; padding: 0.8rem; }
+        .table-light-warning { background-color: #fff3cd !important; color: #664d03 !important; }
+        .esperando-datos { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60vh; text-align: center; color: #bdc3c7; }
+        .status-connected { background: rgba(46, 204, 113, 0.2); border: 1px solid #2ecc71; color: #2ecc71; }
+        .status-disconnected { background: rgba(231, 76, 60, 0.2); border: 1px solid #e74c3c; color: #e74c3c; }
+        .status-waiting { background: rgba(241, 196, 15, 0.2); border: 1px solid #f1c40f; color: #f1c40f; }
     </style>
 </head>
 <body>
     <div class="container-tv">
-        <div class="header-tv">
-            <h1 class="display-4 mb-3">🎯 SISTEMA DE COMPETICIÓN</h1>
-            <h2 class="mb-4">Pistola 9mm / Fuego Central</h2>
-            
-            <div id="infoActualizacion" class="status-waiting p-3 rounded">
+        <header class="text-center my-4">
+            <h1 class="display-4 mb-3">🎯 Resultados en Directo</h1>
+            <div id="infoActualizacion" class="status-waiting p-3 rounded mx-auto" style="max-width: 600px;">
                 <div class="d-flex align-items-center justify-content-center">
                     <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-                    <span>🔄 Esperando datos del sistema...</span>
+                    <span>Buscando canal de competición...</span>
                 </div>
             </div>
-        </div>
-
-        <div id="contenido">
+        </header>
+        <main id="contenido">
             <div class="esperando-datos" id="esperando">
-                <div class="mb-3">
-                    <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
-                </div>
+                <div class="spinner-border text-primary mb-3" style="width: 4rem; height: 4rem;"></div>
                 <h4>Listo para recibir resultados</h4>
-                <p class="text-muted">Los datos aparecerán automáticamente cuando el sistema los envíe</p>
-                <div class="mt-4">
-                    <small class="text-info">💡 Usa el código QR en el sistema principal para enviar datos</small>
-                </div>
+                <p class="text-muted">Los datos aparecerán automáticamente en esta pantalla.</p>
             </div>
             <div id="tablasContainer" style="display: none;"></div>
-        </div>
+        </main>
     </div>
 
-   / =========================================================================
-// LÓGICA DE TV - VERSIÓN CANAL UNIVERSAL (DEFINITIVA)
-// =========================================================================
+<script>
+    const CANAL_UNIVERSAL_ID = '68e187bdd0ea881f40956915';
+    let ultimoContenido = '';
 
-// ▼▼▼ PEGA AQUÍ EL MISMO ID DE CANAL UNIVERSAL ▼▼▼
-const CANAL_UNIVERSAL_ID = '68e187bdd0ea881f40956915';
-// ▲▲▲ PEGA AQUÍ EL MISMO ID DE CANAL UNIVERSAL ▲▲▲
+    async function consultarCanal() {
+        const infoElement = document.getElementById('infoActualizacion');
+        try {
+            const respuesta = await fetch(`https://api.jsonbin.io/v3/b/${CANAL_UNIVERSAL_ID}/latest`);
+            if (!respuesta.ok) { throw new Error(`Error ${respuesta.status}`); }
+            const contenidoTexto = await respuesta.text();
+            if (contenidoTexto === ultimoContenido) return;
+            ultimoContenido = contenidoTexto;
+            const datos = JSON.parse(contenidoTexto).record;
+            if (!datos || !datos.tipo) return;
 
-let ultimoContenido = ''; // Variable para evitar parpadeos si los datos no cambian
+            mostrarResultadosTV(datos);
+            document.getElementById('esperando').style.display = 'none';
+            document.getElementById('tablasContainer').style.display = 'block';
 
-async function consultarCanal() {
-    if (CANAL_UNIVERSAL_ID === 'PEGA_AQUI_EL_ID_QUE_COPIASTE') { // Doble chequeo por si acaso
-        document.getElementById('esperando').innerHTML = `<h4>Error de Configuración</h4><p>El ID del canal no ha sido configurado en la página de TV.</p>`;
-        return;
+            const ahora = new Date();
+            infoElement.className = 'status-connected p-3 rounded mx-auto';
+            infoElement.innerHTML = `<div class="text-center"><span class="fw-bold">✅ EN DIRECTO</span><br><small>Última Actualización: ${ahora.toLocaleTimeString()} | ${datos.disciplina.toUpperCase()}</small></div>`;
+        } catch (error) {
+            console.error("❌ Error al buscar datos:", error);
+            infoElement.className = 'status-disconnected p-3 rounded mx-auto';
+            infoElement.innerHTML = `<div class="text-center">❌ Error al recibir datos. Verificando...</div>`;
+        }
     }
 
-    const infoElement = document.getElementById('infoActualizacion');
-
-    try {
-        const respuesta = await fetch(`https://api.jsonbin.io/v3/b/${CANAL_UNIVERSAL_ID}/latest`);
-
-        if (!respuesta.ok) {
-            throw new Error(`Error ${respuesta.status} al contactar con el canal.`);
-        }
-
-        const contenidoTexto = await respuesta.text();
-
-        // Si el contenido no ha cambiado, no hacemos nada para evitar refrescar la pantalla innecesariamente.
-        if (contenidoTexto === ultimoContenido) {
-            return;
-        }
-
-        ultimoContenido = contenidoTexto;
-        // La respuesta de 'latest' envuelve los datos en un objeto 'record'.
-        const datos = JSON.parse(contenidoTexto).record;
-
-        // Si el bin está vacío o es la primera vez, 'datos' podría no existir.
-        if (!datos || !datos.tipo) {
-            console.log("Canal vacío o esperando primer envío de datos...");
-            return;
-        }
-
-        // Llamamos a la función principal que dibuja las tablas.
-        mostrarResultadosTV(datos);
-
-        document.getElementById('esperando').style.display = 'none';
-        document.getElementById('tablasContainer').style.display = 'block';
-
-        const ahora = new Date();
-        infoElement.className = 'status-connected p-3 rounded';
-        infoElement.innerHTML = `
-            <div class="text-center">
-                <span class="fw-bold">✅ EN DIRECTO</span><br>
-                <small>Última Actualización: ${ahora.toLocaleTimeString()} | ${datos.disciplina.toUpperCase()}</small>
-            </div>
-        `;
-
-    } catch (error) {
-        console.error("❌ Error al buscar datos en el canal:", error);
-        infoElement.className = 'status-disconnected p-3 rounded';
-        infoElement.innerHTML = `<div class="text-center">❌ Error al recibir datos. Verificando de nuevo...</div>`;
-    }
-}
-
-// Al cargar la página, consulta el canal inmediatamente y luego repite cada 10 segundos.
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("✅ Sistema de TV por Canal Universal iniciado.");
-    consultarCanal(); // Primera llamada inmediata
-    setInterval(consultarCanal, 10000); // Llamadas periódicas cada 10 segundos
-});
-
-
-// =========================================================================
-// LAS SIGUIENTES FUNCIONES (QUE YA TIENES) NO CAMBIAN.
-// SOLO ASEGÚRATE DE QUE ESTÉN PRESENTES DEBAJO DE ESTA LÍNEA.
-// =========================================================================
-
-function mostrarResultadosTV(datos) {
-    const container = document.getElementById('tablasContainer');
-    container.innerHTML = ''; // Limpiar contenido anterior
-
-    if (datos.tipo === 'finales') {
-        crearTablaFinales(datos.datos, container, datos.disciplina);
-    } else if (datos.tipo === 'parciales') {
-        crearTablaParciales(datos.datos, container, datos.disciplina);
-    }
-}
-
-function crearTablaFinales(resultados, container, disciplina) {
-    let tablaHTML = `
-        <h1 class="text-center mb-4">${disciplina} - Clasificación Final</h1>
-        <table class="table table-dark table-striped table-bordered table-hover">
-            <thead class="table-primary">
-                <tr>
-                    <th>Pos.</th><th>Puesto</th><th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th>
-                    <th class="table-warning">S7</th><th class="table-warning">S8</th><th class="table-warning">S9</th><th class="table-warning">S10</th><th class="table-warning">S11</th><th class="table-warning">S12</th>
-                    <th class="table-success">Total</th><th class="table-info">X</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
-    resultados.forEach((r, index) => {
-        tablaHTML += `
-            <tr>
-                <td class="fw-bold">${index + 1}º</td>
-                <td>Puesto ${r.puesto}</td>
-                ${r.series.map((s, i) => `<td class="${i < 6 ? '' : 'table-light-warning'}">${s}</td>`).join('')}
-                <td class="table-success fw-bold">${r.total}</td>
-                <td class="table-info fw-bold">${r.xTotal}</td>
-            </tr>
-        `;
+    document.addEventListener('DOMContentLoaded', function() {
+        consultarCanal();
+        setInterval(consultarCanal, 10000);
     });
 
-    tablaHTML += '</tbody></table>';
-    container.innerHTML = tablaHTML;
-}
+    function mostrarResultadosTV(datos) {
+        const container = document.getElementById('tablasContainer');
+        container.innerHTML = '';
+        if (datos.tipo === 'finales') crearTablaFinales(datos.datos, container, datos.disciplina);
+        else if (datos.tipo === 'parciales') crearTablaParciales(datos.datos, container, datos.disciplina);
+    }
 
-function crearTablaParciales(resultados, container, disciplina) {
-    let tablaHTML = `
-        <h1 class="text-center mb-4">${disciplina} - Clasificación Parcial</h1>
-        <table class="table table-dark table-striped table-bordered table-hover">
-            <thead class="table-primary">
-                <tr>
-                    <th>Pos.</th><th>Puesto</th><th>Prec. 1</th><th>Prec. 2</th><th>Prec. 3</th>
-                    <th class="table-warning">Duelo 1</th><th class="table-warning">Duelo 2</th><th class="table-warning">Duelo 3</th>
-                    <th class="table-success">Total</th><th class="table-info">X</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
+    function crearTablaFinales(resultados, container, disciplina) {
+        let tablaHTML = `<h1 class="text-center mb-4">${disciplina} - Clasificación Final</h1><table class="table table-dark table-striped table-bordered table-hover"><thead class="table-primary"><tr><th>Pos.</th><th>Puesto</th><th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th><th class="table-warning">S7</th><th class="table-warning">S8</th><th class="table-warning">S9</th><th class="table-warning">S10</th><th class="table-warning">S11</th><th class="table-warning">S12</th><th class="table-success">Total</th><th class="table-info">X</th></tr></thead><tbody>`;
+        resultados.forEach((r, index) => {
+            tablaHTML += `<tr><td class="fw-bold">${index + 1}º</td><td>Puesto ${r.puesto}</td>${r.series.map((s, i) => `<td class="${i < 6 ? '' : 'table-light-warning'}">${s}</td>`).join('')}<td class="table-success fw-bold">${r.total}</td><td class="table-info fw-bold">${r.xTotal}</td></tr>`;
+        });
+        tablaHTML += '</tbody></table>';
+        container.innerHTML = tablaHTML;
+    }
 
-    resultados.forEach((r, index) => {
-        tablaHTML += `
-            <tr>
-                <td class="fw-bold">${index + 1}º</td>
-                <td>Puesto ${r.puesto}</td>
-                ${r.parciales.map((p, i) => `<td class="${i < 3 ? '' : 'table-light-warning'}">${p}</td>`).join('')}
-                <td class="table-success fw-bold">${r.total}</td>
-                <td class="table-info fw-bold">${r.xTotal}</td>
-            </tr>
-        `;
-    });
-
-    tablaHTML += '</tbody></table>';
-    container.innerHTML = tablaHTML;
-}
-</body>
-</html>
+    function crearTablaParciales(resultados, container, disciplina) {
+        let tablaHTML = `<h1 class="text-center mb-4">${disciplina} - Clasificación Parcial</h1><table class="table table-dark table-striped table-bordered table-hover"><thead class="table-primary"><tr><th>Pos.</th><th>Puesto</th><th>Prec. 1</th><th>Prec. 2</th><th>Prec. 3</th><th class="table-warning">Duelo 1</th><th class="table-warning">Duelo 2</th><th class="table-warning">Duelo 3</th><th class="table-success">Total</th><th class="table-info">X</th></tr></thead><tbody>`;
+        resultados.forEach((r, index) => {
+            tablaHTML += `<tr><td class="fw-bold">${index + 1}º</td><td>Puesto ${r.puesto}</td>${r.parciales.map((p, i) => `<td class="${i < 3 ? '' : 'table-light-warning'}">${p}</td>`).join('')}<td class="table-success fw-bold">${r.total}</td><td class="table-info fw-bold">${r.xTotal}</td></tr>`;
+        });
+        tablaHTML += '</tbody></table>';
+        container.innerHTML = tablaHTML;
+    }
 </script>
 
-
+</body>
+</html>
