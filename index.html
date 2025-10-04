@@ -282,46 +282,50 @@
         }
         
         function cargarDatosAutomaticamente() {
-            console.log('🔍 Buscando datos en localStorage...');
-            actualizarDebug('Buscando datos...');
+    console.log('🔍 Buscando datos en sessionStorage y localStorage...');
+    actualizarDebug('Buscando datos...');
+    
+    // ✅ CAMBIO: Buscar primero en sessionStorage, luego en localStorage
+    let datosLocal = sessionStorage.getItem('tvData');
+    if (!datosLocal) {
+        datosLocal = localStorage.getItem('tvData');
+    }
+    
+    console.log('📦 Datos encontrados:', datosLocal);
+    
+    if (datosLocal) {
+        try {
+            console.log('✅ Datos encontrados, procesando...');
+            const datos = JSON.parse(datosLocal);
             
-            // Intentar cargar desde localStorage primero (datos más recientes)
-            const datosLocal = sessionStorage.getItem('tvData') || localStorage.getItem('tvData');
-            console.log('📦 Datos en localStorage:', datosLocal);
-            
-            if (datosLocal) {
-                try {
-                    console.log('✅ Datos encontrados, procesando...');
-                    const datos = JSON.parse(datosLocal);
-                    
-                    // VALIDAR que los datos tengan la estructura mínima
-                    if (!datos || typeof datos !== 'object') {
-                        throw new Error('Datos no son un objeto válido');
-                    }
-                    
-                    // Asegurar que tenga los campos requeridos
-                    if (!datos.tipo) datos.tipo = 'finales';
-                    if (!datos.disciplina) datos.disciplina = 'Competición';
-                    if (!datos.timestamp) datos.timestamp = new Date().toISOString();
-                    if (!datos.datos) datos.datos = [];
-                    
-                    mostrarDatos(datos);
-                    lastUpdateTime = new Date();
-                    actualizarInfoTiempo();
-                    actualizarDebug('Datos mostrados correctamente');
-                    return;
-                } catch (error) {
-                    console.error('❌ Error procesando datos:', error);
-                    actualizarDebug('Error: ' + error.message);
-                }
-            } else {
-                console.log('❌ No hay datos en localStorage');
-                actualizarDebug('No hay datos disponibles');
+            // VALIDAR que los datos tengan la estructura mínima
+            if (!datos || typeof datos !== 'object') {
+                throw new Error('Datos no son un objeto válido');
             }
             
-            // Si no hay datos, mostrar estado vacío
-            mostrarEstadoVacio();
+            // Asegurar que tenga los campos requeridos
+            if (!datos.tipo) datos.tipo = 'finales';
+            if (!datos.disciplina) datos.disciplina = 'Competición';
+            if (!datos.timestamp) datos.timestamp = new Date().toISOString();
+            if (!datos.datos) datos.datos = [];
+            
+            mostrarDatos(datos);
+            lastUpdateTime = new Date();
+            actualizarInfoTiempo();
+            actualizarDebug('Datos mostrados correctamente');
+            return;
+        } catch (error) {
+            console.error('❌ Error procesando datos:', error);
+            actualizarDebug('Error: ' + error.message);
         }
+    } else {
+        console.log('❌ No hay datos en sessionStorage ni localStorage');
+        actualizarDebug('No hay datos disponibles');
+    }
+    
+    // Si no hay datos, mostrar estado vacío
+    mostrarEstadoVacio();
+}
         
         function mostrarDatos(datos) {
             console.log('🎯 Mostrando datos:', datos);
@@ -545,4 +549,5 @@
     </script>
 </body>
 </html>
+
 
