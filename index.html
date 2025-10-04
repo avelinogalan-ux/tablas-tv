@@ -110,44 +110,70 @@
     </div>
 
     <script>
-        // =============================================
-        // SISTEMA TV MEJORADO
-        // =============================================
+      // =============================================
+// SISTEMA TV MEJORADO - VERSIÓN CON JSONBIN.IO (NUEVO CEREBRO)
+// =============================================
+
+let datosActualesId = null; // Para no recargar datos que ya están en pantalla
+
+async function cargarDatosDesdeURL() {
+    console.log("🔍 Buscando un 'ticket' en la URL...");
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const dataId = urlParams.get('id'); // 1. Miro si hay un 'id' (el ticket).
+
+    // 2. Si no hay ticket, o es el mismo que ya mostré, no hago nada.
+    if (!dataId || dataId === datosActualesId) {
+        return;
+    }
+    
+    console.log("✅ ¡Ticket encontrado! Es el número:", dataId);
+    datosActualesId = dataId; // Guardo el número del ticket para no repetirlo.
+
+    const infoElement = document.getElementById('infoActualizacion');
+
+    try {
+        // Pongo un mensaje de "Estoy yendo al Tablón de Anuncios..."
+        infoElement.innerHTML = `<span>📥 Descargando datos del sistema...</span>`;
+
+        // 3. Voy al Tablón de Anuncios (JSONBin.io) a buscar la hoja con ese ticket.
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${dataId}/latest`);
         
-        let datosActuales = null;
-        
-        function cargarDatosDesdeURL() {
-            console.log("🔍 Verificando parámetros URL...");
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const dataParam = urlParams.get('data');
-            
-            if (dataParam) {
-                console.log("✅ Datos encontrados en URL");
-                try {
-                    const datos = JSON.parse(decodeURIComponent(dataParam));
-                    mostrarResultadosTV(datos);
-                    
-                    const ahora = new Date();
-                    const infoElement = document.getElementById('infoActualizacion');
-                    infoElement.className = 'status-connected p-3 rounded';
-                    infoElement.innerHTML = `
-                        <div class="text-center">
-                            <span class="fw-bold">✅ CONECTADO AL SISTEMA</span><br>
-                            <small>Actualizado: ${ahora.toLocaleTimeString()} | ${datos.tipo.toUpperCase()} | ${datos.datos.length} puestos</small>
-                        </div>
-                    `;
-                        
-                } catch (error) {
-                    console.error("❌ Error procesando datos:", error);
-                    document.getElementById('infoActualizacion').innerHTML = 
-                        '<div class="text-center">❌ Error en los datos recibidos</div>';
-                }
-            } else {
-                console.log("🔄 Modo espera activado");
-                // No hay datos, mantener modo espera
-            }
+        if (!response.ok) { // Si no encuentro la hoja, aviso del error.
+            throw new Error(`No encontré la hoja con el ticket ${dataId}.`);
         }
+        
+        const resultadoBin = await response.json();
+        
+        // 4. Leo los resultados de la hoja.
+        const datos = resultadoBin.record;
+
+        // Muestro los resultados en el marcador (llamo a tu función que crea la tabla).
+        mostrarResultadosTV(datos);
+        
+        // Pongo un mensaje de "¡Conectado y mostrando resultados!"
+        const ahora = new Date();
+        infoElement.className = 'status-connected p-3 rounded';
+        infoElement.innerHTML = `
+            <div class="text-center">
+                <span class="fw-bold">✅ CONECTADO AL SISTEMA</span><br>
+                <small>Actualizado: ${ahora.toLocaleTimeString()} | ${datos.tipo.toUpperCase()} | ${datos.datos.length} puestos</small>
+            </div>
+        `;
+            
+    } catch (error) {
+        console.error("❌ Error al buscar los datos en el Tablón:", error);
+        infoElement.innerHTML = '<div>❌ Error al recibir los datos.</div>';
+    }
+}
+
+// Al cargar la página, ejecuto las instrucciones una vez.
+// Luego, me quedo revisando cada 5 segundos por si alguien me grita un nuevo ticket.
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("✅ Locutor (Sistema TV) listo para recibir tickets.");
+    cargarDatosDesdeURL();
+    setInterval(cargarDatosDesdeURL, 5000);
+});
         
         function mostrarResultadosTV(datos) {
             console.log("📊 Mostrando resultados:", datos);
@@ -289,3 +315,4 @@
     </script>
 </body>
 </html>
+
