@@ -109,210 +109,154 @@
         </div>
     </div>
 
-    <script>
-      // =============================================
-// SISTEMA TV MEJORADO - VERSIÓN CON JSONBIN.IO (NUEVO CEREBRO)
-// =============================================
+   / =========================================================================
+// LÓGICA DE TV - VERSIÓN CANAL UNIVERSAL (DEFINITIVA)
+// =========================================================================
 
-let datosActualesId = null; // Para no recargar datos que ya están en pantalla
+// ▼▼▼ PEGA AQUÍ EL MISMO ID DE CANAL UNIVERSAL ▼▼▼
+const CANAL_UNIVERSAL_ID = '68e187bdd0ea881f40956915';
+// ▲▲▲ PEGA AQUÍ EL MISMO ID DE CANAL UNIVERSAL ▲▲▲
 
-async function cargarDatosDesdeURL() {
-    console.log("🔍 Buscando un 'ticket' en la URL...");
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    const dataId = urlParams.get('id'); // 1. Miro si hay un 'id' (el ticket).
+let ultimoContenido = ''; // Variable para evitar parpadeos si los datos no cambian
 
-    // 2. Si no hay ticket, o es el mismo que ya mostré, no hago nada.
-    if (!dataId || dataId === datosActualesId) {
+async function consultarCanal() {
+    if (CANAL_UNIVERSAL_ID === 'PEGA_AQUI_EL_ID_QUE_COPIASTE') { // Doble chequeo por si acaso
+        document.getElementById('esperando').innerHTML = `<h4>Error de Configuración</h4><p>El ID del canal no ha sido configurado en la página de TV.</p>`;
         return;
     }
-    
-    console.log("✅ ¡Ticket encontrado! Es el número:", dataId);
-    datosActualesId = dataId; // Guardo el número del ticket para no repetirlo.
 
     const infoElement = document.getElementById('infoActualizacion');
 
     try {
-        // Pongo un mensaje de "Estoy yendo al Tablón de Anuncios..."
-        infoElement.innerHTML = `<span>📥 Descargando datos del sistema...</span>`;
+        const respuesta = await fetch(`https://api.jsonbin.io/v3/b/${CANAL_UNIVERSAL_ID}/latest`);
 
-        // 3. Voy al Tablón de Anuncios (JSONBin.io) a buscar la hoja con ese ticket.
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${dataId}/latest`);
-        
-        if (!response.ok) { // Si no encuentro la hoja, aviso del error.
-            throw new Error(`No encontré la hoja con el ticket ${dataId}.`);
+        if (!respuesta.ok) {
+            throw new Error(`Error ${respuesta.status} al contactar con el canal.`);
         }
-        
-        const resultadoBin = await response.json();
-        
-        // 4. Leo los resultados de la hoja.
-        const datos = resultadoBin.record;
 
-        // Muestro los resultados en el marcador (llamo a tu función que crea la tabla).
+        const contenidoTexto = await respuesta.text();
+
+        // Si el contenido no ha cambiado, no hacemos nada para evitar refrescar la pantalla innecesariamente.
+        if (contenidoTexto === ultimoContenido) {
+            return;
+        }
+
+        ultimoContenido = contenidoTexto;
+        // La respuesta de 'latest' envuelve los datos en un objeto 'record'.
+        const datos = JSON.parse(contenidoTexto).record;
+
+        // Si el bin está vacío o es la primera vez, 'datos' podría no existir.
+        if (!datos || !datos.tipo) {
+            console.log("Canal vacío o esperando primer envío de datos...");
+            return;
+        }
+
+        // Llamamos a la función principal que dibuja las tablas.
         mostrarResultadosTV(datos);
-        
-        // Pongo un mensaje de "¡Conectado y mostrando resultados!"
+
+        document.getElementById('esperando').style.display = 'none';
+        document.getElementById('tablasContainer').style.display = 'block';
+
         const ahora = new Date();
         infoElement.className = 'status-connected p-3 rounded';
         infoElement.innerHTML = `
             <div class="text-center">
-                <span class="fw-bold">✅ CONECTADO AL SISTEMA</span><br>
-                <small>Actualizado: ${ahora.toLocaleTimeString()} | ${datos.tipo.toUpperCase()} | ${datos.datos.length} puestos</small>
+                <span class="fw-bold">✅ EN DIRECTO</span><br>
+                <small>Última Actualización: ${ahora.toLocaleTimeString()} | ${datos.disciplina.toUpperCase()}</small>
             </div>
         `;
-            
+
     } catch (error) {
-        console.error("❌ Error al buscar los datos en el Tablón:", error);
-        infoElement.innerHTML = '<div>❌ Error al recibir los datos.</div>';
+        console.error("❌ Error al buscar datos en el canal:", error);
+        infoElement.className = 'status-disconnected p-3 rounded';
+        infoElement.innerHTML = `<div class="text-center">❌ Error al recibir datos. Verificando de nuevo...</div>`;
     }
 }
 
-// Al cargar la página, ejecuto las instrucciones una vez.
-// Luego, me quedo revisando cada 5 segundos por si alguien me grita un nuevo ticket.
+// Al cargar la página, consulta el canal inmediatamente y luego repite cada 10 segundos.
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("✅ Locutor (Sistema TV) listo para recibir tickets.");
-    cargarDatosDesdeURL();
-    setInterval(cargarDatosDesdeURL, 5000);
+    console.log("✅ Sistema de TV por Canal Universal iniciado.");
+    consultarCanal(); // Primera llamada inmediata
+    setInterval(consultarCanal, 10000); // Llamadas periódicas cada 10 segundos
 });
-        
-        function mostrarResultadosTV(datos) {
-            console.log("📊 Mostrando resultados:", datos);
-            
-            const esperando = document.getElementById('esperando');
-            const tablasContainer = document.getElementById('tablasContainer');
-            
-            esperando.style.display = 'none';
-            tablasContainer.style.display = 'block';
-            tablasContainer.innerHTML = '';
 
-            if (datos.tipo === 'finales') {
-                crearTablaFinales(datos.datos, tablasContainer, datos.disciplina);
-            } else if (datos.tipo === 'parciales') {
-                crearTablaParciales(datos.datos, tablasContainer, datos.disciplina);
-            }
-        }
 
-        function crearTablaFinales(resultados, container, disciplina) {
-            const titulo = document.createElement('div');
-            titulo.className = 'text-center mb-4';
-            titulo.innerHTML = `
-                <h1 class="display-5 text-warning">🏆 RESULTADOS FINALES</h1>
-                <h3 class="text-info">${disciplina}</h3>
-                <div class="badge bg-success fs-6 mt-2">${resultados.length} puestos</div>
-            `;
-            container.appendChild(titulo);
+// =========================================================================
+// LAS SIGUIENTES FUNCIONES (QUE YA TIENES) NO CAMBIAN.
+// SOLO ASEGÚRATE DE QUE ESTÉN PRESENTES DEBAJO DE ESTA LÍNEA.
+// =========================================================================
 
-            const tabla = document.createElement('table');
-            tabla.className = 'tabla-resultados-tv table table-striped';
-            
-            let thead = `
-            <thead>
+function mostrarResultadosTV(datos) {
+    const container = document.getElementById('tablasContainer');
+    container.innerHTML = ''; // Limpiar contenido anterior
+
+    if (datos.tipo === 'finales') {
+        crearTablaFinales(datos.datos, container, datos.disciplina);
+    } else if (datos.tipo === 'parciales') {
+        crearTablaParciales(datos.datos, container, datos.disciplina);
+    }
+}
+
+function crearTablaFinales(resultados, container, disciplina) {
+    let tablaHTML = `
+        <h1 class="text-center mb-4">${disciplina} - Clasificación Final</h1>
+        <table class="table table-dark table-striped table-bordered table-hover">
+            <thead class="table-primary">
                 <tr>
-                    <th width="80">POS</th>
-                    <th width="100">PUESTO</th>
-                    <th>S1<br><small class="text-muted">P</small></th>
-                    <th>S2<br><small class="text-muted">P</small></th>
-                    <th>S3<br><small class="text-muted">P</small></th>
-                    <th>S4<br><small class="text-muted">P</small></th>
-                    <th>S5<br><small class="text-muted">P</small></th>
-                    <th>S6<br><small class="text-muted">P</small></th>
-                    <th>S7<br><small class="text-muted">TR</small></th>
-                    <th>S8<br><small class="text-muted">TR</small></th>
-                    <th>S9<br><small class="text-muted">TR</small></th>
-                    <th>S10<br><small class="text-muted">TR</small></th>
-                    <th>S11<br><small class="text-muted">TR</small></th>
-                    <th>S12<br><small class="text-muted">TR</small></th>
-                    <th width="100" class="total-destacado">TOTAL</th>
-                    <th width="80" class="x-destacado">X</th>
+                    <th>Pos.</th><th>Puesto</th><th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th>
+                    <th class="table-warning">S7</th><th class="table-warning">S8</th><th class="table-warning">S9</th><th class="table-warning">S10</th><th class="table-warning">S11</th><th class="table-warning">S12</th>
+                    <th class="table-success">Total</th><th class="table-info">X</th>
                 </tr>
-            </thead>`;
-            
-            let tbody = '<tbody>';
-            
-            resultados.forEach((resultado, index) => {
-                const esTop3 = index < 3;
-                const claseFila = esTop3 ? 'puesto-destacado' : '';
-                
-                tbody += `<tr class="${claseFila}">`;
-                tbody += `<td><strong>${index + 1}º</strong></td>`;
-                tbody += `<td><strong>${resultado.puesto}</strong></td>`;
-                
-                for (let i = 0; i < 12; i++) {
-                    tbody += `<td>${resultado.series[i] || 0}</td>`;
-                }
-                
-                tbody += `<td class="total-destacado">${resultado.total}</td>`;
-                tbody += `<td class="x-destacado">${resultado.xTotal}</td>`;
-                tbody += '</tr>';
-            });
-            
-            tbody += '</tbody>';
-            tabla.innerHTML = thead + tbody;
-            container.appendChild(tabla);
-        }
+            </thead>
+            <tbody>
+    `;
 
-        function crearTablaParciales(resultados, container, disciplina) {
-            const titulo = document.createElement('div');
-            titulo.className = 'text-center mb-4';
-            titulo.innerHTML = `
-                <h1 class="display-5 text-info">📊 RESULTADOS PARCIALES</h1>
-                <h3 class="text-warning">${disciplina}</h3>
-                <div class="badge bg-success fs-6 mt-2">${resultados.length} puestos</div>
-            `;
-            container.appendChild(titulo);
+    resultados.forEach((r, index) => {
+        tablaHTML += `
+            <tr>
+                <td class="fw-bold">${index + 1}º</td>
+                <td>Puesto ${r.puesto}</td>
+                ${r.series.map((s, i) => `<td class="${i < 6 ? '' : 'table-light-warning'}">${s}</td>`).join('')}
+                <td class="table-success fw-bold">${r.total}</td>
+                <td class="table-info fw-bold">${r.xTotal}</td>
+            </tr>
+        `;
+    });
 
-            const tabla = document.createElement('table');
-            tabla.className = 'tabla-resultados-tv table table-striped';
-            
-            let thead = `
-            <thead>
+    tablaHTML += '</tbody></table>';
+    container.innerHTML = tablaHTML;
+}
+
+function crearTablaParciales(resultados, container, disciplina) {
+    let tablaHTML = `
+        <h1 class="text-center mb-4">${disciplina} - Clasificación Parcial</h1>
+        <table class="table table-dark table-striped table-bordered table-hover">
+            <thead class="table-primary">
                 <tr>
-                    <th width="80">POS</th>
-                    <th width="100">PUESTO</th>
-                    <th>P1<br><small class="text-muted">S1+S2</small></th>
-                    <th>P2<br><small class="text-muted">S3+S4</small></th>
-                    <th>P3<br><small class="text-muted">S5+S6</small></th>
-                    <th>P4<br><small class="text-muted">S7+S8</small></th>
-                    <th>P5<br><small class="text-muted">S9+S10</small></th>
-                    <th>P6<br><small class="text-muted">S11+S12</small></th>
-                    <th width="100" class="total-destacado">TOTAL</th>
-                    <th width="80" class="x-destacado">X</th>
+                    <th>Pos.</th><th>Puesto</th><th>Prec. 1</th><th>Prec. 2</th><th>Prec. 3</th>
+                    <th class="table-warning">Duelo 1</th><th class="table-warning">Duelo 2</th><th class="table-warning">Duelo 3</th>
+                    <th class="table-success">Total</th><th class="table-info">X</th>
                 </tr>
-            </thead>`;
-            
-            let tbody = '<tbody>';
-            
-            resultados.forEach((resultado, index) => {
-                const esTop3 = index < 3;
-                const claseFila = esTop3 ? 'puesto-destacado' : '';
-                
-                tbody += `<tr class="${claseFila}">`;
-                tbody += `<td><strong>${index + 1}º</strong></td>`;
-                tbody += `<td><strong>${resultado.puesto}</strong></td>`;
-                
-                for (let i = 0; i < 6; i++) {
-                    tbody += `<td>${resultado.parciales[i] || 0}</td>`;
-                }
-                
-                tbody += `<td class="total-destacado">${resultado.total}</td>`;
-                tbody += `<td class="x-destacado">${resultado.xTotal}</td>`;
-                tbody += '</tr>';
-            });
-            
-            tbody += '</tbody>';
-            tabla.innerHTML = thead + tbody;
-            container.appendChild(tabla);
-        }
+            </thead>
+            <tbody>
+    `;
 
-        // Cargar datos automáticamente al abrir la página
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log("✅ Sistema TV mejorado iniciado");
-            cargarDatosDesdeURL();
-            
-            // Verificar cada 10 segundos por nuevos datos (por si se recarga la página con datos)
-            setInterval(cargarDatosDesdeURL, 10000);
-        });
-    </script>
+    resultados.forEach((r, index) => {
+        tablaHTML += `
+            <tr>
+                <td class="fw-bold">${index + 1}º</td>
+                <td>Puesto ${r.puesto}</td>
+                ${r.parciales.map((p, i) => `<td class="${i < 3 ? '' : 'table-light-warning'}">${p}</td>`).join('')}
+                <td class="table-success fw-bold">${r.total}</td>
+                <td class="table-info fw-bold">${r.xTotal}</td>
+            </tr>
+        `;
+    });
+
+    tablaHTML += '</tbody></table>';
+    container.innerHTML = tablaHTML;
+}
 </body>
 </html>
+
 
