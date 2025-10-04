@@ -25,19 +25,6 @@
             border-radius: 15px;
             border: 2px solid rgba(255,255,255,0.2);
         }
-        .codigo-acceso {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .input-codigo {
-            font-size: 1.8em;
-            text-align: center;
-            font-weight: bold;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-        }
         .tabla-resultados-tv {
             width: 100%;
             border-collapse: collapse;
@@ -89,26 +76,8 @@
             <h1 class="display-4 mb-3">🎯 SISTEMA DE COMPETICIÓN</h1>
             <h2 class="mb-4">Pistola 9mm / Fuego Central</h2>
             
-            <div class="codigo-acceso">
-                <h4 class="text-warning mb-3">🔢 INTRODUCIR CÓDIGO DE ACCESO</h4>
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <input type="text" class="form-control input-codigo" id="codigoInput" 
-                               placeholder="EJ: A1B2" maxlength="4" autocomplete="off">
-                        <div class="mt-3">
-                            <button class="btn btn-success btn-lg" onclick="cargarPorCodigo()">
-                                📺 Cargar Resultados
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-3 text-info">
-                    <small>💡 El código de 4 letras se obtiene del sistema principal</small>
-                </div>
-            </div>
-            
             <div id="infoActualizacion" class="mt-3">
-                ⏳ Esperando código de acceso...
+                🔍 Verificando datos de la URL...
             </div>
         </div>
 
@@ -116,65 +85,48 @@
             <div class="esperando-datos" id="esperando">
                 <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
                 <br>
-                Introduzca el código de 4 letras arriba
+                Cargando datos del sistema...
             </div>
             <div id="tablasContainer" style="display: none;"></div>
         </div>
     </div>
 
     <script>
-        // Base de datos de códigos (en un sistema real esto estaría en un servidor)
-        const baseDatosCodigos = {};
+        // =============================================
+        // SISTEMA TV CON URL PARAMETERS
+        // =============================================
         
-        // Cargar base de datos desde localStorage al iniciar
-        function cargarBaseDatos() {
-            const dbGuardada = localStorage.getItem('tvDatabase');
-            if (dbGuardada) {
-                Object.assign(baseDatosCodigos, JSON.parse(dbGuardada));
-            }
-        }
-        
-        // Permitir Enter en el input
-        document.getElementById('codigoInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') cargarPorCodigo();
-        });
-        
-        // Convertir a mayúsculas automáticamente
-        document.getElementById('codigoInput').addEventListener('input', function(e) {
-            this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-        });
-
-        function cargarPorCodigo() {
-            const codigo = document.getElementById('codigoInput').value.trim();
+        function cargarDatosDesdeURL() {
+            console.log("🔍 Verificando parámetros URL...");
             
-            if (!codigo) {
-                mostrarError('⚠️ Por favor, introduce un código');
-                return;
-            }
+            const urlParams = new URLSearchParams(window.location.search);
+            const dataParam = urlParams.get('data');
             
-            if (codigo.length !== 4) {
-                mostrarError('⚠️ El código debe tener exactamente 4 caracteres');
-                return;
-            }
-            
-            // Verificar en base de datos local
-            if (baseDatosCodigos[codigo]) {
-                procesarDatos(baseDatosCodigos[codigo], `Código: ${codigo}`);
+            if (dataParam) {
+                console.log("✅ Datos encontrados en URL");
+                try {
+                    const datos = JSON.parse(decodeURIComponent(dataParam));
+                    mostrarResultadosTV(datos);
+                    
+                    const ahora = new Date();
+                    document.getElementById('infoActualizacion').innerHTML = 
+                        `✅ <strong>CONECTADO</strong> - Última actualización: ${ahora.toLocaleTimeString()}`;
+                        
+                } catch (error) {
+                    console.error("❌ Error procesando datos:", error);
+                    document.getElementById('infoActualizacion').innerHTML = 
+                        '❌ Error en los datos recibidos';
+                }
             } else {
-                mostrarError('❌ Código no encontrado. Verifique el código o pida uno nuevo.');
+                console.log("❌ No hay datos en URL");
+                document.getElementById('infoActualizacion').innerHTML = 
+                    '⏳ Esperando datos... (No hay parámetros en la URL)';
             }
-        }
-        
-        function procesarDatos(datos, fuente) {
-            datosActuales = datos;
-            mostrarResultadosTV(datos);
-            
-            const ahora = new Date();
-            document.getElementById('infoActualizacion').innerHTML = 
-                `✅ <strong>CONECTADO</strong> - ${fuente} - Actualizado: ${ahora.toLocaleTimeString()}`;
         }
         
         function mostrarResultadosTV(datos) {
+            console.log("📊 Mostrando resultados:", datos);
+            
             const esperando = document.getElementById('esperando');
             const tablasContainer = document.getElementById('tablasContainer');
             
@@ -206,8 +158,18 @@
                 <tr>
                     <th width="80">POS</th>
                     <th width="100">PUESTO</th>
-                    <th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th>
-                    <th>S7</th><th>S8</th><th>S9</th><th>S10</th><th>S11</th><th>S12</th>
+                    <th>S1<br><small class="text-muted">P</small></th>
+                    <th>S2<br><small class="text-muted">P</small></th>
+                    <th>S3<br><small class="text-muted">P</small></th>
+                    <th>S4<br><small class="text-muted">P</small></th>
+                    <th>S5<br><small class="text-muted">P</small></th>
+                    <th>S6<br><small class="text-muted">P</small></th>
+                    <th>S7<br><small class="text-muted">TR</small></th>
+                    <th>S8<br><small class="text-muted">TR</small></th>
+                    <th>S9<br><small class="text-muted">TR</small></th>
+                    <th>S10<br><small class="text-muted">TR</small></th>
+                    <th>S11<br><small class="text-muted">TR</small></th>
+                    <th>S12<br><small class="text-muted">TR</small></th>
                     <th width="100" class="total-destacado">TOTAL</th>
                     <th width="80" class="x-destacado">X</th>
                 </tr>
@@ -254,7 +216,12 @@
                 <tr>
                     <th width="80">POS</th>
                     <th width="100">PUESTO</th>
-                    <th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>P6</th>
+                    <th>P1<br><small class="text-muted">S1+S2</small></th>
+                    <th>P2<br><small class="text-muted">S3+S4</small></th>
+                    <th>P3<br><small class="text-muted">S5+S6</small></th>
+                    <th>P4<br><small class="text-muted">S7+S8</small></th>
+                    <th>P5<br><small class="text-muted">S9+S10</small></th>
+                    <th>P6<br><small class="text-muted">S11+S12</small></th>
                     <th width="100" class="total-destacado">TOTAL</th>
                     <th width="80" class="x-destacado">X</th>
                 </tr>
@@ -284,14 +251,10 @@
             container.appendChild(tabla);
         }
 
-        function mostrarError(mensaje) {
-            document.getElementById('infoActualizacion').innerHTML = 
-                `<div class="alert alert-warning">${mensaje}</div>`;
-        }
-
-        // Cargar base de datos al iniciar
+        // Cargar datos automáticamente al abrir la página
         document.addEventListener('DOMContentLoaded', function() {
-            cargarBaseDatos();
+            console.log("✅ Sistema TV iniciado");
+            cargarDatosDesdeURL();
         });
     </script>
 </body>
