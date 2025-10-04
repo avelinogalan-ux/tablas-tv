@@ -419,6 +419,22 @@
                 }
             }
         });
+        // Verificar datos cada 3 segundos
+setInterval(() => {
+    const datosGuardados = localStorage.getItem('tvData');
+    if (datosGuardados) {
+        try {
+            const datos = JSON.parse(datosGuardados);
+            console.log('💾 Datos recibidos via localStorage:', datos);
+            mostrarDatos(datos);
+            // Opcional: limpiar después de usar
+            // localStorage.removeItem('tvData');
+        } catch (error) {
+            console.error('Error parseando datos:', error);
+        }
+    }
+}, 3000);
     </script>
 </body>
 </html>
+
