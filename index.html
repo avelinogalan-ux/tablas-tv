@@ -32,10 +32,14 @@
             margin-bottom: 20px;
         }
         .input-codigo {
-            font-size: 2em;
+            font-size: 1.5em;
             text-align: center;
             font-weight: bold;
-            letter-spacing: 5px;
+            letter-spacing: 3px;
+        }
+        .qr-section {
+            text-align: center;
+            margin: 20px 0;
         }
         .tabla-resultados-tv {
             width: 100%;
@@ -62,8 +66,8 @@
         }
         .esperando-datos {
             text-align: center;
-            font-size: 2em;
-            margin-top: 100px;
+            font-size: 1.5em;
+            margin-top: 50px;
             color: #bdc3c7;
         }
         .puesto-destacado {
@@ -89,25 +93,38 @@
             <h2 class="mb-4">Pistola 9mm / Fuego Central</h2>
             
             <div class="codigo-acceso">
-                <h4 class="text-warning mb-3">🔢 INTRODUCIR CÓDIGO DE ACCESO</h4>
+                <h4 class="text-warning mb-3">🔢 INTRODUCIR CÓDIGO O URL</h4>
                 <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <input type="text" class="form-control input-codigo" id="codigoInput" 
-                               placeholder="EJ: A1B2" maxlength="4" autocomplete="off">
-                        <div class="mt-2">
-                            <button class="btn btn-success btn-lg" onclick="cargarPorCodigo()">
-                                📺 Cargar Resultados
+                    <div class="col-md-8">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Código (4 letras)</span>
+                            <input type="text" class="form-control input-codigo" id="codigoInput" 
+                                   placeholder="EJ: A1B2" maxlength="4" autocomplete="off">
+                            <button class="btn btn-success" onclick="cargarPorCodigo()">
+                                Cargar
+                            </button>
+                        </div>
+                        
+                        <div class="input-group">
+                            <span class="input-group-text">URL completa</span>
+                            <input type="text" class="form-control" id="urlInput" 
+                                   placeholder="Pega aquí la URL completa">
+                            <button class="btn btn-primary" onclick="cargarPorURL()">
+                                Cargar
                             </button>
                         </div>
                     </div>
                 </div>
-                <div class="mt-3 text-info">
-                    <small>💡 El código se obtiene del sistema principal al enviar resultados</small>
+                
+                <div class="mt-3">
+                    <button class="btn btn-outline-info btn-sm" onclick="mostrarInstrucciones()">
+                        📋 Ver Instrucciones
+                    </button>
                 </div>
             </div>
             
-            <div id="infoActualizacion" class="actualizado">
-                ⏳ Esperando código de acceso...
+            <div id="infoActualizacion" class="mt-3">
+                ⏳ Esperando datos...
             </div>
         </div>
 
@@ -115,9 +132,7 @@
             <div class="esperando-datos" id="esperando">
                 <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
                 <br>
-                Introduzca el código de 4 letras arriba
-                <br>
-                <small class="text-muted">Ejemplo: A1B2, C3D4, X5Y6</small>
+                Use una de las opciones arriba para cargar resultados
             </div>
             <div id="tablasContainer" style="display: none;"></div>
         </div>
@@ -125,75 +140,82 @@
 
     <script>
         // =============================================
-        // SISTEMA CON CÓDIGOS CORTOS
+        // SISTEMA MEJORADO - CÓDIGOS + URL
         // =============================================
         
-        // Base de datos temporal de códigos
-        const codigosDB = {};
-        let codigoActual = '';
+        let datosActuales = null;
         
-        // Permitir Enter en el input
+        // Permitir Enter en los inputs
         document.getElementById('codigoInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                cargarPorCodigo();
-            }
+            if (e.key === 'Enter') cargarPorCodigo();
+        });
+        
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') cargarPorURL();
         });
         
         // Convertir a mayúsculas automáticamente
         document.getElementById('codigoInput').addEventListener('input', function(e) {
-            this.value = this.value.toUpperCase();
+            this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
         });
 
         function cargarPorCodigo() {
             const codigo = document.getElementById('codigoInput').value.trim();
             
             if (!codigo) {
-                alert('⚠️ Por favor, introduce un código');
+                mostrarError('⚠️ Por favor, introduce un código');
                 return;
             }
             
             if (codigo.length !== 4) {
-                alert('⚠️ El código debe tener 4 caracteres');
+                mostrarError('⚠️ El código debe tener 4 caracteres (letras y números)');
                 return;
             }
             
             console.log("🔍 Buscando código:", codigo);
-            codigoActual = codigo;
             
-            // Verificar si tenemos datos para este código
-            if (codigosDB[codigo]) {
-                console.log("✅ Código encontrado:", codigosDB[codigo]);
-                mostrarResultadosTV(codigosDB[codigo]);
-            } else {
-                // Intentar cargar del servidor (para futuro)
-                cargarDatosServidor(codigo);
+            // Simulamos búsqueda - en una versión real esto conectaría con un servidor
+            mostrarError('❌ Sistema de códigos requiere servidor. Use la opción URL.');
+        }
+        
+        function cargarPorURL() {
+            const url = document.getElementById('urlInput').value.trim();
+            
+            if (!url) {
+                mostrarError('⚠️ Por favor, pega una URL');
+                return;
             }
-        }
-        
-        function cargarDatosServidor(codigo) {
-            // Para futura implementación con servidor
-            // Por ahora simulamos una búsqueda
-            setTimeout(() => {
-                document.getElementById('infoActualizacion').innerHTML = 
-                    '❌ Código no encontrado. Verifique el código o actualice la página.';
-            }, 1000);
-        }
-        
-        // Sistema de polling para códigos existentes
-        function verificarCodigoActual() {
-            if (codigoActual && codigosDB[codigoActual]) {
-                const datos = codigosDB[codigoActual];
-                mostrarResultadosTV(datos);
+            
+            console.log("🔍 Procesando URL:", url);
+            
+            try {
+                // Extraer parámetros de la URL
+                const urlObj = new URL(url);
+                const dataParam = urlObj.searchParams.get('data');
                 
-                const ahora = new Date();
-                document.getElementById('infoActualizacion').innerHTML = 
-                    `✅ <strong>CONECTADO</strong> - Código: ${codigoActual} - Actualizado: ${ahora.toLocaleTimeString()}`;
+                if (!dataParam) {
+                    mostrarError('❌ URL no contiene datos válidos');
+                    return;
+                }
+                
+                const datos = JSON.parse(decodeURIComponent(dataParam));
+                procesarDatos(datos, 'URL');
+                
+            } catch (error) {
+                console.error("Error procesando URL:", error);
+                mostrarError('❌ Error en la URL: ' + error.message);
             }
         }
         
-        // Verificar cada 5 segundos si hay actualizaciones
-        setInterval(verificarCodigoActual, 5000);
-
+        function procesarDatos(datos, fuente) {
+            console.log("✅ Datos recibidos de", fuente, ":", datos);
+            datosActuales = datos;
+            mostrarResultadosTV(datos);
+            
+            document.getElementById('infoActualizacion').innerHTML = 
+                `✅ <strong>CONECTADO</strong> - Fuente: ${fuente} - Actualizado: ${new Date().toLocaleTimeString()}`;
+        }
+        
         function mostrarResultadosTV(datos) {
             console.log("📊 Mostrando resultados:", datos);
             
@@ -209,9 +231,6 @@
             } else if (datos.tipo === 'parciales') {
                 crearTablaParciales(datos.datos, tablasContainer, datos.disciplina);
             }
-            
-            document.getElementById('infoActualizacion').innerHTML = 
-                `✅ <strong>CONECTADO</strong> - Código: ${codigoActual} - ${datos.tipo.toUpperCase()}`;
         }
 
         function crearTablaFinales(resultados, container, disciplina) {
@@ -220,7 +239,6 @@
             titulo.innerHTML = `
                 <h1 class="display-5 text-warning">🏆 RESULTADOS FINALES</h1>
                 <h3 class="text-info">${disciplina}</h3>
-                <div class="badge bg-success fs-6">Código: ${codigoActual}</div>
             `;
             container.appendChild(titulo);
 
@@ -269,7 +287,6 @@
             titulo.innerHTML = `
                 <h1 class="display-5 text-info">📊 RESULTADOS PARCIALES</h1>
                 <h3 class="text-warning">${disciplina}</h3>
-                <div class="badge bg-success fs-6">Código: ${codigoActual}</div>
             `;
             container.appendChild(titulo);
 
@@ -311,10 +328,44 @@
             container.appendChild(tabla);
         }
 
-        // Para desarrollo: exponer la base de datos globalmente
-        window.codigosDB = codigosDB;
-        
-        console.log("✅ Sistema TV con códigos iniciado");
+        function mostrarError(mensaje) {
+            document.getElementById('infoActualizacion').innerHTML = 
+                `<div class="alert alert-warning">${mensaje}</div>`;
+        }
+
+        function mostrarInstrucciones() {
+            alert(`📋 INSTRUCCIONES DE USO:
+
+1. EN EL SISTEMA PRINCIPAL:
+   - Haz clic en "Enviar a TV"
+   - Copia la URL completa que aparece
+
+2. EN ESTA PANTALLA TV:
+   - Pega la URL en el campo "URL completa"
+   - Haz clic en "Cargar"
+
+3. LOS RESULTADOS aparecerán automáticamente
+
+💡 La URL contiene todos los datos necesarios`);
+        }
+
+        // Verificar si hay parámetros en la URL al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const dataParam = urlParams.get('data');
+            
+            if (dataParam) {
+                try {
+                    const datos = JSON.parse(decodeURIComponent(dataParam));
+                    procesarDatos(datos, 'URL directa');
+                    document.getElementById('urlInput').value = window.location.href;
+                } catch (error) {
+                    console.error("Error procesando URL inicial:", error);
+                }
+            }
+            
+            console.log("✅ Sistema TV mejorado iniciado");
+        });
     </script>
 </body>
 </html>
