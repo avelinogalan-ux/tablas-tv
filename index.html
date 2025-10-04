@@ -419,22 +419,24 @@
                 }
             }
         });
-        // Verificar datos cada 3 segundos
+       // =============================================
+// SISTEMA DE RESPALDO - VERIFICAR DATOS CADA 2 SEGUNDOS
+// =============================================
 setInterval(() => {
-    const datosGuardados = localStorage.getItem('tvData');
-    if (datosGuardados) {
+    const datosLocal = localStorage.getItem('tvData');
+    if (datosLocal) {
         try {
-            const datos = JSON.parse(datosGuardados);
+            const datos = JSON.parse(datosLocal);
             console.log('💾 Datos recibidos via localStorage:', datos);
             mostrarDatos(datos);
-            // Opcional: limpiar después de usar
-            // localStorage.removeItem('tvData');
+            mostrarNotificacion('📊 Datos actualizados via respaldo!');
         } catch (error) {
-            console.error('Error parseando datos:', error);
+            console.error('Error:', error);
         }
     }
-}, 3000);
+}, 2000);
     </script>
 </body>
 </html>
+
 
