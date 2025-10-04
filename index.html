@@ -25,6 +25,18 @@
             border-radius: 15px;
             border: 2px solid rgba(255,255,255,0.2);
         }
+        .codigo-acceso {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .input-codigo {
+            font-size: 2em;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 5px;
+        }
         .tabla-resultados-tv {
             width: 100%;
             border-collapse: collapse;
@@ -48,23 +60,11 @@
             text-align: center;
             border: 1px solid #e0e0e0;
         }
-        .tabla-resultados-tv tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
         .esperando-datos {
             text-align: center;
             font-size: 2em;
             margin-top: 100px;
             color: #bdc3c7;
-        }
-        .actualizado {
-            text-align: center;
-            font-size: 1em;
-            color: #95a5a6;
-            margin-bottom: 20px;
-            background: rgba(255,255,255,0.1);
-            padding: 10px;
-            border-radius: 10px;
         }
         .puesto-destacado {
             background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%) !important;
@@ -74,7 +74,6 @@
             background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%) !important;
             color: white !important;
             font-weight: bold;
-            font-size: 1.2em;
         }
         .x-destacado {
             background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%) !important;
@@ -88,8 +87,27 @@
         <div class="header-tv">
             <h1 class="display-4 mb-3">🎯 SISTEMA DE COMPETICIÓN</h1>
             <h2 class="mb-4">Pistola 9mm / Fuego Central</h2>
+            
+            <div class="codigo-acceso">
+                <h4 class="text-warning mb-3">🔢 INTRODUCIR CÓDIGO DE ACCESO</h4>
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control input-codigo" id="codigoInput" 
+                               placeholder="EJ: A1B2" maxlength="4" autocomplete="off">
+                        <div class="mt-2">
+                            <button class="btn btn-success btn-lg" onclick="cargarPorCodigo()">
+                                📺 Cargar Resultados
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3 text-info">
+                    <small>💡 El código se obtiene del sistema principal al enviar resultados</small>
+                </div>
+            </div>
+            
             <div id="infoActualizacion" class="actualizado">
-                🔍 Verificando datos...
+                ⏳ Esperando código de acceso...
             </div>
         </div>
 
@@ -97,50 +115,84 @@
             <div class="esperando-datos" id="esperando">
                 <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
                 <br>
-                ⏳ Esperando datos del sistema de competición...
+                Introduzca el código de 4 letras arriba
                 <br>
-                <small class="text-muted">Esta página se actualiza automáticamente cada 3 segundos</small>
+                <small class="text-muted">Ejemplo: A1B2, C3D4, X5Y6</small>
             </div>
-            <div id="tablasContainer" style="display: none;">
-                <!-- Aquí se mostrarán las tablas dinámicamente -->
-            </div>
+            <div id="tablasContainer" style="display: none;"></div>
         </div>
     </div>
 
     <script>
         // =============================================
-        // SISTEMA SIMPLIFICADO - SOLO URL PARAMETERS
+        // SISTEMA CON CÓDIGOS CORTOS
         // =============================================
         
-        console.log("📺 Iniciando sistema TV...");
+        // Base de datos temporal de códigos
+        const codigosDB = {};
+        let codigoActual = '';
+        
+        // Permitir Enter en el input
+        document.getElementById('codigoInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                cargarPorCodigo();
+            }
+        });
+        
+        // Convertir a mayúsculas automáticamente
+        document.getElementById('codigoInput').addEventListener('input', function(e) {
+            this.value = this.value.toUpperCase();
+        });
 
-        function verificarDatos() {
-            console.log("🔍 Verificando datos en URL...");
+        function cargarPorCodigo() {
+            const codigo = document.getElementById('codigoInput').value.trim();
             
-            const urlParams = new URLSearchParams(window.location.search);
-            const dataParam = urlParams.get('data');
+            if (!codigo) {
+                alert('⚠️ Por favor, introduce un código');
+                return;
+            }
             
-            if (dataParam) {
-                console.log("✅ Datos encontrados en URL");
-                try {
-                    const datos = JSON.parse(decodeURIComponent(dataParam));
-                    mostrarResultadosTV(datos);
-                    
-                    const ahora = new Date();
-                    document.getElementById('infoActualizacion').innerHTML = 
-                        `✅ <strong>CONECTADO</strong> - Última actualización: ${ahora.toLocaleTimeString()}`;
-                        
-                } catch (error) {
-                    console.error("❌ Error procesando datos:", error);
-                    document.getElementById('infoActualizacion').innerHTML = 
-                        '❌ Error en los datos recibidos';
-                }
+            if (codigo.length !== 4) {
+                alert('⚠️ El código debe tener 4 caracteres');
+                return;
+            }
+            
+            console.log("🔍 Buscando código:", codigo);
+            codigoActual = codigo;
+            
+            // Verificar si tenemos datos para este código
+            if (codigosDB[codigo]) {
+                console.log("✅ Código encontrado:", codigosDB[codigo]);
+                mostrarResultadosTV(codigosDB[codigo]);
             } else {
-                console.log("❌ No hay parámetro 'data' en la URL");
-                document.getElementById('infoActualizacion').innerHTML = 
-                    '⏳ Esperando datos... (No hay parámetro "data" en la URL)';
+                // Intentar cargar del servidor (para futuro)
+                cargarDatosServidor(codigo);
             }
         }
+        
+        function cargarDatosServidor(codigo) {
+            // Para futura implementación con servidor
+            // Por ahora simulamos una búsqueda
+            setTimeout(() => {
+                document.getElementById('infoActualizacion').innerHTML = 
+                    '❌ Código no encontrado. Verifique el código o actualice la página.';
+            }, 1000);
+        }
+        
+        // Sistema de polling para códigos existentes
+        function verificarCodigoActual() {
+            if (codigoActual && codigosDB[codigoActual]) {
+                const datos = codigosDB[codigoActual];
+                mostrarResultadosTV(datos);
+                
+                const ahora = new Date();
+                document.getElementById('infoActualizacion').innerHTML = 
+                    `✅ <strong>CONECTADO</strong> - Código: ${codigoActual} - Actualizado: ${ahora.toLocaleTimeString()}`;
+            }
+        }
+        
+        // Verificar cada 5 segundos si hay actualizaciones
+        setInterval(verificarCodigoActual, 5000);
 
         function mostrarResultadosTV(datos) {
             console.log("📊 Mostrando resultados:", datos);
@@ -157,6 +209,9 @@
             } else if (datos.tipo === 'parciales') {
                 crearTablaParciales(datos.datos, tablasContainer, datos.disciplina);
             }
+            
+            document.getElementById('infoActualizacion').innerHTML = 
+                `✅ <strong>CONECTADO</strong> - Código: ${codigoActual} - ${datos.tipo.toUpperCase()}`;
         }
 
         function crearTablaFinales(resultados, container, disciplina) {
@@ -165,6 +220,7 @@
             titulo.innerHTML = `
                 <h1 class="display-5 text-warning">🏆 RESULTADOS FINALES</h1>
                 <h3 class="text-info">${disciplina}</h3>
+                <div class="badge bg-success fs-6">Código: ${codigoActual}</div>
             `;
             container.appendChild(titulo);
 
@@ -193,7 +249,6 @@
                 tbody += `<td><strong>${index + 1}º</strong></td>`;
                 tbody += `<td><strong>${resultado.puesto}</strong></td>`;
                 
-                // Todas las series
                 for (let i = 0; i < 12; i++) {
                     tbody += `<td>${resultado.series[i] || 0}</td>`;
                 }
@@ -214,6 +269,7 @@
             titulo.innerHTML = `
                 <h1 class="display-5 text-info">📊 RESULTADOS PARCIALES</h1>
                 <h3 class="text-warning">${disciplina}</h3>
+                <div class="badge bg-success fs-6">Código: ${codigoActual}</div>
             `;
             container.appendChild(titulo);
 
@@ -241,7 +297,6 @@
                 tbody += `<td><strong>${index + 1}º</strong></td>`;
                 tbody += `<td><strong>${resultado.puesto}</strong></td>`;
                 
-                // Parciales
                 for (let i = 0; i < 6; i++) {
                     tbody += `<td>${resultado.parciales[i] || 0}</td>`;
                 }
@@ -256,16 +311,10 @@
             container.appendChild(tabla);
         }
 
-        // Verificar cada 3 segundos
-        setInterval(verificarDatos, 3000);
+        // Para desarrollo: exponer la base de datos globalmente
+        window.codigosDB = codigosDB;
         
-        // Verificar inmediatamente al cargar
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log("📺 Página TV cargada - Iniciando verificación...");
-            verificarDatos();
-        });
-
-        console.log("✅ Sistema TV configurado - Esperando datos...");
+        console.log("✅ Sistema TV con códigos iniciado");
     </script>
 </body>
 </html>
