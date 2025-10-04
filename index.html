@@ -286,7 +286,7 @@
             actualizarDebug('Buscando datos...');
             
             // Intentar cargar desde localStorage primero (datos más recientes)
-            const datosLocal = localStorage.getItem('tvData');
+            const datosLocal = sessionStorage.getItem('tvData') || localStorage.getItem('tvData');
             console.log('📦 Datos en localStorage:', datosLocal);
             
             if (datosLocal) {
@@ -545,3 +545,4 @@
     </script>
 </body>
 </html>
+
