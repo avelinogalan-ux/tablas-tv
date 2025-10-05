@@ -1,306 +1,270 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TV - Resultados Tiro Deportivo</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TV - Resultados Tiro Deportivo</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            background: radial-gradient(circle at top, #0a0f1f 0%, #000000 100%);
-            color: #f5f6fa;
-            font-family: 'Rajdhani', sans-serif;
-            overflow-x: hidden;
-        }
+<style>
+    body {
+        background: radial-gradient(circle at center, #000428 0%, #004e92 100%);
+        color: #ffffff;
+        font-family: 'Rajdhani', sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
 
-        .container-tv {
-            max-width: 1900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+    .container-tv {
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
 
-        /* CABECERA */
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: linear-gradient(90deg, #003cff 0%, #001b5c 100%);
-            color: white;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.6);
-            padding: 10px 0 20px;
-            border-bottom: 3px solid #ffc107;
-        }
+    /* ===== CABECERA ===== */
+    header {
+        position: relative;
+        background: linear-gradient(90deg, #002bff 0%, #001242 100%);
+        color: white;
+        padding: 2vh 5vw;
+        border-bottom: 0.5vh solid #ffc107;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        .logo-header {
-            height: 100px;
-            width: auto;
-            object-fit: contain;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.7));
-        }
+    .logo-izquierdo {
+        position: absolute;
+        left: 3vw;
+        height: clamp(60px, 10vh, 130px);
+        width: auto;
+        filter: drop-shadow(0 0 10px rgba(255,255,255,0.7));
+    }
 
-        h1.display-5 {
-            font-size: 2.8rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            text-shadow: 0 0 20px rgba(255,255,255,0.6);
-        }
+    h1.display-5 {
+        font-size: clamp(2rem, 4vw, 4.5rem);
+        text-transform: uppercase;
+        letter-spacing: 0.2vw;
+        text-shadow: 0 0 25px rgba(255,255,255,0.9);
+        margin: 0;
+        text-align: center;
+    }
 
-        /* ESTADOS */
-        .status-connected {
-            background: rgba(0,255,136,0.15);
-            border: 1px solid #00ff88;
-            color: #00ff88;
-            font-weight: 700;
-            text-shadow: 0 0 10px rgba(0,255,136,0.6);
-        }
-        .status-disconnected {
-            background: rgba(255, 0, 60, 0.15);
-            border: 1px solid #ff003c;
-            color: #ff4d6d;
-        }
-        .status-waiting {
-            background: rgba(255, 255, 0, 0.15);
-            border: 1px solid #ffe600;
-            color: #ffe600;
-        }
+    /* ===== LOGO TRASONA CENTRAL ===== */
+    .logo-trasona {
+        display: block;
+        margin: 5vh auto 4vh;
+        height: clamp(180px, 35vh, 380px);
+        width: auto;
+        filter: drop-shadow(0 0 30px rgba(255,255,255,0.8));
+        transition: transform 0.3s ease;
+        animation: aparecerLogo 1.5s ease-out;
+    }
 
-        /* TABLAS */
-        .table-container {
-            max-height: 70vh;
-            overflow-y: auto;
-            scroll-behavior: smooth;
-            margin-top: 20px;
-        }
+    .logo-trasona:hover {
+        transform: scale(1.05);
+    }
 
-        .table {
-            font-size: 2rem;
-            border-color: #0048ff;
-            color: #f8f9fa;
-            background: rgba(0, 60, 150, 0.2);
-            backdrop-filter: blur(8px);
-            animation: aparecerTabla 0.8s ease-out;
-            min-width: 1400px; /* asegurar espacio horizontal */
-        }
+    @keyframes aparecerLogo {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+    }
 
-        @keyframes aparecerTabla {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    /* ===== ESTADOS ===== */
+    .status-connected {
+        background: rgba(0,255,136,0.2);
+        border: 2px solid #00ff88;
+        color: #00ff88;
+        font-weight: bold;
+        text-shadow: 0 0 15px rgba(0,255,136,0.7);
+        font-size: clamp(1rem, 1.8vw, 1.8rem);
+        margin-top: 1vh;
+    }
 
-        .table thead {
-            background: linear-gradient(90deg, #001f7a 0%, #0048ff 100%);
-            color: #fff;
-            text-transform: uppercase;
-            font-size: 1.6rem;
-            border-bottom: 4px solid #ffc107;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
+    .status-disconnected {
+        background: rgba(255,0,60,0.2);
+        border: 2px solid #ff003c;
+        color: #ff4d6d;
+    }
 
-        .table th, .table td {
-            text-align: center;
-            vertical-align: middle;
-            padding: 1rem;
-        }
+    .status-waiting {
+        background: rgba(255,255,0,0.2);
+        border: 2px solid #ffe600;
+        color: #ffe600;
+    }
 
-        .table-success { background-color: rgba(0,255,136,0.2) !important; }
-        .table-info { background-color: rgba(0,229,255,0.25) !important; }
-        .table-light-warning { background-color: rgba(255,193,7,0.3) !important; }
+    /* ===== TABLAS ===== */
+    .table-container {
+        flex-grow: 1;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        margin: 2vh auto;
+        width: 95%;
+        border-radius: 1vh;
+    }
 
-        tr:hover {
-            background-color: rgba(255,255,255,0.08);
-            transition: background 0.3s;
-        }
+    .table {
+        font-size: clamp(1rem, 2vw, 2.5rem);
+        border-color: #00bfff;
+        color: #ffffff;
+        background: rgba(0, 60, 150, 0.3);
+        backdrop-filter: blur(8px);
+        min-width: 1500px;
+    }
 
-        /* ESPERA */
-        .esperando-datos {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 60vh;
-            text-align: center;
-            color: #adb5bd;
-        }
-    </style>
+    .table thead {
+        background: linear-gradient(90deg, #001f7a 0%, #0048ff 100%);
+        color: #fff;
+        text-transform: uppercase;
+        border-bottom: 0.5vh solid #ffc107;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        font-size: clamp(1rem, 1.6vw, 2rem);
+    }
+
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+        padding: 1.2rem;
+    }
+
+    .table-success { background-color: rgba(0,255,136,0.25) !important; color: #00ff9c; font-weight: 700; }
+    .table-info { background-color: rgba(0,229,255,0.25) !important; color: #00d8ff; font-weight: 700; }
+    tr:hover { background-color: rgba(255,255,255,0.08); }
+
+    /* ===== SCROLL AUTOMÁTICO ===== */
+    @keyframes scrollTabla {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-50%); }
+    }
+
+    .scroll-animado {
+        animation: scrollTabla 60s linear infinite;
+    }
+</style>
 </head>
 <body>
 <div class="container-tv">
 
     <!-- CABECERA -->
-    <header class="text-center">
-        <div class="d-flex justify-content-between align-items-center flex-wrap px-4">
-            <img src="shooting_logo.png" alt="Logo Izquierdo" class="logo-header">
-            <div class="flex-grow-1 text-center">
-                <h1 class="display-5 fw-bold">Resultados en Directo</h1>
-                <div id="infoActualizacion" class="status-waiting mt-3 p-2 rounded mx-auto" style="max-width:600px;">
-                    <div class="d-flex align-items-center justify-content-center">
-                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-                        <span>Buscando canal de competición...</span>
-                    </div>
+    <header>
+        <img src="shooting_logo.png" alt="Logo Izquierdo" class="logo-izquierdo">
+        <div class="text-center">
+            <h1 class="display-5 fw-bold">Resultados en Directo</h1>
+            <div id="infoActualizacion" class="status-waiting mt-3 p-2 rounded mx-auto" style="max-width:60vw;">
+                <div class="d-flex align-items-center justify-content-center">
+                    <div class="spinner-border spinner-border-sm me-3" role="status"></div>
+                    <span>Buscando canal de competición...</span>
                 </div>
             </div>
-            <img src="shooting_logo.png" alt="Logo Derecho" class="logo-header">
         </div>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL -->
+    <!-- LOGO CENTRAL -->
+    <div id="logoCentral">
+        <img src="trasona-logo.png" alt="Club de Tiro Ensidesa Trasona" class="logo-trasona">
+    </div>
+
+    <!-- TABLA -->
     <main id="contenido">
-        <!-- CÓDIGO ACTUALIZADO PARA LA PÁGINA DE ESPERA DE LA TV -->
-        <div class="esperando-datos" id="esperando">
-            <div class="card bg-dark text-white shadow-lg" style="border: 1px solid #0048ff; width: 80%; max-width: 900px;">
-                <div class="card-body p-5 text-center">
-
-                    <!-- ▼▼▼ LÍNEAS AÑADIDAS PARA EL LOGO ▼▼▼ -->
-                    <img src="trasona-logo.png" alt="Logo Principal del Club" style="max-height: 150px; margin-bottom: 25px;">
-                    <!-- ▲▲▲ FIN LÍNEAS DEL LOGO ▲▲▲ -->
-
-                    <h2 class="display-6 fw-bold mb-4">La Competición Aún No Ha Comenzado</h2>
-
-                    <div class="mt-4">
-                        <div class="spinner-grow text-primary" role="status" style="width: 4rem; height: 4rem;">
-                            <span class="visually-hidden">Cargando...</span>
-                        </div>
-                        <p class="lead mt-4 mb-1">Esperando datos desde el puesto de control...</p>
-                        <p class="text-muted">La pantalla se actualizará automáticamente.</p>
-                    </div>
-                </div>
-                <div class="card-footer text-center text-muted" style="background-color: rgba(0, 60, 150, 0.2);">
-                    Sistema de Resultados en Directo
-                </div>
-            </div>
-        </div>
         <div class="table-container" id="tablasContainer" style="display: none;"></div>
     </main>
 </div>
 
 <script>
-    const CANAL_UNIVERSAL_ID = '68e19505ae596e708f063783';
-    let ultimoContenido = '';
+const CANAL_UNIVERSAL_ID = '68e19505ae596e708f063783';
+let ultimoContenido = '';
 
-    async function consultarCanal() {
-        const infoElement = document.getElementById('infoActualizacion');
-        try {
-            const respuesta = await fetch(`https://api.jsonbin.io/v3/b/${CANAL_UNIVERSAL_ID}/latest`);
-            if (!respuesta.ok) throw new Error(`Error ${respuesta.status}`);
+async function consultarCanal() {
+    const infoElement = document.getElementById('infoActualizacion');
+    const logoCentral = document.getElementById('logoCentral');
+    const tablasContainer = document.getElementById('tablasContainer');
 
-            const contenidoTexto = await respuesta.text();
-            if (contenidoTexto === ultimoContenido) return;
+    try {
+        const respuesta = await fetch(`https://api.jsonbin.io/v3/b/${CANAL_UNIVERSAL_ID}/latest`);
+        if (!respuesta.ok) throw new Error(`Error ${respuesta.status}`);
+        const contenidoTexto = await respuesta.text();
+        if (contenidoTexto === ultimoContenido) return;
+        ultimoContenido = contenidoTexto;
+        const datos = JSON.parse(contenidoTexto).record;
+        if (!datos || !datos.tipo) return;
 
-            ultimoContenido = contenidoTexto;
-            const datos = JSON.parse(contenidoTexto).record;
+        mostrarResultadosTV(datos);
+        logoCentral.style.display = 'none';
+        tablasContainer.style.display = 'block';
 
-            if (!datos || !datos.tipo) {
-                 // Si no hay datos válidos, nos aseguramos de que se muestre la pantalla de espera
-                document.getElementById('esperando').style.display = 'flex';
-                document.getElementById('tablasContainer').style.display = 'none';
-                return;
-            }
-
-            mostrarResultadosTV(datos);
-            document.getElementById('esperando').style.display = 'none';
-            document.getElementById('tablasContainer').style.display = 'block';
-
-            infoElement.className = 'status-connected p-3 rounded mx-auto';
-            infoElement.innerHTML = `<div class="text-center"><span class="fw-bold">✅ EN DIRECTO</span><br><small>${datos.disciplina.toUpperCase()}</small></div>`;
-        } catch (error) {
-            console.error("❌ Error al buscar datos:", error);
-            infoElement.className = 'status-disconnected p-3 rounded mx-auto';
-            infoElement.innerHTML = `<div class="text-center">❌ Error al recibir datos. Verificando...</div>`;
-        }
+        infoElement.className = 'status-connected p-3 rounded mx-auto';
+        infoElement.innerHTML = `<div class="text-center"><span class="fw-bold">✅ EN DIRECTO</span><br><small>${datos.disciplina.toUpperCase()}</small></div>`;
+    } catch (error) {
+        console.error("❌ Error al buscar datos:", error);
+        infoElement.className = 'status-disconnected p-3 rounded mx-auto';
+        infoElement.innerHTML = `<div class="text-center">❌ Error al recibir datos. Verificando...</div>`;
     }
+}
 
-    document.addEventListener('DOMContentLoaded', function() {
-        consultarCanal();
-        setInterval(consultarCanal, 500000); 
+document.addEventListener('DOMContentLoaded', function() {
+    consultarCanal();
+    setInterval(consultarCanal, 400000);
+});
+
+function mostrarResultadosTV(datos) {
+    const container = document.getElementById('tablasContainer');
+    container.innerHTML = '';
+    if (datos.tipo === 'finales') crearTablaFinales(datos.datos, container, datos.disciplina);
+    else if (datos.tipo === 'parciales') crearTablaParciales(datos.datos, container, datos.disciplina);
+}
+
+function crearTablaFinales(resultados, container, disciplina) {
+    let tablaHTML = `
+    <h1 class="text-center mb-4 text-warning">${disciplina} - Clasificación Final</h1>
+    <div class="scroll-animado">
+    <table class="table table-dark table-bordered table-hover">
+    <thead><tr>
+    <th>Pos.</th><th>Puesto</th>
+    ${Array.from({ length: 12 }, (_, i) => `<th>S${i+1}</th>`).join('')}
+    <th>Total</th><th>X</th></tr></thead><tbody>`;
+
+    resultados.forEach((r, index) => {
+        tablaHTML += `<tr><td class="fw-bold text-warning">${index + 1}º</td>
+        <td>Puesto ${r.puesto}</td>
+        ${r.series.map(s => `<td>${s}</td>`).join('')}
+        <td class="table-success fw-bold">${r.total}</td>
+        <td class="table-info fw-bold">${r.xTotal}</td></tr>`;
     });
 
-    function mostrarResultadosTV(datos) {
-        const container = document.getElementById('tablasContainer');
-        container.innerHTML = '';
-        if (datos.tipo === 'finales') crearTablaFinales(datos.datos, container, datos.disciplina);
-        else if (datos.tipo === 'parciales') crearTablaParciales(datos.datos, container, datos.disciplina);
+    tablaHTML += '</tbody></table></div>';
+    container.innerHTML = tablaHTML;
+}
 
-        // Inicia el scroll automático cuando se muestran los resultados
-        iniciarScrollAutomatico();
-    }
+function crearTablaParciales(resultados, container, disciplina) {
+    let tablaHTML = `
+    <h1 class="text-center mb-4 text-warning">${disciplina} - Clasificación Parcial</h1>
+    <div class="scroll-animado">
+    <table class="table table-dark table-bordered table-hover">
+    <thead><tr><th>Pos.</th><th>Puesto</th>
+    <th>S1</th><th>S2</th><th>S3</th>
+    <th>S4/th><th>S5</th><th>S6</th>
+    <th>Total</th><th>X</th></tr></thead><tbody>`;
 
-    function crearTablaFinales(resultados, container, disciplina) {
-        let tablaHTML = `<h1 class="text-center mb-4 text-warning">${disciplina} - Clasificación Final</h1>
-        <table class="table table-dark table-bordered table-hover">
-        <thead><tr>
-        <th>Pos.</th><th>Puesto</th>
-        ${Array.from({ length: 12 }, (_, i) => `<th>S${i+1}</th>`).join('')}
-        <th>Total</th><th>X</th></tr></thead><tbody>`;
-        resultados.forEach((r, index) => {
-            tablaHTML += `<tr><td class="fw-bold text-warning">${index + 1}º</td>
-            <td>Puesto ${r.puesto}</td>
-            ${r.series.map(s => `<td>${s}</td>`).join('')}
-            <td class="table-success fw-bold">${r.total}</td>
-            <td class="table-info fw-bold">${r.xTotal}</td></tr>`;
-        });
-        tablaHTML += '</tbody></table>';
-        container.innerHTML = tablaHTML;
-    }
+    resultados.forEach((r, index) => {
+        tablaHTML += `<tr><td class="fw-bold text-warning">${index + 1}º</td>
+        <td>Puesto ${r.puesto}</td>
+        ${r.parciales.map(p => `<td>${p}</td>`).join('')}
+        <td class="table-success fw-bold">${r.total}</td>
+        <td class="table-info fw-bold">${r.xTotal}</td></tr>`;
+    });
 
-    function crearTablaParciales(resultados, container, disciplina) {
-        let tablaHTML = `<h1 class="text-center mb-4 text-warning">${disciplina} - Clasificación Parcial</h1>
-        <table class="table table-dark table-bordered table-hover">
-        <thead><tr><th>Pos.</th><th>Puesto</th>
-        <th>Prec. 1</th><th>Prec. 2</th><th>Prec. 3</th>
-        <th>Duelo 1</th><th>Duelo 2</th><th>Duelo 3</th>
-        <th>Total</th><th>X</th></tr></thead><tbody>`;
-        resultados.forEach((r, index) => {
-            tablaHTML += `<tr><td class="fw-bold text-warning">${index + 1}º</td>
-            <td>Puesto ${r.puesto}</td>
-            ${r.parciales.map(p => `<td>${p}</td>`).join('')}
-            <td class="table-success fw-bold">${r.total}</td>
-            <td class="table-info fw-bold">${r.xTotal}</td></tr>`;
-        });
-        tablaHTML += '</tbody></table>';
-        container.innerHTML = tablaHTML;
-    }
-
-    // ===============================================
-    // ▼▼▼  FUNCIÓN PARA SCROLL AUTOMÁTICO ▼▼▼
-    // ===============================================
-    let scrollIntervalo = null; // Variable para guardar el intervalo del scroll
-
-    function iniciarScrollAutomatico() {
-        // Detenemos cualquier scroll anterior para evitar que se acelere
-        if (scrollIntervalo) {
-            clearInterval(scrollIntervalo);
-        }
-
-        const container = document.getElementById('tablasContainer');
-        // Si no hay suficiente contenido para hacer scroll, no hacemos nada
-        if (container.scrollHeight <= container.clientHeight) {
-            return;
-        }
-
-        const scrollSpeed = 50; // Velocidad del scroll en milisegundos (más bajo = más rápido)
-        const pauseAtBottom = 4000; // Tiempo de pausa abajo antes de reiniciar (en ms)
-
-        scrollIntervalo = setInterval(() => {
-            // Si hemos llegado al final del scroll...
-            if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
-                // Hacemos una pausa y luego reiniciamos
-                clearInterval(scrollIntervalo); // Detenemos el scroll actual
-                setTimeout(() => {
-                    container.scrollTo({ top: 0, behavior: 'smooth' }); // Volvemos arriba suavemente
-                    setTimeout(iniciarScrollAutomatico, 2000); // Esperamos 2 segundos y reiniciamos el ciclo
-                }, pauseAtBottom);
-            } else {
-                // Si no hemos llegado al final, seguimos bajando
-                container.scrollTop += 1; // Mueve el scroll 1 píxel hacia abajo
-            }
-        }, scrollSpeed);
-    }
+    tablaHTML += '</tbody></table></div>';
+    container.innerHTML = tablaHTML;
+}
 </script>
 </body>
 </html>
-
