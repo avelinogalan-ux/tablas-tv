@@ -150,11 +150,30 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <main id="contenido">
-        <div class="esperando-datos" id="esperando">
-            <div class="spinner-border text-info mb-3" style="width: 4rem; height: 4rem"></div>
-            <h4>Listo para recibir resultados</h4>
-            <p class="text-muted">Los datos aparecerán automáticamente en esta pantalla.</p>
+<!-- CÓDIGO ACTUALIZADO PARA LA PÁGINA DE ESPERA DE LA TV -->
+<div class="esperando-datos" id="esperando">
+    <div class="card bg-dark text-white shadow-lg" style="border: 1px solid #0048ff; width: 80%; max-width: 900px;">
+        <div class="card-body p-5 text-center">
+
+            <!-- ▼▼▼ LÍNEAS AÑADIDAS PARA EL LOGO ▼▼▼ -->
+            <img src="logo-trasona.png" alt="Logo Principal del Club" style="max-height: 150px; margin-bottom: 25px;">
+            <!-- ▲▲▲ FIN LÍNEAS DEL LOGO ▲▲▲ -->
+
+            <h2 class="display-6 fw-bold mb-4">La Competición Aún No Ha Comenzado</h2>
+
+            <div class="mt-4">
+                <div class="spinner-grow text-primary" role="status" style="width: 4rem; height: 4rem;">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="lead mt-4 mb-1">Esperando datos desde el puesto de control...</p>
+                <p class="text-muted">La pantalla se actualizará automáticamente.</p>
+            </div>
         </div>
+        <div class="card-footer text-center text-muted" style="background-color: rgba(0, 60, 150, 0.2);">
+            Sistema de Resultados en Directo
+        </div>
+    </div>
+</div>
         <div class="table-container" id="tablasContainer" style="display: none;"></div>
     </main>
 </div>
