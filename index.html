@@ -149,6 +149,28 @@
     .scroll-animado {
         animation: scrollTabla 60s linear infinite;
     }
+
+    /* ===== CABECERA RESULTADOS ===== */
+    .resultados-header {
+        position: sticky;
+        top: 0;
+        background: radial-gradient(circle at top, rgba(0,10,60,0.95), rgba(0,10,30,0.9));
+        padding: 1vh 0;
+        text-align: center;
+        font-size: clamp(1.6rem, 3vw, 3rem);
+        color: #ffc107;
+        text-transform: uppercase;
+        font-weight: 700;
+        z-index: 20;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+    }
+
+    .contador-actualizacion {
+        font-size: clamp(1rem, 1.5vw, 1.6rem);
+        color: #00e6ff;
+        text-shadow: 0 0 8px rgba(0,230,255,0.9);
+        margin-top: 0.5vh;
+    }
 </style>
 </head>
 <body>
@@ -181,7 +203,10 @@
 
 <script>
 const CANAL_UNIVERSAL_ID = '68e19505ae596e708f063783';
+const INTERVALO_ACTUALIZACION = 400000; // 400 segundos = 6 minutos 40 segundos
 let ultimoContenido = '';
+let tiempoRestante = INTERVALO_ACTUALIZACION / 1000;
+let contadorIntervalo;
 
 async function consultarCanal() {
     const infoElement = document.getElementById('infoActualizacion');
@@ -202,7 +227,14 @@ async function consultarCanal() {
         tablasContainer.style.display = 'block';
 
         infoElement.className = 'status-connected p-3 rounded mx-auto';
-        infoElement.innerHTML = `<div class="text-center"><span class="fw-bold">✅ EN DIRECTO</span><br><small>${datos.disciplina.toUpperCase()}</small></div>`;
+        infoElement.innerHTML = `
+            <div class="text-center">
+                <span class="fw-bold">✅ EN DIRECTO</span><br>
+                <small>${datos.disciplina.toUpperCase()}</small>
+                <div class="contador-actualizacion" id="contador">Próxima actualización en: —</div>
+            </div>`;
+
+        reiniciarContador();
     } catch (error) {
         console.error("❌ Error al buscar datos:", error);
         infoElement.className = 'status-disconnected p-3 rounded mx-auto';
@@ -210,9 +242,31 @@ async function consultarCanal() {
     }
 }
 
+function reiniciarContador() {
+    tiempoRestante = INTERVALO_ACTUALIZACION / 1000;
+    clearInterval(contadorIntervalo);
+    actualizarContador();
+    contadorIntervalo = setInterval(() => {
+        tiempoRestante--;
+        if (tiempoRestante <= 0) {
+            consultarCanal();
+        } else {
+            actualizarContador();
+        }
+    }, 1000);
+}
+
+function actualizarContador() {
+    const contador = document.getElementById('contador');
+    if (!contador) return;
+    const minutos = Math.floor(tiempoRestante / 60);
+    const segundos = tiempoRestante % 60;
+    contador.textContent = `Próxima actualización en: ${minutos}m ${segundos}s`;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     consultarCanal();
-    setInterval(consultarCanal, 400000);
+    setInterval(consultarCanal, INTERVALO_ACTUALIZACION);
 });
 
 function mostrarResultadosTV(datos) {
@@ -224,49 +278,64 @@ function mostrarResultadosTV(datos) {
 
 function crearTablaFinales(resultados, container, disciplina) {
     let tablaHTML = `
-    <h1 class="text-center mb-4 text-warning">${disciplina} - Clasificación Final</h1>
-    <div class="scroll-animado">
+    <div class="resultados-header">${disciplina} - Clasificación Final</div>
+    <div class="scroll-animado table-wrapper">
     <table class="table table-dark table-bordered table-hover">
-    <thead><tr>
-    <th>Pos.</th><th>Puesto</th>
-    ${Array.from({ length: 12 }, (_, i) => `<th>S${i+1}</th>`).join('')}
-    <th>Total</th><th>X</th></tr></thead><tbody>`;
+        <thead><tr>
+            <th>Pos.</th><th>Puesto</th>
+            ${Array.from({ length: 12 }, (_, i) => `<th>S${i+1}</th>`).join('')}
+            <th>Total</th><th>X</th>
+        </tr></thead>
+        <tbody>`;
 
     resultados.forEach((r, index) => {
-        tablaHTML += `<tr><td class="fw-bold text-warning">${index + 1}º</td>
-        <td>Puesto ${r.puesto}</td>
-        ${r.series.map(s => `<td>${s}</td>`).join('')}
-        <td class="table-success fw-bold">${r.total}</td>
-        <td class="table-info fw-bold">${r.xTotal}</td></tr>`;
+        tablaHTML += `<tr>
+            <td class="fw-bold text-warning">${index + 1}º</td>
+            <td>Puesto ${r.puesto}</td>
+            ${r.series.map(s => `<td>${s}</td>`).join('')}
+            <td class="table-success fw-bold">${r.total}</td>
+            <td class="table-info fw-bold">${r.xTotal}</td>
+        </tr>`;
     });
 
-    tablaHTML += '</tbody></table></div>';
+    tablaHTML += `
+        </tbody>
+    </table>
+    </div>`;
+
     container.innerHTML = tablaHTML;
 }
 
 function crearTablaParciales(resultados, container, disciplina) {
     let tablaHTML = `
-    <h1 class="text-center mb-4 text-warning">${disciplina} - Clasificación Parcial</h1>
-    <div class="scroll-animado">
+    <div class="resultados-header">${disciplina} - Clasificación Parcial</div>
+    <div class="scroll-animado table-wrapper">
     <table class="table table-dark table-bordered table-hover">
-    <thead><tr><th>Pos.</th><th>Puesto</th>
-    <th>S1</th><th>S2</th><th>S3</th>
-    <th>S4</th><th>S5</th><th>S6</th>
-    <th>Total</th><th>X</th></tr></thead><tbody>`;
+        <thead><tr>
+            <th>Pos.</th><th>Puesto</th>
+            <th>Prec. 1</th><th>Prec. 2</th><th>Prec. 3</th>
+            <th>Duelo 1</th><th>Duelo 2</th><th>Duelo 3</th>
+            <th>Total</th><th>X</th>
+        </tr></thead>
+        <tbody>`;
 
     resultados.forEach((r, index) => {
-        tablaHTML += `<tr><td class="fw-bold text-warning">${index + 1}º</td>
-        <td>Puesto ${r.puesto}</td>
-        ${r.parciales.map(p => `<td>${p}</td>`).join('')}
-        <td class="table-success fw-bold">${r.total}</td>
-        <td class="table-info fw-bold">${r.xTotal}</td></tr>`;
+        tablaHTML += `<tr>
+            <td class="fw-bold text-warning">${index + 1}º</td>
+            <td>Puesto ${r.puesto}</td>
+            ${r.parciales.map(p => `<td>${p}</td>`).join('')}
+            <td class="table-success fw-bold">${r.total}</td>
+            <td class="table-info fw-bold">${r.xTotal}</td>
+        </tr>`;
     });
 
-    tablaHTML += '</tbody></table></div>';
+    tablaHTML += `
+        </tbody>
+    </table>
+    </div>`;
+
     container.innerHTML = tablaHTML;
 }
 </script>
 </body>
 </html>
-
-
