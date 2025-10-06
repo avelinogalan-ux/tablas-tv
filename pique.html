@@ -69,16 +69,16 @@
             <h1 class="titulo-pique mb-4">¡El Duelo!</h1>
             <table class="table table-dark table-striped table-bordered">
                 <thead>
-                    <tr>
-                        <th>Pos.</th>
-                        <th>Puesto</th>
-                        <th>Nombre</th>
-                        <!-- Asumimos 6 series como máximo -->
-                        <th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th>
-                        <th>Total</th>
-                        <th>X</th>
-                    </tr>
-                </thead>
+    <tr>
+        <th>Pos.</th>
+        <th>Puesto</th>
+        <th>Nombre</th>
+        <th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th>
+        <th>Total</th>
+        <th>X</th>
+        <th style="width:20%;">Progreso</th> <!-- Columna nueva -->
+    </tr>
+</thead>
                 <tbody id="tabla-resultados-body">
                     <!-- Los resultados del pique irán aquí -->
                 </tbody>
@@ -89,9 +89,9 @@
 
     <script>
         // --- CONFIGURACIÓN ---
-        const BIN_ID = 'TU_BIN_ID_DE_RESULTADOS'; // ¡¡MUY IMPORTANTE: Pega aquí el ID de tu Bin de resultados!!
-        const TOTAL_PUESTOS = 10; // Cambia esto al número de puestos de tu competición
-        const INTERVALO_REFRESCO_MS = 5000; // 5 segundos
+        const BIN_ID = '68e19505ae596e708f063783'; // ¡¡MUY IMPORTANTE: Pega aquí el ID de tu Bin de resultados!!
+        const TOTAL_PUESTOS = 21; // Cambia esto al número de puestos de tu competición
+        const INTERVALO_REFRESCO_MS = 400000; // 
 
         // --- LÓGICA DE LA PÁGINA ---
         const seccionSeleccion = document.getElementById('seccion-seleccion');
@@ -187,31 +187,53 @@
         }
         
         function dibujarTabla(datos) {
-            tablaResultadosBody.innerHTML = '';
-            if (!datos || datos.length === 0) {
-                 tablaResultadosBody.innerHTML = `<tr><td colspan="11">Esperando datos de los puestos seleccionados...</td></tr>`;
-                 return;
-            }
+    tablaResultadosBody.innerHTML = '';
+    if (!datos || datos.length === 0) {
+        // ... (el código para el caso de no haber datos se queda igual) ...
+        return;
+    }
 
-            datos.forEach((tirador, index) => {
-                const fila = `
-                    <tr>
-                        <td>${index + 1}º</td>
-                        <td>${tirador.puesto}</td>
-                        <td>${tirador.nombre || 'Tirador ' + tirador.puesto}</td>
-                        <td>${tirador.series['1'] || 0}</td>
-                        <td>${tirador.series['2'] || 0}</td>
-                        <td>${tirador.series['3'] || 0}</td>
-                        <td>${tirador.series['4'] || 0}</td>
-                        <td>${tirador.series['5'] || 0}</td>
-                        <td>${tirador.series['6'] || 0}</td>
-                        <td><strong>${tirador.total}</strong></td>
-                        <td>${tirador.totalX}</td>
-                    </tr>
-                `;
-                tablaResultadosBody.innerHTML += fila;
-            });
-        }
+    // Primero, encontramos la puntuación máxima entre los seleccionados
+    // para que la barra más larga sea siempre del 100%.
+    const maxPuntuacion = Math.max(...datos.map(d => d.total));
+    const puntuacionMaximaPosible = 600; // Máximo teórico de 6 series x 100 puntos
+
+    datos.forEach((tirador, index) => {
+        // Calculamos el porcentaje de la barra respecto al máximo teórico
+        const porcentaje = (tirador.total / puntuacionMaximaPosible) * 100;
+
+        // Definimos el color de la barra. El primero (ganador) será dorado.
+        const colorBarra = (index === 0) ? 'bg-warning' : 'bg-primary'; // bg-warning es el amarillo de Bootstrap
+
+        const fila = `
+            <tr>
+                <td>${index + 1}º</td>
+                <td>${tirador.puesto}</td>
+                <td>${tirador.nombre || 'Tirador ' + tirador.puesto}</td>
+                <td>${tirador.series['1'] || 0}</td>
+                <td>${tirador.series['2'] || 0}</td>
+                <td>${tirador.series['3'] || 0}</td>
+                <td>${tirador.series['4'] || 0}</td>
+                <td>${tirador.series['5'] || 0}</td>
+                <td>${tirador.series['6'] || 0}</td>
+                <td><strong>${tirador.total}</strong></td>
+                <td>${tirador.totalX}</td>
+                
+                <!-- ▼▼▼ CELDA NUEVA CON LA BARRA DE PROGRESO ▼▼▼ -->
+                <td>
+                    <div class="progress" style="height: 20px; background-color: #333;">
+                        <div class="progress-bar ${colorBarra}" role="progressbar" 
+                             style="width: ${porcentaje}%;" 
+                             aria-valuenow="${tirador.total}" aria-valuemin="0" aria-valuemax="${puntuacionMaximaPosible}">
+                        </div>
+                    </div>
+                </td>
+                <!-- ▲▲▲ FIN DE LA CELDA NUEVA ▲▲▲ -->
+            </tr>
+        `;
+        tablaResultadosBody.innerHTML += fila;
+    });
+}
     </script>
 
 </body>
