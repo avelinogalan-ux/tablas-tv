@@ -208,31 +208,33 @@
         const colorBarra = (index === 0) ? 'bg-warning' : 'bg-primary'; // bg-warning es el amarillo de Bootstrap
 
         const fila = `
-            <tr>
-                <td>${index + 1}º</td>
-                <td>${tirador.puesto}</td>
-                <td>${tirador.nombre || 'Tirador ' + tirador.puesto}</td>
-                <td>${tirador.series['1'] || 0}</td>
-                <td>${tirador.series['2'] || 0}</td>
-                <td>${tirador.series['3'] || 0}</td>
-                <td>${tirador.series['4'] || 0}</td>
-                <td>${tirador.series['5'] || 0}</td>
-                <td>${tirador.series['6'] || 0}</td>
-                <td><strong>${tirador.total}</strong></td>
-                <td>${tirador.totalX}</td>
-                
-                <!-- ▼▼▼ CELDA NUEVA CON LA BARRA DE PROGRESO ▼▼▼ -->
-                <td>
-                    <div class="progress" style="height: 20px; background-color: #333;">
-                        <div class="progress-bar ${colorBarra}" role="progressbar" 
-                             style="width: ${porcentaje}%;" 
-                             aria-valuenow="${tirador.total}" aria-valuemin="0" aria-valuemax="${puntuacionMaximaPosible}">
-                        </div>
-                    </div>
-                </td>
-                <!-- ▲▲▲ FIN DE LA CELDA NUEVA ▲▲▲ -->
-            </tr>
-        `;
+const fila = `
+    <tr>
+        <td><strong>${index + 1}º ${indicadorHTML}</strong></td>
+        <td>${tirador.puesto}</td>
+        <td>${tirador.nombre || 'Tirador ' + tirador.puesto}</td>
+        <td>${tirador.series['1'] || 0}</td>
+        <td>${tirador.series['2'] || 0}</td>
+        <td>${tirador.series['3'] || 0}</td>
+        <td>${tirador.series['4'] || 0}</td>
+        <td>${tirador.series['5'] || 0}</td>
+        <td>${tirador.series['6'] || 0}</td>
+        <td>${tirador.series['7'] || 0}</td>
+        <td>${tirador.series['8'] || 0}</td>
+        <td>${tirador.series['9'] || 0}</td>
+        <td>${tirador.series['10'] || 0}</td>
+        <td>${tirador.series['11'] || 0}</td>
+        <td>${tirador.series['12'] || 0}</td>
+        <td><strong>${tirador.total}</strong></td>
+        <td>${tirador.totalX}</td>
+        
+        <td>
+            <div class="progress" style="height: 20px; background-color: #333;">
+                <div class="progress-bar ${colorBarra}" role="progressbar" style="width: ${porcentaje}%;" aria-valuenow="${tirador.total}" aria-valuemin="0" aria-valuemax="${puntuacionMaximaPosible}"></div>
+            </div>
+        </td>
+    </tr>
+`;
         tablaResultadosBody.innerHTML += fila;
     });
 }
