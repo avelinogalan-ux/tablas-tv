@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modo Pique</title>
+    <!-- Usamos Bootstrap para un diseño rápido y atractivo -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #111;
+            color: #eee;
+        }
+        .contenedor-principal {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+        .titulo-pique {
+            color: #ffc107;
+            text-shadow: 2px 2px 4px #000;
+        }
+        .puesto-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 80px;
+            border: 2px solid #555;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 2rem;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .puesto-selector:hover {
+            border-color: #ffc107;
+            transform: scale(1.1);
+        }
+        .puesto-selector.seleccionado {
+            background-color: #ffc107;
+            color: #111;
+            border-color: #ffc107;
+        }
+        .btn-pique {
+            background-color: #ffc107;
+            border: none;
+            color: #111;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-principal text-center">
+        <!-- Esta sección se mostrará para seleccionar puestos -->
+        <div id="seccion-seleccion">
+            <h1 class="titulo-pique mb-4">Modo Pique</h1>
+            <p class="lead">Selecciona hasta 4 puestos para comparar:</p>
+            
+            <div id="grid-puestos" class="d-flex flex-wrap justify-content-center gap-3 my-4">
+                <!-- Los botones de los puestos se generarán aquí con JS -->
+            </div>
+            
+            <button id="btnVerDuelo" class="btn btn-lg btn-pique" disabled>¡Ver Duelo!</button>
+        </div>
+
+        <!-- Esta sección se mostrará para ver los resultados del pique -->
+        <div id="seccion-resultados" style="display: none;">
+            <h1 class="titulo-pique mb-4">¡El Duelo!</h1>
+            <table class="table table-dark table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Pos.</th>
+                        <th>Puesto</th>
+                        <th>Nombre</th>
+                        <!-- Asumimos 6 series como máximo -->
+                        <th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th>
+                        <th>Total</th>
+                        <th>X</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-resultados-body">
+                    <!-- Los resultados del pique irán aquí -->
+                </tbody>
+            </table>
+            <button onclick="window.location.href = 'pique.html';" class="btn btn-secondary mt-3">Nueva Selección</button>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURACIÓN ---
+        const BIN_ID = 'TU_BIN_ID_DE_RESULTADOS'; // ¡¡MUY IMPORTANTE: Pega aquí el ID de tu Bin de resultados!!
+        const TOTAL_PUESTOS = 10; // Cambia esto al número de puestos de tu competición
+        const INTERVALO_REFRESCO_MS = 5000; // 5 segundos
+
+        // --- LÓGICA DE LA PÁGINA ---
+        const seccionSeleccion = document.getElementById('seccion-seleccion');
+        const seccionResultados = document.getElementById('seccion-resultados');
+        const tablaResultadosBody = document.getElementById('tabla-resultados-body');
+        const gridPuestos = document.getElementById('grid-puestos');
+        const btnVerDuelo = document.getElementById('btnVerDuelo');
+
+        let puestosSeleccionados = new Set();
+
+        // Función que se ejecuta al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const puestosUrl = urlParams.get('puestos');
+
+            if (puestosUrl) {
+                // Si la URL tiene puestos, mostramos la vista de resultados
+                const puestosAMostrar = puestosUrl.split(',').map(Number);
+                mostrarVistaResultados(puestosAMostrar);
+                // Iniciar el ciclo de actualización
+                setInterval(() => fetchYMostrarResultados(puestosAMostrar), INTERVALO_REFRESCO_MS);
+                fetchYMostrarResultados(puestosAMostrar); // Primera carga inmediata
+            } else {
+                // Si no, mostramos la vista de selección
+                mostrarVistaSeleccion();
+            }
+        });
+
+        function mostrarVistaSeleccion() {
+            seccionSeleccion.style.display = 'block';
+            seccionResultados.style.display = 'none';
+            
+            // Generar los botones de los puestos
+            for (let i = 1; i <= TOTAL_PUESTOS; i++) {
+                const puestoDiv = document.createElement('div');
+                puestoDiv.className = 'puesto-selector';
+                puestoDiv.textContent = i;
+                puestoDiv.dataset.puesto = i;
+                puestoDiv.addEventListener('click', () => togglePuesto(i));
+                gridPuestos.appendChild(puestoDiv);
+            }
+
+            btnVerDuelo.addEventListener('click', () => {
+                const puestosQuery = Array.from(puestosSeleccionados).join(',');
+                window.location.href = `pique.html?puestos=${puestosQuery}`;
+            });
+        }
+
+        function togglePuesto(numeroPuesto) {
+            const div = document.querySelector(`[data-puesto='${numeroPuesto}']`);
+            if (puestosSeleccionados.has(numeroPuesto)) {
+                puestosSeleccionados.delete(numeroPuesto);
+                div.classList.remove('seleccionado');
+            } else {
+                if (puestosSeleccionados.size < 4) {
+                    puestosSeleccionados.add(numeroPuesto);
+                    div.classList.add('seleccionado');
+                } else {
+                    alert('¡Solo puedes seleccionar hasta 4 puestos!');
+                }
+            }
+            // Habilitar o deshabilitar el botón de duelo
+            btnVerDuelo.disabled = puestosSeleccionados.size === 0;
+        }
+
+        function mostrarVistaResultados(puestos) {
+            seccionSeleccion.style.display = 'none';
+            seccionResultados.style.display = 'block';
+            document.querySelector('h1').textContent = `¡Duelo entre puestos: ${puestos.join(', ')}!`;
+        }
+
+        async function fetchYMostrarResultados(puestosAMostrar) {
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`);
+                if (!response.ok) throw new Error('No se pudo cargar los datos.');
+                
+                const data = await response.json();
+                const record = data.record; // El contenido real está en 'record'
+
+                // Filtrar solo los datos de los puestos seleccionados
+                let datosFiltrados = record.datos.filter(d => puestosAMostrar.includes(d.puesto));
+
+                // Ordenar por puntuación total (y X en caso de empate)
+                datosFiltrados.sort((a, b) => b.total - a.total || b.totalX - a.totalX);
+
+                // Dibujar la tabla
+                dibujarTabla(datosFiltrados);
+
+            } catch (error) {
+                console.error("Error al refrescar:", error);
+                tablaResultadosBody.innerHTML = `<tr><td colspan="11">Error al cargar datos... Reintentando...</td></tr>`;
+            }
+        }
+        
+        function dibujarTabla(datos) {
+            tablaResultadosBody.innerHTML = '';
+            if (!datos || datos.length === 0) {
+                 tablaResultadosBody.innerHTML = `<tr><td colspan="11">Esperando datos de los puestos seleccionados...</td></tr>`;
+                 return;
+            }
+
+            datos.forEach((tirador, index) => {
+                const fila = `
+                    <tr>
+                        <td>${index + 1}º</td>
+                        <td>${tirador.puesto}</td>
+                        <td>${tirador.nombre || 'Tirador ' + tirador.puesto}</td>
+                        <td>${tirador.series['1'] || 0}</td>
+                        <td>${tirador.series['2'] || 0}</td>
+                        <td>${tirador.series['3'] || 0}</td>
+                        <td>${tirador.series['4'] || 0}</td>
+                        <td>${tirador.series['5'] || 0}</td>
+                        <td>${tirador.series['6'] || 0}</td>
+                        <td><strong>${tirador.total}</strong></td>
+                        <td>${tirador.totalX}</td>
+                    </tr>
+                `;
+                tablaResultadosBody.innerHTML += fila;
+            });
+        }
+    </script>
+
+</body>
+</html>
