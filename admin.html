@@ -62,77 +62,68 @@
 <script type="module">
 // ========================================================================
 // --- CONFIGURACIÓN ---
-// Leemos las variables de entorno seguras proporcionadas por Vercel
 // ========================================================================
 const CODIGO_ACCESO_BIN_ID = import.meta.env.VITE_CODIGO_ACCESO_BIN_ID;
 const JSONBIN_API_KEY = import.meta.env.VITE_JSONBIN_API_KEY;
 // ========================================================================
 
+// --- "CHIVATOS" DE DEPURACIÓN ---
+console.log("--- INICIANDO SCRIPT DE ADMIN ---");
+console.log("ID del Bin de Código de Acceso:", CODIGO_ACCESO_BIN_ID);
+console.log("¿Tenemos API Key?:", JSONBIN_API_KEY ? "Sí, existe" : "NO, ESTÁ VACÍA O UNDEFINED");
+// --------------------------------
 
-// --- LÓGICA DE LA PÁGINA ---
 const btnGenerar = document.getElementById('btnGenerar');
 const codigoDisplay = document.getElementById('codigoGenerado');
 const statusDisplay = document.getElementById('status');
 const spinner = btnGenerar.querySelector('.spinner-border');
 
-// Al cargar la página, intenta obtener el código actual
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log("1. DOMContentLoaded - El documento ha cargado.");
+
     if (!CODIGO_ACCESO_BIN_ID || !JSONBIN_API_KEY) {
         statusDisplay.textContent = 'Error: Faltan variables de configuración en Vercel.';
+        console.error("ERROR CRÍTICO: Las variables de Vercel no se cargaron. Revisa la configuración y el redespliegue.");
         return;
     }
     
     statusDisplay.textContent = 'Cargando código actual...';
+    console.log("2. Voy a intentar hacer 'fetch' para cargar el código actual.");
+
     try {
         const response = await fetch(`https://api.jsonbin.io/v3/b/${CODIGO_ACCESO_BIN_ID}/latest`, {
             headers: { 'X-Master-Key': JSONBIN_API_KEY }
         });
-        if (!response.ok) throw new Error('No se pudo cargar el código.');
-        const data = await response.json();
-        codigoDisplay.textContent = data.record.codigo_acceso || "----";
-        statusDisplay.textContent = 'Código actual cargado.';
-    } catch (error) {
-        statusDisplay.textContent = `Error: ${error.message}`;
-        codigoDisplay.textContent = "Error";
-    }
-});
 
-
-btnGenerar.addEventListener('click', async () => {
-    btnGenerar.disabled = true;
-    spinner.classList.remove('d-none');
-    statusDisplay.textContent = 'Generando y guardando...';
-
-    // 1. Genera un código aleatorio de 4 dígitos
-    const nuevoCodigo = Math.floor(1000 + Math.random() * 9000).toString();
-
-    try {
-        // 2. Sube el nuevo código a jsonbin.io, sobrescribiendo el anterior
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${CODIGO_ACCESO_BIN_ID}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Master-Key': JSONBIN_API_KEY
-            },
-            body: JSON.stringify({ "codigo_acceso": nuevoCodigo })
-        });
+        console.log("3. Respuesta de la API recibida. Estado:", response.status, response.statusText);
 
         if (!response.ok) {
-            throw new Error('No se pudo guardar el código en la nube.');
+            // Si la respuesta no es exitosa, lanzamos un error para que lo capture el 'catch'
+            throw new Error(`Error de red ${response.status}. Revisa la API Key y el ID del Bin.`);
+        }
+        
+        const data = await response.json();
+        console.log("4. JSON de la respuesta:", data);
+
+        // Comprobación clave
+        if (data && data.record && 'codigo_acceso' in data.record) {
+            codigoDisplay.textContent = data.record.codigo_acceso;
+            console.log("5. ¡ÉXITO! Código encontrado en el JSON:", data.record.codigo_acceso);
+        } else {
+            codigoDisplay.textContent = "JSON?";
+            console.error("6. ERROR LÓGICO: La respuesta JSON no tiene la estructura esperada. No se encontró 'record.codigo_acceso'.");
+            console.error("El JSON recibido fue:", JSON.stringify(data));
         }
 
-        // 3. Muestra el código nuevo en pantalla
-        codigoDisplay.textContent = nuevoCodigo;
-        statusDisplay.textContent = `¡Código actualizado a las ${new Date().toLocaleTimeString()}!`;
+        statusDisplay.textContent = 'Código actual cargado.';
 
     } catch (error) {
         statusDisplay.textContent = `Error: ${error.message}`;
-        codigoDisplay.textContent = "Error";
-    } finally {
-        btnGenerar.disabled = false;
-        spinner.classList.add('d-none');
+        codigoDisplay.textContent = "Fallo";
+        console.error("7. CATCH: Ha ocurrido un error en el bloque try.", error);
     }
 });
+
 script type="module">
 </body>
 </html>
