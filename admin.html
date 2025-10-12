@@ -59,13 +59,20 @@
         </div>
     </div>
 
-<script type="module">
+/ ========================================================================
+// --- CONFIGURACIÓN DE PRUEBA (TEMPORAL) ---
+// Pega tus claves aquí directamente para diagnosticar el problema.
+// ¡NO DEJES ESTO EN EL CÓDIGO FINAL!
 // ========================================================================
-// --- CONFIGURACIÓN ---
+const CODIGO_ACCESO_BIN_ID = "PEGA_AQUÍ_EL_ID_DE_TU_BIN_DE_CÓDIGO"; 
+const JSONBIN_API_KEY = "PEGA_AQUÍ_TU_X_MASTER_KEY";
 // ========================================================================
-const CODIGO_ACCESO_BIN_ID = import.meta.env.VITE_CODIGO_ACCESO_BIN_ID;
-const JSONBIN_API_KEY = import.meta.env.VITE_JSONBIN_API_KEY;
-// ========================================================================
+
+// --- "CHIVATOS" DE DEPURACIÓN ---
+console.log("--- INICIANDO SCRIPT DE ADMIN (VERSIÓN DE PRUEBA) ---");
+console.log("ID del Bin de Código de Acceso (directo):", CODIGO_ACCESO_BIN_ID);
+console.log("API Key (directa):", JSONBIN_API_KEY ? "Sí, existe" : "NO, ESTÁ VACÍA");
+// --------------------------------
 
 // --- "CHIVATOS" DE DEPURACIÓN ---
 console.log("--- INICIANDO SCRIPT DE ADMIN ---");
