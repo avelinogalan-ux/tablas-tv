@@ -31,7 +31,7 @@
             font-weight: bold;
             letter-spacing: 0.5rem;
             text-shadow: 0 0 15px rgba(255, 193, 7, 0.8);
-            user-select: all; /* Facilita copiar el código */
+            user-select: all;
         }
         #btnGenerar {
             padding: 0.75rem 1.5rem;
@@ -40,6 +40,7 @@
     </style>
 </head>
 <body>
+    <!-- Esta es la estructura HTML visible -->
     <div class="card bg-dark text-white p-4">
         <h2><i class="bi bi-shield-lock-fill"></i> Panel de Administrador</h2>
         <p class="lead mt-3">Genera un nuevo código para que los espectadores accedan a la TV.</p>
@@ -59,79 +60,83 @@
         </div>
     </div>
 
-/ ========================================================================
-// --- CONFIGURACIÓN DE PRUEBA (TEMPORAL) ---
-// Pega tus claves aquí directamente para diagnosticar el problema.
-// ¡NO DEJES ESTO EN EL CÓDIGO FINAL!
-// ========================================================================
-const CODIGO_ACCESO_BIN_ID = "68ead4c4d0ea881f409e35e6"; 
-const JSONBIN_API_KEY = "$2a$10$Y2G3CGiuOtx7xINhU1Ei.uhbBh0Jai/iw7/ZCTb7yoWWZ2PVEPt.e";
-// ========================================================================
+    <!-- El código JavaScript empieza aquí, DENTRO del body y al FINAL -->
+    <script type="module">
+        // ========================================================================
+        // --- CONFIGURACIÓN ---
+        // Leemos las variables de entorno seguras proporcionadas por Vercel
+        // ========================================================================
+        const CODIGO_ACCESO_BIN_ID = import.meta.env.VITE_CODIGO_ACCESO_BIN_ID;
+        const JSONBIN_API_KEY = import.meta.env.VITE_JSONBIN_API_KEY;
+        // ========================================================================
 
-// --- "CHIVATOS" DE DEPURACIÓN ---
-console.log("--- INICIANDO SCRIPT DE ADMIN (VERSIÓN DE PRUEBA) ---");
-console.log("ID del Bin de Código de Acceso (directo):", CODIGO_ACCESO_BIN_ID);
-console.log("API Key (directa):", JSONBIN_API_KEY ? "Sí, existe" : "NO, ESTÁ VACÍA");
-// --------------------------------
+        // --- LÓGICA DE LA PÁGINA ---
+        const btnGenerar = document.getElementById('btnGenerar');
+        const codigoDisplay = document.getElementById('codigoGenerado');
+        const statusDisplay = document.getElementById('status');
+        const spinner = btnGenerar.querySelector('.spinner-border');
 
-// --- "CHIVATOS" DE DEPURACIÓN ---
-console.log("--- INICIANDO SCRIPT DE ADMIN ---");
-console.log("ID del Bin de Código de Acceso:", CODIGO_ACCESO_BIN_ID);
-console.log("¿Tenemos API Key?:", JSONBIN_API_KEY ? "Sí, existe" : "NO, ESTÁ VACÍA O UNDEFINED");
-// --------------------------------
-
-const btnGenerar = document.getElementById('btnGenerar');
-const codigoDisplay = document.getElementById('codigoGenerado');
-const statusDisplay = document.getElementById('status');
-const spinner = btnGenerar.querySelector('.spinner-border');
-
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log("1. DOMContentLoaded - El documento ha cargado.");
-
-    if (!CODIGO_ACCESO_BIN_ID || !JSONBIN_API_KEY) {
-        statusDisplay.textContent = 'Error: Faltan variables de configuración en Vercel.';
-        console.error("ERROR CRÍTICO: Las variables de Vercel no se cargaron. Revisa la configuración y el redespliegue.");
-        return;
-    }
-    
-    statusDisplay.textContent = 'Cargando código actual...';
-    console.log("2. Voy a intentar hacer 'fetch' para cargar el código actual.");
-
-    try {
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${CODIGO_ACCESO_BIN_ID}/latest`, {
-            headers: { 'X-Master-Key': JSONBIN_API_KEY }
+        // Al cargar la página, intenta obtener el código actual
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!CODIGO_ACCESO_BIN_ID || !JSONBIN_API_KEY) {
+                statusDisplay.textContent = 'Error: Variables de Vercel no configuradas.';
+                return;
+            }
+            
+            statusDisplay.textContent = 'Cargando código actual...';
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${CODIGO_ACCESO_BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': JSONBIN_API_KEY }
+                });
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}. Revisa API Key y Bin ID.`);
+                }
+                const data = await response.json();
+                if (data.record && 'codigo_acceso' in data.record) {
+                    codigoDisplay.textContent = data.record.codigo_acceso;
+                } else {
+                    codigoDisplay.textContent = "JSON?";
+                    console.error("El JSON del bin no tiene la clave 'codigo_acceso'. Contenido:", data);
+                }
+                statusDisplay.textContent = 'Código actual cargado.';
+            } catch (error) {
+                statusDisplay.textContent = error.message;
+                codigoDisplay.textContent = "Error";
+            }
         });
 
-        console.log("3. Respuesta de la API recibida. Estado:", response.status, response.statusText);
+        // Lógica del botón para generar un nuevo código
+        btnGenerar.addEventListener('click', async () => {
+            btnGenerar.disabled = true;
+            spinner.classList.remove('d-none');
+            statusDisplay.textContent = 'Generando y guardando...';
 
-        if (!response.ok) {
-            // Si la respuesta no es exitosa, lanzamos un error para que lo capture el 'catch'
-            throw new Error(`Error de red ${response.status}. Revisa la API Key y el ID del Bin.`);
-        }
-        
-        const data = await response.json();
-        console.log("4. JSON de la respuesta:", data);
+            const nuevoCodigo = Math.floor(1000 + Math.random() * 9000).toString();
 
-        // Comprobación clave
-        if (data && data.record && 'codigo_acceso' in data.record) {
-            codigoDisplay.textContent = data.record.codigo_acceso;
-            console.log("5. ¡ÉXITO! Código encontrado en el JSON:", data.record.codigo_acceso);
-        } else {
-            codigoDisplay.textContent = "JSON?";
-            console.error("6. ERROR LÓGICO: La respuesta JSON no tiene la estructura esperada. No se encontró 'record.codigo_acceso'.");
-            console.error("El JSON recibido fue:", JSON.stringify(data));
-        }
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${CODIGO_ACCESO_BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': JSONBIN_API_KEY
+                    },
+                    body: JSON.stringify({ "codigo_acceso": nuevoCodigo })
+                });
 
-        statusDisplay.textContent = 'Código actual cargado.';
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status} al guardar. Revisa API Key.`);
+                }
 
-    } catch (error) {
-        statusDisplay.textContent = `Error: ${error.message}`;
-        codigoDisplay.textContent = "Fallo";
-        console.error("7. CATCH: Ha ocurrido un error en el bloque try.", error);
-    }
-});
-
-script type="module">
+                codigoDisplay.textContent = nuevoCodigo;
+                statusDisplay.textContent = `¡Código actualizado a las ${new Date().toLocaleTimeString()}!`;
+            } catch (error) {
+                statusDisplay.textContent = error.message;
+                codigoDisplay.textContent = "Error";
+            } finally {
+                btnGenerar.disabled = false;
+                spinner.classList.add('d-none');
+            }
+        });
+    </script>
 </body>
 </html>
-
