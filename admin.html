@@ -40,9 +40,8 @@
     </style>
 </head>
 <body>
-    <!-- Esta es la estructura HTML visible -->
     <div class="card bg-dark text-white p-4">
-        <h2><i class="bi bi-shield-lock-fill "></i> Panel de Administrador V2</h2>
+        <h2><i class="bi bi-shield-lock-fill"></i> Panel de Administrador V2</h2>
         <p class="lead mt-3">Genera un nuevo código para que los espectadores accedan a la TV.</p>
         
         <div class="my-4">
@@ -60,15 +59,19 @@
         </div>
     </div>
 
-    <!-- El código JavaScript empieza aquí, DENTRO del body y al FINAL -->
-    <script type="module">
+    <script>
         // ========================================================================
-        // --- CONFIGURACIÓN ---
-        // Leemos las variables de entorno seguras proporcionadas por Vercel
+        // OPCIÓN 1: Para archivos HTML estáticos (reemplaza con tus valores reales)
         // ========================================================================
-        const CODIGO_ACCESO_BIN_ID = import.meta.env.VITE_CODIGO_ACCESO_BIN_ID;
-        const JSONBIN_API_KEY = import.meta.env.VITE_JSONBIN_API;
+        const CODIGO_ACCESO_BIN_ID = 'TU_BIN_ID_AQUI';
+        const JSONBIN_API_KEY = 'TU_API_KEY_AQUI';
+        
         // ========================================================================
+        // OPCIÓN 2: Si usas un servidor (Node.js, PHP, etc.) que inyecta las variables
+        // Descomenta estas líneas y comenta las de arriba:
+        // ========================================================================
+        // const CODIGO_ACCESO_BIN_ID = '{{CODIGO_ACCESO_BIN_ID}}';
+        // const JSONBIN_API_KEY = '{{JSONBIN_API_KEY}}';
 
         // --- LÓGICA DE LA PÁGINA ---
         const btnGenerar = document.getElementById('btnGenerar');
@@ -78,8 +81,11 @@
 
         // Al cargar la página, intenta obtener el código actual
         document.addEventListener('DOMContentLoaded', async () => {
-            if (!CODIGO_ACCESO_BIN_ID || !JSONBIN_API_KEY) {
-                statusDisplay.textContent = 'Error: Variables de Vercel no configuradas.';
+            if (!CODIGO_ACCESO_BIN_ID || !JSONBIN_API_KEY || 
+                CODIGO_ACCESO_BIN_ID === 'TU_BIN_ID_AQUI' || 
+                JSONBIN_API_KEY === 'TU_API_KEY_AQUI') {
+                statusDisplay.textContent = 'Error: Configura tus credenciales de JSONBin.';
+                statusDisplay.className = 'mt-3 text-danger';
                 return;
             }
             
@@ -94,13 +100,17 @@
                 const data = await response.json();
                 if (data.record && 'codigo_acceso' in data.record) {
                     codigoDisplay.textContent = data.record.codigo_acceso;
+                    statusDisplay.textContent = 'Código actual cargado.';
+                    statusDisplay.className = 'mt-3 text-success';
                 } else {
                     codigoDisplay.textContent = "JSON?";
+                    statusDisplay.textContent = "Error: Estructura JSON incorrecta.";
+                    statusDisplay.className = 'mt-3 text-warning';
                     console.error("El JSON del bin no tiene la clave 'codigo_acceso'. Contenido:", data);
                 }
-                statusDisplay.textContent = 'Código actual cargado.';
             } catch (error) {
                 statusDisplay.textContent = error.message;
+                statusDisplay.className = 'mt-3 text-danger';
                 codigoDisplay.textContent = "Error";
             }
         });
@@ -110,6 +120,7 @@
             btnGenerar.disabled = true;
             spinner.classList.remove('d-none');
             statusDisplay.textContent = 'Generando y guardando...';
+            statusDisplay.className = 'mt-3 text-info';
 
             const nuevoCodigo = Math.floor(1000 + Math.random() * 9000).toString();
 
@@ -129,14 +140,16 @@
 
                 codigoDisplay.textContent = nuevoCodigo;
                 statusDisplay.textContent = `¡Código actualizado a las ${new Date().toLocaleTimeString()}!`;
+                statusDisplay.className = 'mt-3 text-success';
             } catch (error) {
                 statusDisplay.textContent = error.message;
+                statusDisplay.className = 'mt-3 text-danger';
                 codigoDisplay.textContent = "Error";
             } finally {
                 btnGenerar.disabled = false;
                 spinner.classList.add('d-none');
             }
         });
-     <script type="module">
+    </script>
 </body>
 </html>
