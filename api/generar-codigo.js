@@ -1,6 +1,6 @@
 // /api/generar-codigo.js
+// Genera un código de 4 dígitos y lo guarda en JSONBin
 
-// Variables de entorno configuradas en Vercel
 const CODIGO_ACCESO_BIN_ID = process.env.CODIGO_ACCESO_BIN_ID;
 const JSONBIN_API_KEY = process.env.JSONBIN_API_KEY;
 
@@ -14,10 +14,9 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Variables de entorno no configuradas" });
     }
 
-    // Generar un código aleatorio de 4 dígitos
     const nuevoCodigo = Math.floor(1000 + Math.random() * 9000).toString();
+    const payload = { codigo_acceso: nuevoCodigo, timestamp: Date.now() };
 
-    // Guardar en JSONBin
     const url = `https://api.jsonbin.io/v3/b/${CODIGO_ACCESO_BIN_ID}`;
     const response = await fetch(url, {
       method: "PUT",
@@ -26,7 +25,7 @@ export default async function handler(req, res) {
         "X-Master-Key": JSONBIN_API_KEY,
         "X-Bin-Private": "false"
       },
-      body: JSON.stringify({ codigo_acceso: nuevoCodigo })
+      body: JSON.stringify(payload)
     });
 
     if (!response.ok) {
@@ -34,10 +33,9 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: `Error al actualizar JSONBin: ${text}` });
     }
 
-    return res.status(200).json({ nuevoCodigo });
-
-  } catch (error) {
-    console.error("Error en /api/generar-codigo:", error);
-    return res.status(500).json({ error: "Error interno del servidor" });
+    res.status(200).json({ nuevoCodigo });
+  } catch (err) {
+    console.error("Error en /api/generar-codigo:", err);
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 }
