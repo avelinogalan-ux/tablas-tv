@@ -3,190 +3,289 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TV - Resultados en Directo</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<title>TV - Resultados Tiro Deportivo</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <style>
-    /* El CSS se mantiene igual para conservar el diseño */
-    body { background: radial-gradient(circle at center, #000428 0%, #004e92 100%); color: #fff; font-family: 'Rajdhani', sans-serif; margin:0; padding:0; overflow:hidden; }
-    .container-tv { width:100%; height:100vh; display:flex; flex-direction:column; justify-content:flex-start; }
-    header { position:relative; background:linear-gradient(90deg,#002bff 0%,#001242 100%); padding:1.5vh 3vw; border-bottom:0.5vh solid #ffc107; display:flex; align-items:center; justify-content:center; }
-    .logo-izquierdo { position:absolute; left:3vw; height:clamp(60px,10vh,130px); filter:drop-shadow(0 0 10px rgba(255,255,255,0.7)); }
-    h1.display-5 { font-size:clamp(2rem,4vw,4.5rem); text-transform:uppercase; text-shadow:0 0 25px rgba(255,255,255,0.9); margin:0; }
-    .logo-trasona { display:block; margin:5vh auto 4vh; height:clamp(180px,35vh,380px); width:auto; filter:drop-shadow(0 0 30px rgba(255,255,255,0.8)); animation:aparecerLogo 1.5s ease-out; }
-    @keyframes aparecerLogo { from {opacity:0; transform:scale(0.8);} to {opacity:1; transform:scale(1);} }
-    .status-box { max-width:60vw; margin:1vh auto 0; padding:0.7rem; border-radius:0.5rem; font-size:clamp(1rem,1.6vw,1.7rem); font-weight:bold; text-align:center; }
-    .status-connected { background: rgba(0,255,136,0.2); border:2px solid #00ff88; color:#00ff88; text-shadow:0 0 15px rgba(0,255,136,0.7); }
-    .status-disconnected { background: rgba(255,0,60,0.2); border:2px solid #ff003c; color:#ff4d6d; }
-    .table-container { flex-grow:1; overflow-y:auto; scroll-behavior:smooth; margin:2vh auto; width:95%; }
-    .table { font-size:clamp(1rem,2vw,2.5rem); border-color:#00bfff; color:#fff; background:rgba(0,60,150,0.3); backdrop-filter:blur(8px); min-width:1500px; }
-    .table thead { background: linear-gradient(90deg,#001f7a 0%,#0048ff 100%); color:#fff; text-transform:uppercase; border-bottom:0.5vh solid #ffc107; position:sticky; top:0; z-index:10; font-size:clamp(1rem,1.6vw,2rem); }
-    .table th,.table td { text-align:center; vertical-align:middle; padding:1.2rem; }
-    .table-success { background-color:rgba(0,255,136,0.25)!important; color:#00ff9c; font-weight:700; }
-    .table-info { background-color:rgba(0,229,255,0.25)!important; color:#00d8ff; font-weight:700; }
-    tr:hover { background-color:rgba(255,255,255,0.08); }
-    .resultados-header { position:sticky; top:0; background:radial-gradient(circle at top, rgba(0,10,60,0.95), rgba(0,10,30,0.9)); padding:1vh 0; text-align:center; font-size:clamp(1.6rem,3vw,3rem); color:#ffc107; text-transform:uppercase; font-weight:700; z-index:20; box-shadow:0 6px 12px rgba(0,0,0,0.5); }
-    .contador-actualizacion { font-size:clamp(1rem,1.5vw,1.6rem); color:#00e6ff; text-shadow:0 0 8px rgba(0,230,255,0.9); margin-top:0.5vh; }
+    body {
+        background: radial-gradient(circle at center, #000428 0%, #004e92 100%);
+        color: #ffffff;
+        font-family: 'Rajdhani', sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .container-tv {
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    /* ===== CABECERA ===== */
+    header {
+        position: relative;
+        background: linear-gradient(90deg, #002bff 0%, #001242 100%);
+        color: white;
+        padding: 2vh 5vw;
+        border-bottom: 0.5vh solid #ffc107;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .logo-izquierdo {
+        position: absolute;
+        left: 3vw;
+        height: clamp(60px, 10vh, 130px);
+        width: auto;
+        filter: drop-shadow(0 0 10px rgba(255,255,255,0.7));
+    }
+
+    h1.display-5 {
+        font-size: clamp(2rem, 4vw, 4.5rem);
+        text-transform: uppercase;
+        letter-spacing: 0.2vw;
+        text-shadow: 0 0 25px rgba(255,255,255,0.9);
+        margin: 0;
+        text-align: center;
+    }
+
+    /* ===== LOGO CENTRAL ===== */
+    .logo-trasona {
+        display: block;
+        margin: 5vh auto 4vh;
+        height: clamp(180px, 35vh, 380px);
+        width: auto;
+        filter: drop-shadow(0 0 30px rgba(255,255,255,0.8));
+        animation: aparecerLogo 1.5s ease-out;
+    }
+
+    @keyframes aparecerLogo {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    /* ===== ESTADOS ===== */
+    .status-connected {
+        background: rgba(0,255,136,0.2);
+        border: 2px solid #00ff88;
+        color: #00ff88;
+        font-weight: bold;
+        text-shadow: 0 0 15px rgba(0,255,136,0.7);
+        font-size: clamp(1rem, 1.8vw, 1.8rem);
+        margin-top: 1vh;
+    }
+
+    .status-disconnected {
+        background: rgba(255,0,60,0.2);
+        border: 2px solid #ff003c;
+        color: #ff4d6d;
+    }
+
+    .status-waiting {
+        background: rgba(255,255,0,0.2);
+        border: 2px solid #ffe600;
+        color: #ffe600;
+    }
+
+    /* ===== TABLAS ===== */
+    .table-container {
+        flex-grow: 1;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        margin: 2vh auto;
+        width: 95%;
+        border-radius: 1vh;
+    }
+
+    .table {
+        font-size: clamp(1rem, 2vw, 2.5rem);
+        border-color: #00bfff;
+        color: #ffffff;
+        background: rgba(0, 60, 150, 0.3);
+        backdrop-filter: blur(8px);
+        min-width: 1500px;
+    }
+
+    .table thead {
+        background: linear-gradient(90deg, #001f7a 0%, #0048ff 100%);
+        color: #fff;
+        text-transform: uppercase;
+        border-bottom: 0.5vh solid #ffc107;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        font-size: clamp(1rem, 1.6vw, 2rem);
+    }
+
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+        padding: 1.2rem;
+    }
+
+    .table-success { background-color: rgba(0,255,136,0.25) !important; color: #00ff9c; font-weight: 700; }
+    .table-info { background-color: rgba(0,229,255,0.25) !important; color: #00d8ff; font-weight: 700; }
+    tr:hover { background-color: rgba(255,255,255,0.08); }
+
+    /* ===== CABECERA RESULTADOS ===== */
+    .resultados-header {
+        position: sticky;
+        top: 0;
+        background: radial-gradient(circle at top, rgba(0,10,60,0.95), rgba(0,10,30,0.9));
+        padding: 1vh 0;
+        text-align: center;
+        font-size: clamp(1.6rem, 3vw, 3rem);
+        color: #ffc107;
+        text-transform: uppercase;
+        font-weight: 700;
+        z-index: 20;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+    }
+
+    .contador-actualizacion {
+        font-size: clamp(1rem, 1.5vw, 1.6rem);
+        color: #00e6ff;
+        text-shadow: 0 0 8px rgba(0,230,255,0.9);
+        margin-top: 0.5vh;
+    }
 </style>
 </head>
 <body>
-
-<!-- MODAL DE ACCESO HA SIDO ELIMINADO -->
-
 <div class="container-tv">
-  <header>
-    <img src="shooting_logo.png" alt="Logo Izquierdo" class="logo-izquierdo">
-    <div class="text-center">
-      <h1 class="display-5 fw-bold">Resultados en Directo</h1>
-      <div id="infoActualizacion" class="status-box rounded mx-auto" style="display:none;"></div>
+
+    <!-- CABECERA -->
+    <header>
+        <img src="shooting_logo.png" alt="Logo Izquierdo" class="logo-izquierdo">
+        <div class="text-center">
+            <h1 class="display-5 fw-bold">Resultados en Directo</h1>
+            <div id="infoActualizacion" class="status-waiting mt-3 p-2 rounded mx-auto" style="max-width:60vw;">
+                <div class="d-flex align-items-center justify-content-center">
+                    <div class="spinner-border spinner-border-sm me-3" role="status"></div>
+                    <span>Buscando canal de competición...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- LOGO CENTRAL -->
+    <div id="logoCentral">
+        <img src="trasona-logo.png" alt="Club de Tiro Ensidesa Trasona" class="logo-trasona">
     </div>
-  </header>
 
-  <div id="logoCentral">
-    <img src="trasona-logo.png" alt="Club de Tiro Ensidesa Trasona" class="logo-trasona">
-  </div>
-
-  <main id="contenido">
-    <div class="table-container" id="tablasContainer" style="display:none;"></div>
-  </main>
+    <!-- TABLA -->
+    <main id="contenido">
+        <div class="table-container" id="tablasContainer" style="display: none;"></div>
+    </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-const INTERVALO_ACTUALIZACION = 15000; // Actualizar cada 15 segundos
+const CANAL_UNIVERSAL_ID = '68e19505ae596e708f063783';
+const INTERVALO_ACTUALIZACION = 400000; // 400 segundos = 6 minutos 40 segundos
 let ultimoContenido = '';
-let actualizacionIntervalo;
+let tiempoRestante = INTERVALO_ACTUALIZACION / 1000;
+let contadorIntervalo;
 
-// --- Referencias a elementos del DOM ---
-const infoElement = document.getElementById('infoActualizacion');
-const logoCentral = document.getElementById('logoCentral');
-const tablasContainer = document.getElementById('tablasContainer');
+async function consultarCanal() {
+    const infoElement = document.getElementById('infoActualizacion');
+    const logoCentral = document.getElementById('logoCentral');
+    const tablasContainer = document.getElementById('tablasContainer');
 
-// --- Carga automática al iniciar la página ---
-document.addEventListener('DOMContentLoaded', () => {
-    iniciarCargaDeResultados();
-});
-
-function iniciarCargaDeResultados() {
-  consultarResultados();
-  actualizacionIntervalo = setInterval(consultarResultados, INTERVALO_ACTUALIZACION);
-}
-
-async function consultarResultados() {
     try {
-        // Añadimos un parámetro para evitar problemas de caché del navegador
-        const url = '/api/tabla?cache_bust=' + new Date().getTime();
-        const respuesta = await fetch(url);
-        
-        if (!respuesta.ok) {
-            throw new Error(`Error de conexión: ${respuesta.status}`);
-        }
-        
+        const respuesta = await fetch(`https://api.jsonbin.io/v3/b/${CANAL_UNIVERSAL_ID}/latest`);
+        if (!respuesta.ok) throw new Error(`Error ${respuesta.status}`);
         const contenidoTexto = await respuesta.text();
-
-        // Si los datos no han cambiado, no hacemos nada para evitar parpadeos
-        if (contenidoTexto === ultimoContenido) {
-            return;
-        }
+        if (contenidoTexto === ultimoContenido) return;
         ultimoContenido = contenidoTexto;
-
-        const datos = JSON.parse(contenidoTexto);
-        if (!datos || !datos.datos) {
-            throw new Error("El formato de los datos recibidos es incorrecto.");
-        }
-
-        // Ocultamos el logo inicial y mostramos la tabla de resultados
-        logoCentral.style.display = 'none';
-        tablasContainer.style.display = 'block';
-        infoElement.style.display = 'block';
+        const datos = JSON.parse(contenidoTexto).record;
+        if (!datos || !datos.datos) return;
 
         mostrarTablaUnificada(datos);
+        logoCentral.style.display = 'none';
+        tablasContainer.style.display = 'block';
 
-        // Actualizamos el estado a "EN DIRECTO"
-        infoElement.className = 'status-box status-connected';
+        infoElement.className = 'status-connected p-3 rounded mx-auto';
         infoElement.innerHTML = `
-          <div class="text-center">
-            <span class="fw-bold"><i class="bi bi-check-circle-fill"></i> EN DIRECTO</span><br>
-            <small>${datos.disciplina.toUpperCase()}</small>
-            <div class="contador-actualizacion" id="contador"></div>
-          </div>`;
-        
+            <div class="text-center">
+                <span class="fw-bold">✅ EN DIRECTO</span><br>
+                <small>${datos.disciplina.toUpperCase()}</small>
+                <div class="contador-actualizacion" id="contador">Próxima actualización en: —</div>
+            </div>`;
         reiniciarContador();
-
     } catch (error) {
-        // Mostramos un mensaje de error claro si algo falla
-        infoElement.style.display = 'block';
-        infoElement.className = 'status-box status-disconnected';
-        infoElement.innerHTML = `<div class="text-center">❌ ${error.message}</div>`;
-        
-        // Opcional: Si hay un error, dejamos de intentar actualizar para no sobrecargar
-        if (actualizacionIntervalo) {
-            clearInterval(actualizacionIntervalo);
-        }
+        console.error("❌ Error al buscar datos:", error);
+        infoElement.className = 'status-disconnected p-3 rounded mx-auto';
+        infoElement.innerHTML = `<div class="text-center">❌ Error al recibir datos. Verificando...</div>`;
     }
 }
 
-function mostrarTablaUnificada(datos) {
-  const resultados = datos.datos || [];
-  const container = document.getElementById('tablasContainer');
-
-  if (!resultados.length) {
-    container.innerHTML = `<h2 class="text-center text-warning mt-5">Esperando datos de la competición...</h2>`;
-    return;
-  }
-
-  const numSeries = resultados[0].series ? resultados[0].series.length : (resultados[0].parciales?.length || 0);
-  let tablaHTML = `
-  <div class="resultados-header">${datos.disciplina}</div>
-  <div class="scroll-animado table-wrapper">
-  <table class="table table-dark table-bordered table-hover">
-    <thead><tr>
-      <th>Pos.</th><th>Puesto</th><th>Nombre</th>
-      ${Array.from({ length: numSeries }, (_, i) => `<th>S${i+1}</th>`).join('')}
-      <th>Total</th><th>X</th>
-    </tr></thead><tbody>`;
-
-  resultados.sort((a, b) => parseFloat(b.total) - parseFloat(a.total) || parseFloat(b.xTotal) - parseFloat(a.xTotal));
-  
-  resultados.forEach((r, index) => {
-    const series = r.series || r.parciales || [];
-    tablaHTML += `<tr>
-      <td class="fw-bold text-warning">${index + 1}º</td>
-      <td>Puesto ${r.puesto || '-'}</td>
-      <td>${r.nombre || 'Anónimo'}</td>
-      ${series.map(s => `<td>${s !== null ? s : '-'}</td>`).join('')}
-      <td class="table-success fw-bold">${r.total}</td>
-      <td class="table-info fw-bold">${r.xTotal}</td>
-    </tr>`;
-  });
-
-  tablaHTML += '</tbody></table></div>';
-  container.innerHTML = tablaHTML;
+function reiniciarContador() {
+    tiempoRestante = INTERVALO_ACTUALIZACION / 1000;
+    clearInterval(contadorIntervalo);
+    actualizarContador();
+    contadorIntervalo = setInterval(() => {
+        tiempoRestante--;
+        if (tiempoRestante <= 0) {
+            consultarCanal();
+        } else {
+            actualizarContador();
+        }
+    }, 1000);
 }
 
-// --- Lógica del contador de actualización (sin cambios) ---
-let contadorIntervalo;
-let tiempoRestante;
-
-function reiniciarContador() {
-  tiempoRestante = INTERVALO_ACTUALIZACION / 1000;
-  clearInterval(contadorIntervalo);
-
-  const actualizarTexto = () => {
+function actualizarContador() {
     const contador = document.getElementById('contador');
     if (!contador) return;
     const minutos = Math.floor(tiempoRestante / 60);
     const segundos = tiempoRestante % 60;
-    contador.textContent = `Próxima actualización en: ${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`;
-    if (tiempoRestante > 0) {
-        tiempoRestante--;
+    contador.textContent = `Próxima actualización en: ${minutos}m ${segundos}s`;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    consultarCanal();
+    setInterval(consultarCanal, INTERVALO_ACTUALIZACION);
+});
+
+function mostrarTablaUnificada(datos) {
+    const container = document.getElementById('tablasContainer');
+    const resultados = datos.datos || [];
+
+    if (!resultados.length) {
+        container.innerHTML = `<h2 class="text-center text-warning">Sin datos disponibles</h2>`;
+        return;
     }
-  };
-  
-  actualizarTexto();
-  contadorIntervalo = setInterval(actualizarTexto, 1000);
+
+    const numSeries = resultados[0].series ? resultados[0].series.length : resultados[0].parciales?.length || 0;
+    let tablaHTML = `
+    <div class="resultados-header">${datos.disciplina}</div>
+    <div class="scroll-animado table-wrapper">
+    <table class="table table-dark table-bordered table-hover">
+        <thead><tr>
+            <th>Pos.</th><th>Puesto</th>
+            ${Array.from({ length: numSeries }, (_, i) => `<th>S${i+1}</th>`).join('')}
+            <th>Total</th><th>X</th>
+        </tr></thead><tbody>`;
+
+    resultados.forEach((r, index) => {
+        const series = r.series || r.parciales || [];
+        tablaHTML += `<tr>
+            <td class="fw-bold text-warning">${index + 1}º</td>
+            <td>Puesto ${r.puesto}</td>
+            ${series.map(s => `<td>${s}</td>`).join('')}
+            <td class="table-success fw-bold">${r.total}</td>
+            <td class="table-info fw-bold">${r.xTotal}</td>
+        </tr>`;
+    });
+
+    tablaHTML += '</tbody></table></div>';
+    container.innerHTML = tablaHTML;
 }
 </script>
 </body>
