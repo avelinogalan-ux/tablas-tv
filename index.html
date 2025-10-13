@@ -77,7 +77,7 @@
     // ===================================================================================
     // --- CONFIGURACIÓN SIMPLIFICADA ---
     // ===================================================================================
-    const DATOS_BIN_ID ='68ed56de43b1c97be96636cc'; 
+    const DATOS_BIN_ID = 'ID_DE_TU_UNICO_BIN_PUBLICO'; // <-- PEGA AQUÍ EL ID DE TU ÚNICO BIN
     // ¡NO SE NECESITAN CLAVES AQUÍ!
     // ===================================================================================
 
@@ -106,7 +106,7 @@
         }
     });
 
-    // --- LÓGICA DE ACCESO (MODIFICADA) ---
+    // --- LÓGICA DE ACCESO (CORREGIDA) ---
     formAcceso.addEventListener('submit', async (e) => {
         e.preventDefault();
         const codigoIntroducido = accessCodeInput.value.trim();
@@ -115,19 +115,22 @@
         errorMessage.textContent = '';
 
         try {
-            // Petición al ÚNICO BIN PÚBLICO
             const response = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_BIN_ID}/latest`);
             if (!response.ok) throw new Error('No se pudo contactar con el servidor de resultados.');
             
-            datosCargados = (await response.json()).record;
-            const codigoCorrecto = datosCargados.codigo_acceso;
+            const data = (await response.json()).record;
+            const codigoCorrecto = data.codigo_acceso;
 
             if (codigoIntroducido === codigoCorrecto) {
                 sessionStorage.setItem('acceso_concedido_tv', 'true');
                 modalAcceso.hide();
                 mainContent.style.display = 'flex';
-                // Usamos los datos que ya hemos cargado para la primera visualización
-                mostrarResultados(datosCargados); 
+                
+                // **** ¡CORRECCIÓN CLAVE! ****
+                // Ahora, la primera vez que mostramos los resultados, lo hacemos con la función
+                // que sabe cómo manejar todo el objeto de datos.
+                mostrarResultados(data); 
+                
                 // Iniciamos las actualizaciones periódicas
                 setInterval(consultarResultados, INTERVALO_ACTUALIZACION);
             } else {
@@ -141,7 +144,7 @@
         }
     });
     
-    // --- LÓGICA DE CARGA PERIÓDICA (MODIFICADA) ---
+    // --- LÓGICA DE CARGA PERIÓDICA ---
     function iniciarCargaDeResultados() {
         consultarResultados(); // Carga inicial
         setInterval(consultarResultados, INTERVALO_ACTUALIZACION);
@@ -157,6 +160,7 @@
         ultimoContenido = contenidoTexto;
 
         const datos = JSON.parse(contenidoTexto).record;
+        // Llamamos siempre a la misma función para procesar los datos
         mostrarResultados(datos);
       } catch (error) {
         infoElement.style.display = 'block';
@@ -165,18 +169,21 @@
       }
     }
 
-    // --- FUNCIÓN PARA MOSTRAR LOS DATOS (MODIFICADA) ---
+    // --- FUNCIÓN PARA PROCESAR Y MOSTRAR LOS DATOS ---
     function mostrarResultados(datos) {
         if (!datos || !datos.datos) {
             infoElement.style.display = 'block';
             infoElement.className = 'status-box status-disconnected';
-            infoElement.innerHTML = `<div class="text-center">❌ Formato de datos incorrecto.</div>`;
+            infoElement.innerHTML = `<div class="text-center">❌ Formato de datos incorrecto en el Bin.</div>`;
             return;
         }
         logoCentral.style.display = 'none';
         tablasContainer.style.display = 'block';
         infoElement.style.display = 'block';
-        mostrarTablaUnificada(datos);
+
+        // Aquí pasamos el objeto de datos a la función que sabe dibujar la tabla
+        mostrarTablaUnificada(datos); 
+        
         infoElement.className = 'status-box status-connected';
         infoElement.innerHTML = `
           <div class="text-center">
@@ -205,7 +212,9 @@
         container.innerHTML = tablaHTML;
     }
 </script>
+
 </body>
 </html>
+
 
 
