@@ -1,9 +1,5 @@
 // /api/tabla.js
-import fetch from "node-fetch";
-
-// Configura estas variables de entorno en Vercel
-const DATOS_COMPETICION_BIN_ID = process.env.DATOS_COMPETICION_BIN_ID;
-const JSONBIN_API_KEY = process.env.JSONBIN_API_KEY;
+// Node 18+ ya tiene fetch nativo, no hace falta node-fetch
 
 export default async function handler(req, res) {
   try {
@@ -13,6 +9,9 @@ export default async function handler(req, res) {
       return;
     }
 
+    const DATOS_COMPETICION_BIN_ID = process.env.DATOS_COMPETICION_BIN_ID;
+    const JSONBIN_API_KEY = process.env.JSONBIN_API_KEY;
+
     if (!DATOS_COMPETICION_BIN_ID || !JSONBIN_API_KEY) {
       res.status(500).json({ error: "Variables de entorno no configuradas" });
       return;
@@ -21,14 +20,12 @@ export default async function handler(req, res) {
     const url = `https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`;
 
     const response = await fetch(url, {
-      method: "GET",
       headers: {
         "X-Master-Key": JSONBIN_API_KEY,
         "X-Force-Update": "true",
       },
     });
 
-    // Manejo de errores comunes
     if (response.status === 401) {
       res.status(401).json({ error: "No autorizado: API Key inválida" });
       return;
@@ -40,13 +37,10 @@ export default async function handler(req, res) {
     }
 
     if (!response.ok) {
-      res
-        .status(response.status)
-        .json({ error: `Error al obtener datos: ${response.statusText}` });
+      res.status(response.status).json({ error: `Error al obtener datos: ${response.statusText}` });
       return;
     }
 
-    // Obtener JSON y devolverlo
     const data = await response.json();
     res.status(200).json(data.record);
 
