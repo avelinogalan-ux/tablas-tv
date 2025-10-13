@@ -1,6 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV - Conexión a Resultados</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background: radial-gradient(circle at center, #000428 0%, #004e92 100%); color: #fff; font-family: 'Rajdhani', sans-serif; margin:0; padding:0; overflow:hidden; }
+        .container-tv { width:100%; height:100vh; display:flex; flex-direction:column; justify-content:flex-start; }
+        header { position:relative; background:linear-gradient(90deg,#002bff 0%,#001242 100%); padding:1.5vh 3vw; border-bottom:0.5vh solid #ffc107; display:flex; align-items:center; justify-content:center; }
+        .logo-izquierdo { position:absolute; left:3vw; height:clamp(60px,10vh,130px); filter:drop-shadow(0 0 10px rgba(255,255,255,0.7)); }
+        h1.display-5 { font-size:clamp(2rem,4vw,4.5rem); text-transform:uppercase; text-shadow:0 0 25px rgba(255,255,255,0.9); margin:0; }
+        .logo-trasona { display:block; margin:5vh auto 4vh; height:clamp(180px,35vh,380px); width:auto; filter:drop-shadow(0 0 30px rgba(255,255,255,0.8)); animation:aparecerLogo 1.5s ease-out; }
+        @keyframes aparecerLogo { from {opacity:0; transform:scale(0.8);} to {opacity:1; transform:scale(1);} }
+        .status-box { max-width:60vw; margin:1vh auto 0; padding:0.7rem; border-radius:0.5rem; font-size:clamp(1rem,1.6vw,1.7rem); font-weight:bold; text-align:center; }
+        .status-connected { background: rgba(0,255,136,0.2); border:2px solid #00ff88; color:#00ff88; text-shadow:0 0 15px rgba(0,255,136,0.7); }
+        .status-disconnected { background: rgba(255,0,60,0.2); border:2px solid #ff003c; color:#ff4d6d; }
+        .table-container { flex-grow:1; overflow-y:auto; scroll-behavior:smooth; margin:2vh auto; width:95%; }
+        .table { font-size:clamp(1rem,2vw,2.5rem); border-color:#00bfff; color:#fff; background:rgba(0,60,150,0.3); backdrop-filter:blur(8px); min-width:1500px; }
+        .table thead { background: linear-gradient(90deg,#001f7a 0%,#0048ff 100%); color:#fff; text-transform:uppercase; border-bottom:0.5vh solid #ffc107; position:sticky; top:0; z-index:10; font-size:clamp(1rem,1.6vw,2rem); }
+        .table th,.table td { text-align:center; vertical-align:middle; padding:1.2rem; }
+        .table-success { background-color:rgba(0,255,136,0.25)!important; color:#00ff9c; font-weight:700; }
+        .table-info { background-color:rgba(0,229,255,0.25)!important; color:#00d8ff; font-weight:700; }
+        tr:hover { background-color:rgba(255,255,255,0.08); }
+        .resultados-header { position:sticky; top:0; background:radial-gradient(circle at top, rgba(0,10,60,0.95), rgba(0,10,30,0.9)); padding:1vh 0; text-align:center; font-size:clamp(1.6rem,3vw,3rem); color:#ffc107; text-transform:uppercase; font-weight:700; z-index:20; box-shadow:0 6px 12px rgba(0,0,0,0.5); }
+        .contador-actualizacion { font-size:clamp(1rem,1.5vw,1.6rem); color:#00e6ff; text-shadow:0 0 8px rgba(0,230,255,0.9); margin-top:0.5vh; }
+    </style>
+</head>
+<body>
+
+<!-- MODAL DE ACCESO -->
+<div class="modal fade" id="modalAcceso" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-white" style="backdrop-filter: blur(10px); background: rgba(0,20,50,0.7) !important;">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title">Conexión a Resultados en Directo</h5>
+      </div>
+      <div class="modal-body text-center">
+        <p>Introduce el código de acceso de 4 dígitos.</p>
+        <form id="formAcceso">
+          <input type="text" id="accessCodeInput" class="form-control form-control-lg text-center my-3" maxlength="4" placeholder="----" required>
+          <button type="submit" class="btn btn-primary btn-lg w-100">
+            <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+            Conectar
+          </button>
+          <div id="errorMessage" class="text-danger mt-3" style="height:24px;"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contenido principal -->
+<div id="mainContent" class="container-tv" style="display: none; flex-direction: column;">
+  <header>
+    <img src="shooting_logo.png" alt="Logo Izquierdo" class="logo-izquierdo">
+    <div class="text-center">
+      <h1 class="display-5 fw-bold">Resultados en Directo</h1>
+      <div id="infoActualizacion" class="status-box rounded mx-auto" style="display:none;"></div>
+    </div>
+  </header>
+  <div id="logoCentral">
+    <img src="trasona-logo.png" alt="Club de Tiro Ensidesa Trasona" class="logo-trasona">
+  </div>
+  <main id="contenido">
+    <div class="table-container" id="tablasContainer" style="display:none;"></div>
+  </main>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // --- CONFIGURACIÓN ---    const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc'; // Tu ID de Bin público
+    // --- CONFIGURACIÓN ---
+    const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc'; // El ID de tu único Bin público
     const INTERVALO_ACTUALIZACION = 15000; // 15 segundos
     let ultimoContenido = '';
 
@@ -39,9 +112,9 @@
             
             const data = (await response.json()).record;
             
-            // La primera vez, el Bin DEBE tener el campo "codigo_acceso"
+            // Verificación estricta SOLO en el login inicial
             if (typeof data.codigo_acceso === 'undefined') {
-                 throw new Error('El formato inicial del Bin es incorrecto. Falta "codigo_acceso".');
+                 throw new Error('El formato inicial del Bin es incorrecto. Falta la propiedad "codigo_acceso".');
             }
             const codigoCorrecto = String(data.codigo_acceso);
 
@@ -49,9 +122,8 @@
                 sessionStorage.setItem('acceso_concedido_tv', 'true');
                 modalAcceso.hide();
                 mainContent.style.display = 'flex';
-                // Mostramos los datos y empezamos a actualizar
-                mostrarResultados(data); 
-                iniciarCargaDeResultados();
+                mostrarResultados(data);
+                iniciarCargaDeResultados(); // Inicia las actualizaciones periódicas
             } else {
                 throw new Error('Código de acceso incorrecto.');
             }
@@ -79,10 +151,8 @@
         ultimoContenido = contenidoTexto;
 
         const datos = JSON.parse(contenidoTexto).record;
-        // La función que muestra los resultados se encarga de todo
         mostrarResultados(datos);
       } catch (error) {
-        // Gestionar el error de forma silenciosa o mostrar un pequeño indicador
         console.error("Error en actualización periódica:", error.message);
         infoElement.className = 'status-box status-disconnected';
         infoElement.innerHTML = `<div class="text-center">⚠️ ${error.message}</div>`;
@@ -91,7 +161,7 @@
 
     // --- FUNCIÓN INTELIGENTE PARA PROCESAR Y MOSTRAR DATOS ---
     function mostrarResultados(datos) {
-        // ¡CAMBIO CLAVE! Esta función ya no exige "codigo_acceso"
+        // Esta función ya no comprueba 'codigo_acceso', es más flexible.
         if (!datos || !datos.datos) {
             infoElement.style.display = 'block';
             infoElement.className = 'status-box status-disconnected';
@@ -102,7 +172,7 @@
         // "Traduce" los datos que llegan, añadiendo el nombre si falta.
         const datosTraducidos = datos.datos.map(tirador => ({
             ...tirador,
-            nombre: tirador.nombre || `Tirador ${tirador.puesto}`
+            nombre: tirador.nombre || `Tirador ${tirador.puesto}` // Genera un nombre si no existe
         }));
 
         const datosParaTabla = {
@@ -114,7 +184,7 @@
         logoCentral.style.display = 'none';
         tablasContainer.style.display = 'block';
         infoElement.style.display = 'block';
-        mostrarTablaUnificada(datosParaTabla); 
+        mostrarTablaUnificada(datosParaTabla);
         
         // Actualiza el estado de la conexión
         infoElement.className = 'status-box status-connected';
@@ -126,7 +196,7 @@
           </div>`;
     }
 
-    // --- FUNCIÓN PARA DIBUJAR LA TABLA (SIN CAMBIOS) ---
+    // --- FUNCIÓN PARA DIBUJAR LA TABLA ---
     function mostrarTablaUnificada(datos) {
         const resultados = datos.datos || [];
         const container = document.getElementById('tablasContainer');
@@ -134,7 +204,6 @@
             container.innerHTML = `<h2 class="text-center text-warning mt-5">Esperando resultados...</h2>`;
             return;
         }
-        // Lógica para crear el HTML de la tabla...
         const numSeries = resultados[0].series ? resultados[0].series.length : (resultados[0].parciales?.length || 0);
         let tablaHTML = `<div class="resultados-header">${datos.disciplina}</div><div class="scroll-animado table-wrapper"><table class="table table-dark table-bordered table-hover"><thead><tr><th>Pos.</th><th>Puesto</th><th>Nombre</th>${Array.from({ length: numSeries }, (_, i) => `<th>S${i+1}</th>`).join('')}<th>Total</th><th>X</th></tr></thead><tbody>`;
         resultados.sort((a,b) => parseFloat(b.total)-parseFloat(a.total) || parseFloat(b.xTotal)-parseFloat(a.xTotal));
@@ -146,3 +215,6 @@
         container.innerHTML = tablaHTML;
     }
 </script>
+
+</body>
+</html>
