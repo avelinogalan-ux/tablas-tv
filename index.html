@@ -83,10 +83,9 @@ const DATOS_COMPETICION_BIN_ID = 'TU_BIN_ID_DE_LOS_RESULTADOS';  // ⬅️ Bin I
 // ========================================================================
 
 const INTERVALO_ACTUALIZACION = 400000; // 6 min largos
-const TIEMPO_EXPIRACION_ACCESO = 3 * 60 * 60 * 1000; // 3 horas en milisegundos
 let ultimoContenido = '';
 let actualizacionIntervalo;
-let estadoAnterior = null; // Para detectar cambios de estado
+let estadoAnterior = null;
 
 // --- ELEMENTOS DEL DOM ---
 const modalAcceso = new bootstrap.Modal('#modalAcceso');
@@ -99,6 +98,10 @@ const logoCentral = document.getElementById('logoCentral');
 const tablasContainer = document.getElementById('tablasContainer');
 
 document.addEventListener('DOMContentLoaded', () => {
+    // ⭐⭐ FORZAR MODAL SIEMPRE - ELIMINAR MEMORIA ⭐⭐
+    sessionStorage.clear();
+    localStorage.clear();
+    
     // Verificar que las credenciales estén configuradas
     if (!JSONBIN_API_KEY || JSONBIN_API_KEY === 'TU_API_KEY_AQUI') {
         errorMessage.textContent = 'Error: Configura la API Key de JSONBin en el código.';
@@ -106,24 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Verificar si el acceso ha expirado por tiempo
-    if (sessionStorage.getItem('acceso_concedido') === 'true') {
-        const tiempoAcceso = parseInt(sessionStorage.getItem('tiempo_acceso') || '0');
-        const tiempoActual = Date.now();
-        
-        // Si han pasado más de 3 horas, expirar el acceso
-        if (tiempoActual - tiempoAcceso > TIEMPO_EXPIRACION_ACCESO) {
-            sessionStorage.clear();
-            modalAcceso.show();
-            return;
-        }
-        
-        // Restaurar el estado anterior y continuar
-        estadoAnterior = sessionStorage.getItem('estado_competicion');
-        iniciarCargaDeResultados();
-    } else {
-        modalAcceso.show();
-    }
+    // ⭐⭐ SIEMPRE MOSTRAR EL MODAL ⭐⭐
+    modalAcceso.show();
 });
 
 formAcceso.addEventListener('submit', async (e) => {
@@ -162,8 +149,7 @@ formAcceso.addEventListener('submit', async (e) => {
 
         // 2. Comparar los códigos
         if (codigoIntroducido === codigoCorrecto) {
-            sessionStorage.setItem('acceso_concedido', 'true');
-            sessionStorage.setItem('tiempo_acceso', Date.now().toString());
+            // ⭐ NO GUARDAR EN SESSIONSTORAGE - SIEMPRE PEDIR CÓDIGO
             modalAcceso.hide();
             iniciarCargaDeResultados();
         } else {
@@ -202,26 +188,19 @@ async function consultarResultados() {
         if (!datos || !datos.datos) throw new Error("El formato de los datos no es correcto.");
 
         // ⭐ DETECTAR REINICIO: cuando el admin cambia a "modo espera"
-        const estadoActual = datos.estado || 'activo'; // Por defecto 'activo' si no existe el campo
+        const estadoActual = datos.estado || 'activo';
         
         if (estadoAnterior === null) {
-            // Primera carga: guardar el estado inicial
             estadoAnterior = estadoActual;
-            sessionStorage.setItem('estado_competicion', estadoActual);
         } else if (estadoAnterior !== 'espera' && estadoActual === 'espera') {
             // ¡El admin cambió a modo espera! = Nueva tirada comenzando
-            sessionStorage.clear();
             clearInterval(actualizacionIntervalo);
             alert('Los datos han sido reiniciados para una nueva tirada. Por favor, introduce el código de acceso nuevamente.');
             location.reload();
             return;
         }
         
-        // Actualizar el estado para la próxima comparación
-        if (estadoAnterior !== estadoActual) {
-            estadoAnterior = estadoActual;
-            sessionStorage.setItem('estado_competicion', estadoActual);
-        }
+        estadoAnterior = estadoActual;
 
         // Ocultar logo y mostrar la tabla
         logoCentral.style.display = 'none';
