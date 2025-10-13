@@ -115,7 +115,7 @@
         errorMessage.textContent = '';
 
         try {
-            const response = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_BIN_ID}/latest`);
+            const response = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
             if (!response.ok) throw new Error('No se pudo contactar con el servidor de resultados.');
             
             const data = (await response.json()).record;
@@ -152,7 +152,7 @@
 
     async function consultarResultados() {
       try {
-        const respuesta = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_BIN_ID}/latest`);
+        const respuesta = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
         if (!respuesta.ok) throw new Error(`Error de red: ${respuesta.status}`);
         
         const contenidoTexto = await respuesta.text();
@@ -215,6 +215,7 @@
 
 </body>
 </html>
+
 
 
 
