@@ -3,56 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TV - Resultados Tiro Deportivo</title>
+<title>TV - Resultados en Directo</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <style>
-body { background: radial-gradient(circle at center, #000428 0%, #004e92 100%); color: #fff; font-family: 'Rajdhani', sans-serif; margin:0; padding:0; overflow:hidden; }
-.container-tv { width:100%; height:100vh; display:flex; flex-direction:column; justify-content:flex-start; }
-header { position:relative; background:linear-gradient(90deg,#002bff 0%,#001242 100%); padding:1.5vh 3vw; border-bottom:0.5vh solid #ffc107; display:flex; align-items:center; justify-content:center; }
-.logo-izquierdo { position:absolute; left:3vw; height:clamp(60px,10vh,130px); filter:drop-shadow(0 0 10px rgba(255,255,255,0.7)); }
-h1.display-5 { font-size:clamp(2rem,4vw,4.5rem); text-transform:uppercase; text-shadow:0 0 25px rgba(255,255,255,0.9); margin:0; }
-.logo-trasona { display:block; margin:5vh auto 4vh; height:clamp(180px,35vh,380px); width:auto; filter:drop-shadow(0 0 30px rgba(255,255,255,0.8)); animation:aparecerLogo 1.5s ease-out; }
-@keyframes aparecerLogo { from {opacity:0; transform:scale(0.8);} to {opacity:1; transform:scale(1);} }
-.status-box { max-width:60vw; margin:1vh auto 0; padding:0.7rem; border-radius:0.5rem; font-size:clamp(1rem,1.6vw,1.7rem); font-weight:bold; text-align:center; }
-.status-connected { background: rgba(0,255,136,0.2); border:2px solid #00ff88; color:#00ff88; text-shadow:0 0 15px rgba(0,255,136,0.7); }
-.status-disconnected { background: rgba(255,0,60,0.2); border:2px solid #ff003c; color:#ff4d6d; }
-.table-container { flex-grow:1; overflow-y:auto; scroll-behavior:smooth; margin:2vh auto; width:95%; }
-.table { font-size:clamp(1rem,2vw,2.5rem); border-color:#00bfff; color:#fff; background:rgba(0,60,150,0.3); backdrop-filter:blur(8px); min-width:1500px; }
-.table thead { background: linear-gradient(90deg,#001f7a 0%,#0048ff 100%); color:#fff; text-transform:uppercase; border-bottom:0.5vh solid #ffc107; position:sticky; top:0; z-index:10; font-size:clamp(1rem,1.6vw,2rem); }
-.table th,.table td { text-align:center; vertical-align:middle; padding:1.2rem; }
-.table-success { background-color:rgba(0,255,136,0.25)!important; color:#00ff9c; font-weight:700; }
-.table-info { background-color:rgba(0,229,255,0.25)!important; color:#00d8ff; font-weight:700; }
-tr:hover { background-color:rgba(255,255,255,0.08); }
-.resultados-header { position:sticky; top:0; background:radial-gradient(circle at top, rgba(0,10,60,0.95), rgba(0,10,30,0.9)); padding:1vh 0; text-align:center; font-size:clamp(1.6rem,3vw,3rem); color:#ffc107; text-transform:uppercase; font-weight:700; z-index:20; box-shadow:0 6px 12px rgba(0,0,0,0.5); }
-.contador-actualizacion { font-size:clamp(1rem,1.5vw,1.6rem); color:#00e6ff; text-shadow:0 0 8px rgba(0,230,255,0.9); margin-top:0.5vh; }
+    /* El CSS se mantiene igual para conservar el diseño */
+    body { background: radial-gradient(circle at center, #000428 0%, #004e92 100%); color: #fff; font-family: 'Rajdhani', sans-serif; margin:0; padding:0; overflow:hidden; }
+    .container-tv { width:100%; height:100vh; display:flex; flex-direction:column; justify-content:flex-start; }
+    header { position:relative; background:linear-gradient(90deg,#002bff 0%,#001242 100%); padding:1.5vh 3vw; border-bottom:0.5vh solid #ffc107; display:flex; align-items:center; justify-content:center; }
+    .logo-izquierdo { position:absolute; left:3vw; height:clamp(60px,10vh,130px); filter:drop-shadow(0 0 10px rgba(255,255,255,0.7)); }
+    h1.display-5 { font-size:clamp(2rem,4vw,4.5rem); text-transform:uppercase; text-shadow:0 0 25px rgba(255,255,255,0.9); margin:0; }
+    .logo-trasona { display:block; margin:5vh auto 4vh; height:clamp(180px,35vh,380px); width:auto; filter:drop-shadow(0 0 30px rgba(255,255,255,0.8)); animation:aparecerLogo 1.5s ease-out; }
+    @keyframes aparecerLogo { from {opacity:0; transform:scale(0.8);} to {opacity:1; transform:scale(1);} }
+    .status-box { max-width:60vw; margin:1vh auto 0; padding:0.7rem; border-radius:0.5rem; font-size:clamp(1rem,1.6vw,1.7rem); font-weight:bold; text-align:center; }
+    .status-connected { background: rgba(0,255,136,0.2); border:2px solid #00ff88; color:#00ff88; text-shadow:0 0 15px rgba(0,255,136,0.7); }
+    .status-disconnected { background: rgba(255,0,60,0.2); border:2px solid #ff003c; color:#ff4d6d; }
+    .table-container { flex-grow:1; overflow-y:auto; scroll-behavior:smooth; margin:2vh auto; width:95%; }
+    .table { font-size:clamp(1rem,2vw,2.5rem); border-color:#00bfff; color:#fff; background:rgba(0,60,150,0.3); backdrop-filter:blur(8px); min-width:1500px; }
+    .table thead { background: linear-gradient(90deg,#001f7a 0%,#0048ff 100%); color:#fff; text-transform:uppercase; border-bottom:0.5vh solid #ffc107; position:sticky; top:0; z-index:10; font-size:clamp(1rem,1.6vw,2rem); }
+    .table th,.table td { text-align:center; vertical-align:middle; padding:1.2rem; }
+    .table-success { background-color:rgba(0,255,136,0.25)!important; color:#00ff9c; font-weight:700; }
+    .table-info { background-color:rgba(0,229,255,0.25)!important; color:#00d8ff; font-weight:700; }
+    tr:hover { background-color:rgba(255,255,255,0.08); }
+    .resultados-header { position:sticky; top:0; background:radial-gradient(circle at top, rgba(0,10,60,0.95), rgba(0,10,30,0.9)); padding:1vh 0; text-align:center; font-size:clamp(1.6rem,3vw,3rem); color:#ffc107; text-transform:uppercase; font-weight:700; z-index:20; box-shadow:0 6px 12px rgba(0,0,0,0.5); }
+    .contador-actualizacion { font-size:clamp(1rem,1.5vw,1.6rem); color:#00e6ff; text-shadow:0 0 8px rgba(0,230,255,0.9); margin-top:0.5vh; }
 </style>
 </head>
 <body>
 
-<!-- MODAL DE ACCESO -->
-<div class="modal fade" id="modalAcceso" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content bg-dark text-white" style="backdrop-filter: blur(10px); background: rgba(0,20,50,0.7) !important;">
-      <div class="modal-header border-secondary">
-        <h5 class="modal-title">Conexión a Resultados</h5>
-      </div>
-      <div class="modal-body text-center">
-        <p>Introduce el código de acceso de 4 dígitos proporcionado por el organizador.</p>
-        <form id="formAcceso">
-          <input type="text" id="accessCodeInput" class="form-control form-control-lg text-center my-3" maxlength="4" placeholder="----" required>
-          <button type="submit" class="btn btn-primary btn-lg w-100">
-            <span class="spinner-border spinner-border-sm d-none" role="status"></span>
-            Conectar
-          </button>
-          <div id="error-message" class="text-danger mt-3" style="height:24px;"></div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- MODAL DE ACCESO HA SIDO ELIMINADO -->
 
 <div class="container-tv">
   <header>
@@ -74,59 +55,18 @@ tr:hover { background-color:rgba(255,255,255,0.08); }
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-const INTERVALO_ACTUALIZACION = 30000; // 30 segundos
+const INTERVALO_ACTUALIZACION = 15000; // Actualizar cada 15 segundos
 let ultimoContenido = '';
 let actualizacionIntervalo;
 
-const modalAcceso = new bootstrap.Modal('#modalAcceso');
-const formAcceso = document.getElementById('formAcceso');
-const accessCodeInput = document.getElementById('accessCodeInput');
-const errorMessage = document.getElementById('error-message');
-const spinner = formAcceso.querySelector('.spinner-border');
+// --- Referencias a elementos del DOM ---
 const infoElement = document.getElementById('infoActualizacion');
 const logoCentral = document.getElementById('logoCentral');
 const tablasContainer = document.getElementById('tablasContainer');
 
+// --- Carga automática al iniciar la página ---
 document.addEventListener('DOMContentLoaded', () => {
-  if (sessionStorage.getItem('acceso_concedido') === 'true') {
     iniciarCargaDeResultados();
-  } else {
-    modalAcceso.show();
-  }
-});
-
-formAcceso.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const codigoIntroducido = accessCodeInput.value.trim();
-  if (codigoIntroducido.length !== 4) {
-    errorMessage.textContent = 'El código debe tener 4 dígitos.';
-    return;
-  }
-
-  spinner.classList.remove('d-none');
-  formAcceso.querySelector('button').disabled = true;
-  errorMessage.textContent = '';
-
-  try {
-    // --- Petición al endpoint seguro que devuelve el código actual
-    const response = await fetch('/api/codigo');
-    if (!response.ok) throw new Error('No se pudo verificar el código.');
-    const data = await response.json();
-    const codigoCorrecto = data.codigo_acceso;
-
-    if (codigoIntroducido === codigoCorrecto) {
-      sessionStorage.setItem('acceso_concedido', 'true');
-      modalAcceso.hide();
-      iniciarCargaDeResultados();
-    } else {
-      throw new Error('Código de acceso incorrecto.');
-    }
-  } catch (error) {
-    errorMessage.textContent = error.message;
-  } finally {
-    spinner.classList.add('d-none');
-    formAcceso.querySelector('button').disabled = false;
-  }
 });
 
 function iniciarCargaDeResultados() {
@@ -135,36 +75,57 @@ function iniciarCargaDeResultados() {
 }
 
 async function consultarResultados() {
-  try {
-    const respuesta = await fetch('/api/tabla');
-    if (!respuesta.ok) throw new Error(`Error de red: ${respuesta.status}`);
-    const contenidoTexto = await respuesta.text();
-    if (contenidoTexto === ultimoContenido) return;
-    ultimoContenido = contenidoTexto;
+    try {
+        // Añadimos un parámetro para evitar problemas de caché del navegador
+        const url = '/api/tabla?cache_bust=' + new Date().getTime();
+        const respuesta = await fetch(url);
+        
+        if (!respuesta.ok) {
+            throw new Error(`Error de conexión: ${respuesta.status}`);
+        }
+        
+        const contenidoTexto = await respuesta.text();
 
-    const datos = JSON.parse(contenidoTexto);
-    if (!datos || !datos.datos) throw new Error("Formato de datos incorrecto.");
+        // Si los datos no han cambiado, no hacemos nada para evitar parpadeos
+        if (contenidoTexto === ultimoContenido) {
+            return;
+        }
+        ultimoContenido = contenidoTexto;
 
-    logoCentral.style.display = 'none';
-    tablasContainer.style.display = 'block';
-    infoElement.style.display = 'block';
+        const datos = JSON.parse(contenidoTexto);
+        if (!datos || !datos.datos) {
+            throw new Error("El formato de los datos recibidos es incorrecto.");
+        }
 
-    mostrarTablaUnificada(datos);
+        // Ocultamos el logo inicial y mostramos la tabla de resultados
+        logoCentral.style.display = 'none';
+        tablasContainer.style.display = 'block';
+        infoElement.style.display = 'block';
 
-    infoElement.className = 'status-box status-connected';
-    infoElement.innerHTML = `
-      <div class="text-center">
-        <span class="fw-bold"><i class="bi bi-check-circle-fill"></i> EN DIRECTO</span><br>
-        <small>${datos.disciplina.toUpperCase()}</small>
-        <div class="contador-actualizacion" id="contador"></div>
-      </div>`;
-    reiniciarContador();
-  } catch (error) {
-    infoElement.style.display = 'block';
-    infoElement.className = 'status-box status-disconnected';
-    infoElement.innerHTML = `<div class="text-center">❌ ${error.message}</div>`;
-    if (actualizacionIntervalo) clearInterval(actualizacionIntervalo);
-  }
+        mostrarTablaUnificada(datos);
+
+        // Actualizamos el estado a "EN DIRECTO"
+        infoElement.className = 'status-box status-connected';
+        infoElement.innerHTML = `
+          <div class="text-center">
+            <span class="fw-bold"><i class="bi bi-check-circle-fill"></i> EN DIRECTO</span><br>
+            <small>${datos.disciplina.toUpperCase()}</small>
+            <div class="contador-actualizacion" id="contador"></div>
+          </div>`;
+        
+        reiniciarContador();
+
+    } catch (error) {
+        // Mostramos un mensaje de error claro si algo falla
+        infoElement.style.display = 'block';
+        infoElement.className = 'status-box status-disconnected';
+        infoElement.innerHTML = `<div class="text-center">❌ ${error.message}</div>`;
+        
+        // Opcional: Si hay un error, dejamos de intentar actualizar para no sobrecargar
+        if (actualizacionIntervalo) {
+            clearInterval(actualizacionIntervalo);
+        }
+    }
 }
 
 function mostrarTablaUnificada(datos) {
@@ -172,7 +133,7 @@ function mostrarTablaUnificada(datos) {
   const container = document.getElementById('tablasContainer');
 
   if (!resultados.length) {
-    container.innerHTML = `<h2 class="text-center text-warning mt-5">Sin datos disponibles</h2>`;
+    container.innerHTML = `<h2 class="text-center text-warning mt-5">Esperando datos de la competición...</h2>`;
     return;
   }
 
@@ -187,11 +148,12 @@ function mostrarTablaUnificada(datos) {
       <th>Total</th><th>X</th>
     </tr></thead><tbody>`;
 
-  resultados.sort((a,b) => parseFloat(b.total)-parseFloat(a.total) || parseFloat(b.xTotal)-parseFloat(a.xTotal));
-  resultados.forEach((r,index) => {
+  resultados.sort((a, b) => parseFloat(b.total) - parseFloat(a.total) || parseFloat(b.xTotal) - parseFloat(a.xTotal));
+  
+  resultados.forEach((r, index) => {
     const series = r.series || r.parciales || [];
     tablaHTML += `<tr>
-      <td class="fw-bold text-warning">${index+1}º</td>
+      <td class="fw-bold text-warning">${index + 1}º</td>
       <td>Puesto ${r.puesto || '-'}</td>
       <td>${r.nombre || 'Anónimo'}</td>
       ${series.map(s => `<td>${s !== null ? s : '-'}</td>`).join('')}
@@ -204,19 +166,25 @@ function mostrarTablaUnificada(datos) {
   container.innerHTML = tablaHTML;
 }
 
+// --- Lógica del contador de actualización (sin cambios) ---
 let contadorIntervalo;
 let tiempoRestante;
+
 function reiniciarContador() {
   tiempoRestante = INTERVALO_ACTUALIZACION / 1000;
   clearInterval(contadorIntervalo);
+
   const actualizarTexto = () => {
     const contador = document.getElementById('contador');
     if (!contador) return;
     const minutos = Math.floor(tiempoRestante / 60);
     const segundos = tiempoRestante % 60;
-    contador.textContent = `Próxima actualización en: ${minutos}m ${segundos < 10 ? '0':''}${segundos}s`;
-    if (tiempoRestante > 0) tiempoRestante--;
+    contador.textContent = `Próxima actualización en: ${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`;
+    if (tiempoRestante > 0) {
+        tiempoRestante--;
+    }
   };
+  
   actualizarTexto();
   contadorIntervalo = setInterval(actualizarTexto, 1000);
 }
