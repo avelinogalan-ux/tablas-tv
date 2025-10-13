@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TV - Conexión a Resultados</title>
+    <!-- Tus Links y CSS (sin cambios) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
+        /* Tu CSS aquí (sin cambios) */
         body { background: radial-gradient(circle at center, #000428 0%, #004e92 100%); color: #fff; font-family: 'Rajdhani', sans-serif; margin:0; padding:0; overflow:hidden; }
         .container-tv { width:100%; height:100vh; display:flex; flex-direction:column; justify-content:flex-start; }
         header { position:relative; background:linear-gradient(90deg,#002bff 0%,#001242 100%); padding:1.5vh 3vw; border-bottom:0.5vh solid #ffc107; display:flex; align-items:center; justify-content:center; }
@@ -31,7 +33,7 @@
 </head>
 <body>
 
-<!-- MODAL DE ACCESO -->
+<!-- MODAL DE ACCESO (sin cambios) -->
 <div class="modal fade" id="modalAcceso" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-dark text-white" style="backdrop-filter: blur(10px); background: rgba(0,20,50,0.7) !important;">
@@ -39,9 +41,9 @@
         <h5 class="modal-title">Conexión a Resultados en Directo</h5>
       </div>
       <div class="modal-body text-center">
-        <p>Introduce el código de acceso de 4 dígitos proporcionado por el organizador.</p>
+        <p>Introduce el código de acceso de 4 dígitos.</p>
         <form id="formAcceso">
-          <input type="text" id="accessCodeInput" class="form-control form-control-lg text-center my-3" maxlength="4" placeholder="----" required pattern="\d{4}" inputmode="numeric">
+          <input type="text" id="accessCodeInput" class="form-control form-control-lg text-center my-3" maxlength="4" placeholder="----" required>
           <button type="submit" class="btn btn-primary btn-lg w-100">
             <span class="spinner-border spinner-border-sm d-none" role="status"></span>
             Conectar
@@ -53,7 +55,7 @@
   </div>
 </div>
 
-<!-- Contenido principal (oculto al inicio) -->
+<!-- Contenido principal (sin cambios) -->
 <div id="mainContent" class="container-tv" style="display: none; flex-direction: column;">
   <header>
     <img src="shooting_logo.png" alt="Logo Izquierdo" class="logo-izquierdo">
@@ -73,19 +75,17 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // ===================================================================================
-    // --- CONFIGURACIÓN: ¡RELLENA ESTAS 3 LÍNEAS! ---
+    // --- CONFIGURACIÓN SIMPLIFICADA ---
     // ===================================================================================
-    const CODIGO_ACCESO_BIN_ID = '68ead4c4d0ea881f409e35e6';          // <-- PEGA AQUÍ EL ID DE TU BIN DE ACCESO
-    const DATOS_COMPETICION_BIN_ID = '68ead55843b1c97be963471d'; // <-- PEGA AQUÍ EL ID DE TU BIN DE RESULTADOS
-    const ACCESS_KEY_SOLO_LECTURA = 'TU_CLAVE_DE_ACCESO_DE_SOLO_LECTURA'; // <-- PEGA AQUÍ LA CLAVE QUE DA ACCESO A AMBOS BINS
-
+    const DATOS_BIN_ID =68e19505ae596e708f063783; // <-- PEGA AQUÍ EL ID DE TU ÚNICO BIN
+    // ¡NO SE NECESITAN CLAVES AQUÍ!
     // ===================================================================================
 
-    const INTERVALO_ACTUALIZACION = 30000; // 30 segundos
+    const INTERVALO_ACTUALIZACION = 30000;
     let ultimoContenido = '';
-    let actualizacionIntervalo;
+    let datosCargados; // Variable para guardar los datos temporalmente
 
-    // --- ELEMENTOS DEL DOM ---
+    // --- ELEMENTOS DEL DOM (sin cambios) ---
     const modalAcceso = new bootstrap.Modal('#modalAcceso');
     const formAcceso = document.getElementById('formAcceso');
     const accessCodeInput = document.getElementById('accessCodeInput');
@@ -96,7 +96,7 @@
     const logoCentral = document.getElementById('logoCentral');
     const tablasContainer = document.getElementById('tablasContainer');
 
-    // --- LÓGICA DE INICIO ---
+    // --- LÓGICA DE INICIO (sin cambios) ---
     document.addEventListener('DOMContentLoaded', () => {
         if (sessionStorage.getItem('acceso_concedido_tv') === 'true') {
             mainContent.style.display = 'flex';
@@ -106,7 +106,7 @@
         }
     });
 
-    // --- MANEJO DEL FORMULARIO DE ACCESO ---
+    // --- LÓGICA DE ACCESO (MODIFICADA) ---
     formAcceso.addEventListener('submit', async (e) => {
         e.preventDefault();
         const codigoIntroducido = accessCodeInput.value.trim();
@@ -115,21 +115,21 @@
         errorMessage.textContent = '';
 
         try {
-            // 1. Petición al BIN de ACCESO para verificar el código
-            const response = await fetch(`https://api.jsonbin.io/v3/b/${CODIGO_ACCESO_BIN_ID}/latest`, {
-                headers: { 'X-Access-Key': ACCESS_KEY_SOLO_LECTURA }
-            });
-            if (!response.ok) throw new Error('No se pudo verificar el código.');
+            // Petición al ÚNICO BIN PÚBLICO
+            const response = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_BIN_ID}/latest`);
+            if (!response.ok) throw new Error('No se pudo contactar con el servidor de resultados.');
             
-            const data = await response.json();
-            const codigoCorrecto = data.record.codigo_acceso;
+            datosCargados = (await response.json()).record;
+            const codigoCorrecto = datosCargados.codigo_acceso;
 
             if (codigoIntroducido === codigoCorrecto) {
-                // Código correcto: Iniciar la visualización de resultados
                 sessionStorage.setItem('acceso_concedido_tv', 'true');
                 modalAcceso.hide();
                 mainContent.style.display = 'flex';
-                iniciarCargaDeResultados();
+                // Usamos los datos que ya hemos cargado para la primera visualización
+                mostrarResultados(datosCargados); 
+                // Iniciamos las actualizaciones periódicas
+                setInterval(consultarResultados, INTERVALO_ACTUALIZACION);
             } else {
                 throw new Error('Código de acceso incorrecto.');
             }
@@ -141,18 +141,15 @@
         }
     });
     
-    // --- LÓGICA DE CARGA DE RESULTADOS ---
+    // --- LÓGICA DE CARGA PERIÓDICA (MODIFICADA) ---
     function iniciarCargaDeResultados() {
-        consultarResultados();
-        actualizacionIntervalo = setInterval(consultarResultados, INTERVALO_ACTUALIZACION);
+        consultarResultados(); // Carga inicial
+        setInterval(consultarResultados, INTERVALO_ACTUALIZACION);
     }
 
     async function consultarResultados() {
       try {
-        // 2. Petición al BIN de DATOS para obtener la tabla
-        const respuesta = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`, {
-            headers: { 'X-Access-Key': ACCESS_KEY_SOLO_LECTURA }
-        });
+        const respuesta = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_BIN_ID}/latest`);
         if (!respuesta.ok) throw new Error(`Error de red: ${respuesta.status}`);
         
         const contenidoTexto = await respuesta.text();
@@ -160,21 +157,7 @@
         ultimoContenido = contenidoTexto;
 
         const datos = JSON.parse(contenidoTexto).record;
-        if (!datos || !datos.datos) throw new Error("El formato de los datos es incorrecto.");
-
-        logoCentral.style.display = 'none';
-        tablasContainer.style.display = 'block';
-        infoElement.style.display = 'block';
-
-        mostrarTablaUnificada(datos);
-
-        infoElement.className = 'status-box status-connected';
-        infoElement.innerHTML = `
-          <div class="text-center">
-            <span class="fw-bold"><i class="bi bi-check-circle-fill"></i> EN DIRECTO</span><br>
-            <small>${datos.disciplina.toUpperCase()}</small>
-            <div class="contador-actualizacion">Actualizado: ${new Date().toLocaleTimeString()}</div>
-          </div>`;
+        mostrarResultados(datos);
       } catch (error) {
         infoElement.style.display = 'block';
         infoElement.className = 'status-box status-disconnected';
@@ -182,7 +165,28 @@
       }
     }
 
-    // --- FUNCIÓN PARA DIBUJAR LA TABLA ---
+    // --- FUNCIÓN PARA MOSTRAR LOS DATOS (MODIFICADA) ---
+    function mostrarResultados(datos) {
+        if (!datos || !datos.datos) {
+            infoElement.style.display = 'block';
+            infoElement.className = 'status-box status-disconnected';
+            infoElement.innerHTML = `<div class="text-center">❌ Formato de datos incorrecto.</div>`;
+            return;
+        }
+        logoCentral.style.display = 'none';
+        tablasContainer.style.display = 'block';
+        infoElement.style.display = 'block';
+        mostrarTablaUnificada(datos);
+        infoElement.className = 'status-box status-connected';
+        infoElement.innerHTML = `
+          <div class="text-center">
+            <span class="fw-bold"><i class="bi bi-check-circle-fill"></i> EN DIRECTO</span><br>
+            <small>${datos.disciplina.toUpperCase()}</small>
+            <div class="contador-actualizacion">Actualizado: ${new Date().toLocaleTimeString()}</div>
+          </div>`;
+    }
+
+    // --- FUNCIÓN PARA DIBUJAR LA TABLA (sin cambios) ---
     function mostrarTablaUnificada(datos) {
         const resultados = datos.datos || [];
         const container = document.getElementById('tablasContainer');
