@@ -9,49 +9,51 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
+  const { codigo } = req.body;
+
+  if (!codigo || codigo.length !== 4) {
+    return res.status(400).json({ error: "Código inválido" });
+  }
+
   try {
-    const { codigo } = req.body;
-
-    if (!codigo) {
-      return res.status(400).json({ error: "Falta el código de acceso" });
-    }
-
-    // 1️⃣ Obtener el código actual de JSONBIN
-    const codigoResponse = await fetch(`https://api.jsonbin.io/v3/b/${CODIGO_ACCESO_BIN_ID}/latest`, {
+    // 1️⃣ Obtenemos el código correcto desde JSONBIN
+    const responseCodigo = await fetch(`https://api.jsonbin.io/v3/b/${CODIGO_ACCESO_BIN_ID}/latest`, {
       headers: {
         "X-Master-Key": JSONBIN_API_KEY,
-        "X-Force-Update": "true"
-      }
+        "X-Force-Update": "true",
+      },
     });
 
-    if (!codigoResponse.ok) {
-      return res.status(500).json({ error: "No se pudo verificar el código de acceso" });
+    if (!responseCodigo.ok) {
+      return res.status(500).json({ error: "No se pudo verificar el código" });
     }
 
-    const codigoData = await codigoResponse.json();
-    const codigoActual = codigoData.record.codigo_acceso;
+    const dataCodigo = await responseCodigo.json();
+    const codigoCorrecto = dataCodigo.record.codigo_acceso;
 
-    // 2️⃣ Validar el código
-    if (codigo !== codigoActual) {
+    if (codigo !== codigoCorrecto) {
       return res.status(401).json({ error: "Código de acceso incorrecto" });
     }
 
-    // 3️⃣ Obtener los datos de la competición
-    const datosResponse = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`, {
+    // 2️⃣ Obtenemos los datos de la competición
+    const responseDatos = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`, {
       headers: {
         "X-Master-Key": JSONBIN_API_KEY,
-        "X-Force-Update": "true"
-      }
+        "X-Force-Update": "true",
+      },
     });
 
-    if (!datosResponse.ok) {
-      return res.status(500).json({ error: "No se pudieron obtener los datos de la competición" });
+    if (!responseDatos.ok) {
+      return res.status(500).json({ error: "No se pudieron obtener los datos" });
     }
 
-    const datosData = await datosResponse.json();
+    const datos = await responseDatos.json();
 
-    // 4️⃣ Enviar la respuesta al cliente
-    return res.status(200).json({ accesoValido: true, datos: datosData.record });
-
+    // 3️⃣ Devolvemos los datos a la TV
+    return res.status(200).json({ accesoValido: true, ...datos.record });
+    
   } catch (error) {
     console.error(error);
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
