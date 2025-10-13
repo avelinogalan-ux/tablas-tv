@@ -1,0 +1,20 @@
+{
+  "disciplina": "Pistola Aire Comprimido - Final",
+  "datos": [
+    {
+      "puesto": "1",
+      "nombre": "Ana García López",
+      "series": [98, 99, 97, 100],
+      "total": 394,
+      "xTotal": 25
+    },
+    {
+      "puesto": "2",
+      "nombre": "Luis Martínez Sáez",
+      "series": [97, 98, 99, 98],
+      "total": 392,
+      "xTotal": 21
+    }
+    // ... resto de competidores
+  ]
+}
