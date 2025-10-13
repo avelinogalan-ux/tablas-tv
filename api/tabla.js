@@ -9,16 +9,23 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Ruta al archivo local que la app actualiza
+    // Ruta al archivo de datos
     const filePath = path.join(process.cwd(), "datos_competicion.json");
 
     if (!fs.existsSync(filePath)) {
-      return res.status(500).json({ error: "Datos de competición no disponibles" });
+      res.status(500).json({ error: "Datos de competición no disponibles" });
+      return;
     }
 
     const contenido = fs.readFileSync(filePath, "utf-8");
     const data = JSON.parse(contenido);
 
+    if (!data || !data.datos) {
+      res.status(500).json({ error: "Formato de datos incorrecto" });
+      return;
+    }
+
+    // Devolver los datos
     res.status(200).json(data);
 
   } catch (error) {
