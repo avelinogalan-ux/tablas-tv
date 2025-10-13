@@ -31,21 +31,15 @@
 </head>
 <body>
 
-<!-- MODAL DE ACCESO -->
 <div class="modal fade" id="modalAcceso" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-dark text-white" style="backdrop-filter: blur(10px); background: rgba(0,20,50,0.7) !important;">
-      <div class="modal-header border-secondary">
-        <h5 class="modal-title">Conexión a Resultados en Directo</h5>
-      </div>
+      <div class="modal-header border-secondary"><h5 class="modal-title">Conexión a Resultados en Directo</h5></div>
       <div class="modal-body text-center">
         <p>Introduce el código de acceso de 4 dígitos.</p>
         <form id="formAcceso">
           <input type="text" id="accessCodeInput" class="form-control form-control-lg text-center my-3" maxlength="4" placeholder="----" required>
-          <button type="submit" class="btn btn-primary btn-lg w-100">
-            <span class="spinner-border spinner-border-sm d-none" role="status"></span>
-            Conectar
-          </button>
+          <button type="submit" class="btn btn-primary btn-lg w-100"><span class="spinner-border spinner-border-sm d-none" role="status"></span>Conectar</button>
           <div id="errorMessage" class="text-danger mt-3" style="height:24px;"></div>
         </form>
       </div>
@@ -53,7 +47,6 @@
   </div>
 </div>
 
-<!-- Contenido principal -->
 <div id="mainContent" class="container-tv" style="display: none; flex-direction: column;">
   <header>
     <img src="shooting_logo.png" alt="Logo Izquierdo" class="logo-izquierdo">
@@ -62,22 +55,16 @@
       <div id="infoActualizacion" class="status-box rounded mx-auto" style="display:none;"></div>
     </div>
   </header>
-  <div id="logoCentral">
-    <img src="trasona-logo.png" alt="Club de Tiro Ensidesa Trasona" class="logo-trasona">
-  </div>
-  <main id="contenido">
-    <div class="table-container" id="tablasContainer" style="display:none;"></div>
-  </main>
+  <div id="logoCentral"><img src="trasona-logo.png" alt="Club de Tiro Ensidesa Trasona" class="logo-trasona"></div>
+  <main id="contenido"><div class="table-container" id="tablasContainer" style="display:none;"></div></main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // --- CONFIGURACIÓN ---
-    const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc'; // El ID de tu único Bin público
-    const INTERVALO_ACTUALIZACION = 15000; // 15 segundos
+    const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc';
+    const INTERVALO_ACTUALIZACION = 15000;
     let ultimoContenido = '';
 
-    // --- ELEMENTOS DEL DOM ---
     const modalAcceso = new bootstrap.Modal('#modalAcceso');
     const formAcceso = document.getElementById('formAcceso');
     const accessCodeInput = document.getElementById('accessCodeInput');
@@ -88,7 +75,6 @@
     const logoCentral = document.getElementById('logoCentral');
     const tablasContainer = document.getElementById('tablasContainer');
 
-    // --- LÓGICA DE INICIO ---
     document.addEventListener('DOMContentLoaded', () => {
         if (sessionStorage.getItem('acceso_concedido_tv') === 'true') {
             mainContent.style.display = 'flex';
@@ -98,7 +84,6 @@
         }
     });
 
-    // --- LÓGICA DE ACCESO (SOLO SE EJECUTA UNA VEZ) ---
     formAcceso.addEventListener('submit', async (e) => {
         e.preventDefault();
         const codigoIntroducido = accessCodeInput.value.trim();
@@ -112,7 +97,6 @@
             
             const data = (await response.json()).record;
             
-            // Verificación estricta SOLO en el login inicial
             if (typeof data.codigo_acceso === 'undefined') {
                  throw new Error('El formato inicial del Bin es incorrecto. Falta la propiedad "codigo_acceso".');
             }
@@ -135,7 +119,6 @@
         }
     });
     
-    // --- LÓGICA DE CARGA PERIÓDICA ---
     function iniciarCargaDeResultados() {
         consultarResultados();
         setInterval(consultarResultados, INTERVALO_ACTUALIZACION);
@@ -159,9 +142,7 @@
       }
     }
 
-    // --- FUNCIÓN INTELIGENTE PARA PROCESAR Y MOSTRAR DATOS ---
     function mostrarResultados(datos) {
-        // Esta función ya no comprueba 'codigo_acceso', es más flexible.
         if (!datos || !datos.datos) {
             infoElement.style.display = 'block';
             infoElement.className = 'status-box status-disconnected';
@@ -169,7 +150,6 @@
             return;
         }
         
-        // "Traduce" los datos que llegan, añadiendo el nombre si falta.
         const datosTraducidos = datos.datos.map(tirador => ({
             ...tirador,
             nombre: tirador.nombre || `Tirador ${tirador.puesto}`
@@ -180,13 +160,11 @@
             datos: datosTraducidos
         };
 
-        // Muestra los datos en pantalla
         logoCentral.style.display = 'none';
         tablasContainer.style.display = 'block';
         infoElement.style.display = 'block';
         mostrarTablaUnificada(datosParaTabla);
         
-        // Actualiza el estado de la conexión
         infoElement.className = 'status-box status-connected';
         infoElement.innerHTML = `
           <div class="text-center">
@@ -196,7 +174,6 @@
           </div>`;
     }
 
-    // --- FUNCIÓN PARA DIBUJAR LA TABLA ---
     function mostrarTablaUnificada(datos) {
         const resultados = datos.datos || [];
         const container = document.getElementById('tablasContainer');
@@ -218,3 +195,4 @@
 
 </body>
 </html>
+
