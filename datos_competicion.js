@@ -1,40 +1,47 @@
 {
-  "disciplina": "Rifle Aire 10m",
+  "disciplina": "Pistola Aire Comprimido - Final",
   "datos": [
     {
-      "puesto": 1,
-      "nombre": "Ana García",
-      "series": [100, 99, 100, 100, 99, 100],
-      "total": 598,
-      "xTotal": 45
+      "puesto": "1",
+      "nombre": "Ana García López",
+      "series": [98, 99, 97, 100],
+      "total": 394,
+      "xTotal": 25
     },
     {
-      "puesto": 2,
-      "nombre": "Carlos López",
-      "series": [99, 100, 99, 98, 100, 99],
-      "total": 595,
-      "xTotal": 42
+      "puesto": "2",
+      "nombre": "Luis Martínez Sáez",
+      "series": [97, 98, 99, 98],
+      "total": 392,
+      "xTotal": 21
     },
     {
-      "puesto": 3,
-      "nombre": "María Rodríguez",
-      "series": [98, 99, 98, 99, 98, 99],
-      "total": 591,
-      "xTotal": 38
+      "puesto": "3",
+      "nombre": "Carlos Fernández Rey",
+      "series": [95, 98, 96, 99],
+      "total": 388,
+      "xTotal": 19
     },
     {
-      "puesto": 4,
-      "nombre": "David Martínez",
-      "series": [97, 98, 97, 98, 97, 98],
-      "total": 585,
-      "xTotal": 35
+      "puesto": "4",
+      "nombre": "Sofía Romero Vidal",
+      "series": [96, 97, 97, 97],
+      "total": 387,
+      "xTotal": 15
     },
     {
-      "puesto": 5,
-      "nombre": "Laura Sánchez",
-      "series": [96, 97, 96, 97, 96, 97],
-      "total": 579,
-      "xTotal": 32
+      "puesto": "5",
+      "nombre": "Javier Alonso Gil",
+      "series": [94, 95, 98, 96],
+      "total": 383,
+      "xTotal": 18
+    },
+    {
+      "puesto": "6",
+      "nombre": "Laura Jiménez Ruiz",
+      "series": [92, 96, 95, 94],
+      "total": 377,
+      "xTotal": 11
     }
   ]
 }
