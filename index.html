@@ -31,15 +31,12 @@
 </head>
 <body>
 
-<!-- MODAL DE ACCESO -->
 <div class="modal fade" id="modalAcceso" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark text-white" style="backdrop-filter: blur(10px); background: rgba(0,20,50,0.7) !important;">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title">Conexión a Resultados</h5>
-            </div>
+            <div class="modal-header border-secondary"><h5 class="modal-title">Conexión a Resultados</h5></div>
             <div class="modal-body text-center">
-                <p>Introduce el código de acceso de 4 dígitos proporcionado por el organizador.</p>
+                <p>Introduce el código de acceso de 4 dígitos.</p>
                 <form id="formAcceso">
                     <input type="text" id="accessCodeInput" class="form-control form-control-lg text-center my-3" maxlength="4" placeholder="----" required>
                     <button type="submit" class="btn btn-primary btn-lg w-100">
@@ -53,7 +50,6 @@
     </div>
 </div>
 
-<!-- ESTRUCTURA ORIGINAL DE LA PÁGINA DE TV -->
 <div class="container-tv">
     <header>
         <img src="assets/shooting_logo.png" alt="Logo Izquierdo" class="logo-izquierdo">
@@ -62,11 +58,9 @@
             <div id="infoActualizacion" class="status-box rounded mx-auto" style="display: none;"></div>
         </div>
     </header>
-
     <div id="logoCentral">
         <img src="assets/trasona-logo.png" alt="Club de Tiro Ensidesa Trasona" class="logo-trasona">
     </div>
-
     <main id="contenido">
         <div class="table-container" id="tablasContainer" style="display: none;"></div>
     </main>
@@ -77,23 +71,16 @@
 <script type="module">
 // ========================================================================
 // --- CONFIGURACIÓN ---
-// Leemos las variables de entorno seguras proporcionadas por Vercel.
 // ========================================================================
 const CODIGO_ACCESO_BIN_ID = import.meta.env.VITE_CODIGO_ACCESO_BIN_ID;
 const DATOS_COMPETICION_BIN_ID = import.meta.env.VITE_DATOS_COMPETICION_BIN_ID;
 const JSONBIN_API_KEY = import.meta.env.VITE_JSONBIN_API;
-
-// TIEMPOS DE LA APLICACIÓN
-const MINUTOS_DE_VALIDEZ = 720; // 12 horas
 const INTERVALO_ACTUALIZACION = 180000; // 3 minutos
-
 // ========================================================================
 
 let ultimoContenido = '';
 let actualizacionIntervalo;
-let estadoAnterior = null;
 
-// --- ELEMENTOS DEL DOM ---
 const modalAcceso = new bootstrap.Modal('#modalAcceso');
 const formAcceso = document.getElementById('formAcceso');
 const accessCodeInput = document.getElementById('accessCodeInput');
@@ -104,19 +91,7 @@ const logoCentral = document.getElementById('logoCentral');
 const tablasContainer = document.getElementById('tablasContainer');
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Si el usuario ya se validó en esta sesión, va directo a los resultados
     if (sessionStorage.getItem('acceso_concedido') === 'true') {
-        const tiempoAcceso = parseInt(sessionStorage.getItem('tiempo_acceso') || '0');
-        const tiempoActual = Date.now();
-        const expiracion = MINUTOS_DE_VALIDEZ * 60 * 1000;
-        
-        if (tiempoActual - tiempoAcceso > expiracion) {
-            sessionStorage.clear();
-            modalAcceso.show();
-            return;
-        }
-        
-        estadoAnterior = sessionStorage.getItem('estado_competicion');
         iniciarCargaDeResultados();
     } else {
         modalAcceso.show();
@@ -130,45 +105,34 @@ formAcceso.addEventListener('submit', async (e) => {
         errorMessage.textContent = 'El código debe tener 4 dígitos.';
         return;
     }
-
     spinner.classList.remove('d-none');
     formAcceso.querySelector('button').disabled = true;
     errorMessage.textContent = '';
 
     try {
-        // 1. Descargar el código correcto forzando la actualización para evitar caché
         const response = await fetch(`https://api.jsonbin.io/v3/b/${CODIGO_ACCESO_BIN_ID}/latest`, {
             headers: { 
                 'X-Master-Key': JSONBIN_API_KEY,
-                'X-Force-Update': 'true' // <-- SOLUCIÓN AL CACHÉ
+                'X-Force-Update': 'true' // Evitar caché
             }
         });
-        
         if (!response.ok) throw new Error(`Error ${response.status}: No se pudo verificar.`);
         
         const data = await response.json();
         
-        if (!data.record || !data.record.codigo_acceso || !data.record.creado_en) {
+        if (!data.record || typeof data.record.codigo_acceso === 'undefined') {
             throw new Error('El formato del JSON de acceso no es correcto.');
         }
         
         const codigoCorrecto = data.record.codigo_acceso;
-        const fechaCreacion = data.record.creado_en;
-        const fechaActual = Date.now();
-        const milisegundosDeValidez = MINUTOS_DE_VALIDEZ * 60 * 1000;
 
-        if (codigoIntroducido !== codigoCorrecto) {
+        if (codigoIntroducido === codigoCorrecto) {
+            sessionStorage.setItem('acceso_concedido', 'true');
+            modalAcceso.hide();
+            iniciarCargaDeResultados();
+        } else {
             throw new Error('Código de acceso incorrecto.');
         }
-
-        if ((fechaActual - fechaCreacion) > milisegundosDeValidez) {
-            throw new Error('El código de acceso ha caducado. Pide uno nuevo.');
-        }
-
-        sessionStorage.setItem('acceso_concedido', 'true');
-        sessionStorage.setItem('tiempo_acceso', Date.now().toString());
-        modalAcceso.hide();
-        iniciarCargaDeResultados();
 
     } catch (error) {
         errorMessage.textContent = error.message;
@@ -185,50 +149,25 @@ function iniciarCargaDeResultados() {
 
 async function consultarResultados() {
     try {
-        // Forzar la actualización aquí también para obtener siempre los resultados más recientes
         const respuesta = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`, {
             headers: { 
                 'X-Master-Key': JSONBIN_API_KEY,
-                'X-Force-Update': 'true' // <-- SOLUCIÓN AL CACHÉ
+                'X-Force-Update': 'true' // Evitar caché
             }
         });
-        
         if (!respuesta.ok) throw new Error(`Error de red: ${respuesta.status}`);
 
         const contenidoTexto = await respuesta.text();
-        // Comparamos el contenido DESPUÉS de forzar la actualización
-        if (contenidoTexto === ultimoContenido) {
-            return;
-        }
+        if (contenidoTexto === ultimoContenido) return;
         ultimoContenido = contenidoTexto;
 
         const datos = JSON.parse(contenidoTexto).record;
         if (!datos || !datos.datos) throw new Error("El formato de los datos no es correcto.");
 
-        // Tu lógica de reinicio por cambio de estado
-        const estadoActual = datos.estado || 'activo';
-        if (estadoAnterior === null) {
-            estadoAnterior = estadoActual;
-            sessionStorage.setItem('estado_competicion', estadoActual);
-        } else if (estadoAnterior !== 'espera' && estadoActual === 'espera') {
-            sessionStorage.clear();
-            clearInterval(actualizacionIntervalo);
-            alert('La competición ha finalizado. Se requiere nuevo acceso para la siguiente tirada.');
-            location.reload();
-            return;
-        }
-        if (estadoAnterior !== estadoActual) {
-            estadoAnterior = estadoActual;
-            sessionStorage.setItem('estado_competicion', estadoActual);
-        }
-
-        // Mostrar la tabla y actualizar la UI
         logoCentral.style.display = 'none';
         tablasContainer.style.display = 'block';
         infoElement.style.display = 'block';
-
         mostrarTablaUnificada(datos);
-
         infoElement.className = 'status-box status-connected';
         infoElement.innerHTML = `
             <div class="text-center">
@@ -237,7 +176,6 @@ async function consultarResultados() {
                 <div class="contador-actualizacion" id="contador"></div>
             </div>`;
         reiniciarContador();
-
     } catch (error) {
         infoElement.style.display = 'block';
         infoElement.className = 'status-box status-disconnected';
@@ -249,12 +187,10 @@ async function consultarResultados() {
 function mostrarTablaUnificada(datos) {
     const resultados = datos.datos || [];
     const container = document.getElementById('tablasContainer');
-
     if (!resultados.length) {
         container.innerHTML = `<h2 class="text-center text-warning mt-5">Sin datos de tiradores disponibles</h2>`;
         return;
     }
-
     const numSeries = resultados[0].series ? resultados[0].series.length : (resultados[0].parciales?.length || 0);
     let tablaHTML = `
     <div class="resultados-header">${datos.disciplina}</div>
@@ -265,7 +201,6 @@ function mostrarTablaUnificada(datos) {
             ${Array.from({ length: numSeries }, (_, i) => `<th>S${i+1}</th>`).join('')}
             <th>Total</th><th>X</th>
         </tr></thead><tbody>`;
-
     resultados.sort((a, b) => parseFloat(b.total) - parseFloat(a.total) || parseFloat(b.xTotal) - parseFloat(a.xTotal));
     resultados.forEach((r, index) => {
         const series = r.series || r.parciales || [];
@@ -278,7 +213,6 @@ function mostrarTablaUnificada(datos) {
             <td class="table-info fw-bold">${r.xTotal}</td>
         </tr>`;
     });
-
     tablaHTML += '</tbody></table></div>';
     container.innerHTML = tablaHTML;
 }
@@ -302,3 +236,4 @@ function reiniciarContador() {
 </script>
 </body>
 </html>
+
