@@ -73,7 +73,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // --- CONFIGURACIÓN ---
-    const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc'; // Tu ID de Bin público
+    const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc'; // El ID de tu único Bin público
     const INTERVALO_ACTUALIZACION = 15000; // 15 segundos
     let ultimoContenido = '';
 
@@ -108,14 +108,15 @@
 
         try {
             const response = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
-            if (!response.ok) throw new Error('No se pudo contactar con el servidor de resultados.');
+            if (!response.ok) throw new Error(`404: No se encontró el Bin de competición. Verifica el ID.`);
             
             const data = (await response.json()).record;
             
-            if (!data.codigo_acceso) {
-                 throw new Error('El formato del Bin es incorrecto. Falta "codigo_acceso".');
+            // La primera vez, el Bin DEBE tener el campo "codigo_acceso"
+            if (typeof data.codigo_acceso === 'undefined') {
+                 throw new Error('El formato del Bin es incorrecto. Falta la propiedad "codigo_acceso".');
             }
-            const codigoCorrecto = data.codigo_acceso;
+            const codigoCorrecto = String(data.codigo_acceso); // Convertimos a String para asegurar la comparación
 
             if (codigoIntroducido === codigoCorrecto) {
                 sessionStorage.setItem('acceso_concedido_tv', 'true');
@@ -136,8 +137,7 @@
     
     // --- LÓGICA DE CARGA PERIÓDICA ---
     function iniciarCargaDeResultados() {
-        consultarResultados();
-        setInterval(consultarResultados, INTERVALO_ACTUALIZACION);
+        consultarResultados(); // Carga inicial
     }
 
     async function consultarResultados() {
@@ -146,7 +146,7 @@
         if (!respuesta.ok) throw new Error(`Error de red: ${respuesta.status}`);
         
         const contenidoTexto = await respuesta.text();
-        if (contenidoTexto === ultimoContenido) return;
+        if (contenidoTexto === ultimoContenido) return; // No hacer nada si los datos no han cambiado
         ultimoContenido = contenidoTexto;
 
         const datos = JSON.parse(contenidoTexto).record;
@@ -160,6 +160,7 @@
 
     // --- FUNCIÓN PARA PROCESAR Y MOSTRAR LOS DATOS (LA PARTE INTELIGENTE) ---
     function mostrarResultados(datos) {
+        // Esta función ahora se encarga de "traducir" los datos
         if (!datos || !datos.datos) {
             infoElement.style.display = 'block';
             infoElement.className = 'status-box status-disconnected';
@@ -167,19 +168,19 @@
             return;
         }
         
-        // "Traduce" los datos que llegan al formato que la tabla necesita.
         const datosTraducidos = datos.datos.map(tirador => {
             return {
-                ...tirador, // Copia todas las propiedades que ya vienen (puesto, series, total, xTotal)
-                nombre: tirador.nombre || `Tirador ${tirador.puesto}` // Si no hay 'nombre', lo genera.
+                ...tirador, // Copia todas las propiedades que ya vienen
+                nombre: tirador.nombre || `Tirador ${tirador.puesto}` // Si no hay 'nombre', lo genera
             };
         });
 
         const datosParaTabla = {
-            disciplina: datos.disciplina || 'Resultados', // Si no hay disciplina, pone un título genérico
+            disciplina: datos.disciplina || 'Resultados en Directo', // Título genérico si no viene
             datos: datosTraducidos
         };
 
+        // El resto del código para mostrar en pantalla
         logoCentral.style.display = 'none';
         tablasContainer.style.display = 'block';
         infoElement.style.display = 'block';
@@ -195,7 +196,7 @@
           </div>`;
     }
 
-    // --- FUNCIÓN PARA DIBUJAR LA TABLA ---
+    // --- FUNCIÓN PARA DIBUJAR LA TABLA (SIN CAMBIOS) ---
     function mostrarTablaUnificada(datos) {
         const resultados = datos.datos || [];
         const container = document.getElementById('tablasContainer');
@@ -217,4 +218,3 @@
 
 </body>
 </html>
-
