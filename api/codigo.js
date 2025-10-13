@@ -1,41 +1,41 @@
 // /api/codigo.js
-// Endpoint seguro que devuelve el código de acceso actual en JSON
-// Para la TV
+// Devuelve el código de acceso actual desde JSONBin
 
-import fs from "fs";
-import path from "path";
+const CODIGO_ACCESO_BIN_ID = process.env.CODIGO_ACCESO_BIN_ID;
+const JSONBIN_API_KEY = process.env.JSONBIN_API_KEY;
 
 export default async function handler(req, res) {
   try {
-    // Solo permitimos GET
     if (req.method !== "GET") {
-      res.status(405).json({ error: "Method Not Allowed" });
-      return;
+      return res.status(405).json({ error: "Method Not Allowed" });
     }
 
-    // Obtenemos la ruta al archivo local donde guardamos el código
-    const filePath = path.join(process.cwd(), "codigo_actual.json");
-
-    // Si el archivo no existe, devolvemos un error
-    if (!fs.existsSync(filePath)) {
-      res.status(500).json({ error: "Código no disponible" });
-      return;
+    if (!CODIGO_ACCESO_BIN_ID || !JSONBIN_API_KEY) {
+      return res.status(500).json({ error: "Variables de entorno no configuradas" });
     }
 
-    // Leemos el contenido del archivo
-    const contenido = fs.readFileSync(filePath, "utf-8");
-    const data = JSON.parse(contenido);
+    const url = `https://api.jsonbin.io/v3/b/${CODIGO_ACCESO_BIN_ID}/latest`;
+    const resp = await fetch(url, {
+      headers: {
+        "X-Master-Key": JSONBIN_API_KEY,
+        "X-Force-Update": "true"
+      }
+    });
 
-    if (!data.codigo_acceso) {
-      res.status(500).json({ error: "Código no configurado correctamente" });
-      return;
+    if (!resp.ok) {
+      const text = await resp.text();
+      return res.status(500).json({ error: `Error al leer JSONBin: ${text}` });
     }
 
-    // Devolvemos el código de acceso en formato JSON
-    res.status(200).json({ codigo_acceso: data.codigo_acceso });
+    const body = await resp.json();
+    const record = body.record;
+    if (!record || !record.codigo_acceso) {
+      return res.status(500).json({ error: "Código no disponible en JSONBin" });
+    }
 
-  } catch (error) {
-    console.error("Error en /api/codigo:", error);
+    res.status(200).json({ codigo_acceso: record.codigo_acceso });
+  } catch (err) {
+    console.error("Error en /api/codigo:", err);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 }
