@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TV - Conexión a Resultados</title>
+    <!-- ✅ AGREGAR FAVICON PARA ELIMINAR ERROR 404 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -27,6 +30,19 @@
         tr:hover { background-color:rgba(255,255,255,0.08); }
         .resultados-header { position:sticky; top:0; background:radial-gradient(circle at top, rgba(0,10,60,0.95), rgba(0,10,30,0.9)); padding:1vh 0; text-align:center; font-size:clamp(1.6rem,3vw,3rem); color:#ffc107; text-transform:uppercase; font-weight:700; z-index:20; box-shadow:0 6px 12px rgba(0,0,0,0.5); }
         .contador-actualizacion { font-size:clamp(1rem,1.5vw,1.6rem); color:#00e6ff; text-shadow:0 0 8px rgba(0,230,255,0.9); margin-top:0.5vh; }
+        
+        /* ✅ INDICADOR DE TIPO DE DATOS */
+        .badge-tipo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        .badge-seguimiento { background: rgba(0,123,255,0.3); border: 2px solid #007bff; color: #00d8ff; }
+        .badge-resultado { background: rgba(40,167,69,0.3); border: 2px solid #28a745; color: #00ff88; }
     </style>
 </head>
 <body>
@@ -34,14 +50,22 @@
 <div class="modal fade" id="modalAcceso" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-dark text-white" style="backdrop-filter: blur(10px); background: rgba(0,20,50,0.7) !important;">
-      <div class="modal-header border-secondary"><h5 class="modal-title">Conexión a Resultados en Directo</h5></div>
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title">🎯 Conexión a Resultados en Directo</h5>
+      </div>
       <div class="modal-body text-center">
         <p>Introduce el código de acceso de 4 dígitos.</p>
         <form id="formAcceso">
-          <input type="text" id="accessCodeInput" class="form-control form-control-lg text-center my-3" maxlength="4" placeholder="----" required>
-          <button type="submit" class="btn btn-primary btn-lg w-100"><span class="spinner-border spinner-border-sm d-none" role="status"></span>Conectar</button>
-          <div id="errorMessage" class="text-danger mt-3" style="height:24px;"></div>
+          <input type="text" id="accessCodeInput" class="form-control form-control-lg text-center my-3" maxlength="4" placeholder="----" required autocomplete="off">
+          <button type="submit" class="btn btn-primary btn-lg w-100">
+            <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
+            Conectar
+          </button>
+          <div id="errorMessage" class="text-danger mt-3" style="height:24px; font-size: 0.9rem;"></div>
         </form>
+        <div class="mt-3">
+          <small class="text-muted">Código por defecto: 1234</small>
+        </div>
       </div>
     </div>
   </div>
@@ -49,21 +73,27 @@
 
 <div id="mainContent" class="container-tv" style="display: none; flex-direction: column;">
   <header>
-    <img src="shooting_logo.png" alt="Logo Izquierdo" class="logo-izquierdo">
+    <img src="shooting_logo.png" alt="Logo Izquierdo" class="logo-izquierdo" onerror="this.style.display='none'">
     <div class="text-center">
       <h1 class="display-5 fw-bold">Resultados en Directo</h1>
       <div id="infoActualizacion" class="status-box rounded mx-auto" style="display:none;"></div>
     </div>
+    <!-- ✅ BADGE INDICADOR DE TIPO -->
+    <div id="badgeTipo" class="badge-tipo" style="display:none;"></div>
   </header>
-  <div id="logoCentral"><img src="trasona-logo.png" alt="Club de Tiro Ensidesa Trasona" class="logo-trasona"></div>
-  <main id="contenido"><div class="table-container" id="tablasContainer" style="display:none;"></div></main>
+  <div id="logoCentral">
+    <img src="trasona-logo.png" alt="Club de Tiro Ensidesa Trasona" class="logo-trasona" onerror="this.style.display='none'">
+  </div>
+  <main id="contenido">
+    <div class="table-container" id="tablasContainer" style="display:none;"></div>
+  </main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // --- CONFIGURACIÓN ---
     const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc';
-    const INTERVALO_ACTUALIZACION = 15000;
+    const INTERVALO_ACTUALIZACION = 15000; // 15 segundos
     let ultimoContenido = '';
 
     // --- ELEMENTOS DEL DOM ---
@@ -76,47 +106,75 @@
     const infoElement = document.getElementById('infoActualizacion');
     const logoCentral = document.getElementById('logoCentral');
     const tablasContainer = document.getElementById('tablasContainer');
+    const badgeTipo = document.getElementById('badgeTipo');
 
     // --- LÓGICA DE INICIO ---
     document.addEventListener('DOMContentLoaded', () => {
+        console.log('✅ Sistema TV iniciado');
+        console.log('📡 Bin ID:', DATOS_COMPETICION_BIN_ID);
+        
+        // Si ya hay sesión activa, cargar directamente
         if (sessionStorage.getItem('acceso_concedido_tv') === 'true') {
+            console.log('✅ Sesión activa detectada');
             mainContent.style.display = 'flex';
             iniciarCargaDeResultados();
         } else {
+            console.log('🔐 Mostrando modal de acceso');
             modalAcceso.show();
         }
+        
+        // Auto-focus en el input
+        accessCodeInput.focus();
     });
 
-    // --- LÓGICA DE ACCESO (SOLO SE EJECUTA UNA VEZ) ---
+    // --- LÓGICA DE ACCESO ---
     formAcceso.addEventListener('submit', async (e) => {
         e.preventDefault();
         const codigoIntroducido = accessCodeInput.value.trim();
+        
+        console.log('🔑 Intentando conectar con código:', codigoIntroducido);
+        
         spinner.classList.remove('d-none');
         formAcceso.querySelector('button').disabled = true;
         errorMessage.textContent = '';
 
         try {
+            console.log('📡 Consultando Bin...');
             const response = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
-            if (!response.ok) throw new Error(`404: No se encontró el Bin. Verifica el ID.`);
+            
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: No se pudo conectar con el servidor`);
+            }
             
             const data = (await response.json()).record;
+            console.log('📦 Datos recibidos:', data);
             
+            // Verificar estructura del Bin
             if (typeof data.codigo_acceso === 'undefined') {
-                 throw new Error('El formato inicial del Bin es incorrecto. Falta la propiedad "codigo_acceso".');
+                console.error('❌ Estructura del Bin incorrecta:', data);
+                throw new Error('Configuración del servidor incorrecta. Contacta al administrador.');
             }
+            
             const codigoCorrecto = String(data.codigo_acceso);
+            console.log('🔐 Código correcto:', codigoCorrecto);
 
             if (codigoIntroducido === codigoCorrecto) {
+                console.log('✅ Acceso concedido');
                 sessionStorage.setItem('acceso_concedido_tv', 'true');
                 modalAcceso.hide();
                 mainContent.style.display = 'flex';
-                // Mostramos los datos y LUEGO iniciamos las actualizaciones.
-                mostrarResultados(data); 
+                
+                // Mostrar datos iniciales
+                mostrarResultados(data);
+                
+                // Iniciar actualizaciones periódicas
                 iniciarCargaDeResultados();
             } else {
-                throw new Error('Código de acceso incorrecto.');
+                console.warn('❌ Código incorrecto');
+                throw new Error('Código de acceso incorrecto');
             }
         } catch (error) {
+            console.error('❌ Error en conexión:', error);
             errorMessage.textContent = error.message;
         } finally {
             spinner.classList.add('d-none');
@@ -125,87 +183,198 @@
     });
     
     // --- LÓGICA DE CARGA PERIÓDICA ---
-    // Esta función se define antes para que pueda ser llamada desde el login.
+    let intervaloActualizacion;
+    
     function iniciarCargaDeResultados() {
-        consultarResultados(); // Carga inicial
-        setInterval(consultarResultados, INTERVALO_ACTUALIZACION);
+        console.log('🔄 Iniciando actualizaciones automáticas');
+        
+        // Carga inicial inmediata
+        consultarResultados();
+        
+        // Configurar actualizaciones periódicas
+        if (intervaloActualizacion) {
+            clearInterval(intervaloActualizacion);
+        }
+        intervaloActualizacion = setInterval(consultarResultados, INTERVALO_ACTUALIZACION);
     }
 
     async function consultarResultados() {
-      try {
-        const respuesta = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
-        if (!respuesta.ok) throw new Error(`Error de red: ${respuesta.status}`);
-        
-        const contenidoTexto = await respuesta.text();
-        if (contenidoTexto === ultimoContenido) return;
-        ultimoContenido = contenidoTexto;
+        try {
+            const respuesta = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
+            
+            if (!respuesta.ok) {
+                throw new Error(`Error de red: ${respuesta.status}`);
+            }
+            
+            const contenidoTexto = await respuesta.text();
+            
+            // Solo actualizar si hay cambios
+            if (contenidoTexto === ultimoContenido) {
+                console.log('⏸️ Sin cambios en los datos');
+                return;
+            }
+            
+            console.log('🔄 Datos actualizados detectados');
+            ultimoContenido = contenidoTexto;
 
-        const datos = JSON.parse(contenidoTexto).record;
-        mostrarResultados(datos);
-      } catch (error) {
-        console.error("Error en actualización periódica:", error.message);
-        infoElement.className = 'status-box status-disconnected';
-        infoElement.innerHTML = `<div class="text-center">⚠️ ${error.message}</div>`;
-      }
-    }
-
-    // --- FUNCIÓN INTELIGENTE PARA PROCESAR Y MOSTRAR DATOS ---
-    function mostrarResultados(datos) {
-        if (!datos || !datos.datos) {
+            const datos = JSON.parse(contenidoTexto).record;
+            mostrarResultados(datos);
+            
+        } catch (error) {
+            console.error('❌ Error en actualización:', error.message);
             infoElement.style.display = 'block';
             infoElement.className = 'status-box status-disconnected';
-            infoElement.innerHTML = `<div class="text-center">❌ Formato de datos incorrecto o Bin vacío.</div>`;
+            infoElement.innerHTML = `<div class="text-center">⚠️ Error de conexión</div>`;
+        }
+    }
+
+    // --- FUNCIÓN PARA MOSTRAR RESULTADOS ---
+    function mostrarResultados(datos) {
+        console.log('📊 Procesando resultados:', datos);
+        
+        // Validar estructura de datos
+        if (!datos || !datos.datos) {
+            console.warn('⚠️ Formato de datos incorrecto');
+            infoElement.style.display = 'block';
+            infoElement.className = 'status-box status-disconnected';
+            infoElement.innerHTML = `<div class="text-center">❌ Esperando datos de competición...</div>`;
+            logoCentral.style.display = 'block';
+            tablasContainer.style.display = 'none';
+            badgeTipo.style.display = 'none';
             return;
         }
         
-        const datosTraducidos = datos.datos.map(tirador => ({
-            ...tirador,
-            nombre: tirador.nombre || `Tirador ${tirador.puesto}`
-        }));
-
+        // Si no hay datos todavía
+        if (datos.datos.length === 0) {
+            console.log('⏳ Sin datos de competición aún');
+            infoElement.style.display = 'block';
+            infoElement.className = 'status-box status-connected';
+            infoElement.innerHTML = `
+                <div class="text-center">
+                    <span class="fw-bold"><i class="bi bi-hourglass-split"></i> ESPERANDO DATOS</span><br>
+                    <small>${(datos.disciplina || 'SISTEMA LISTO').toUpperCase()}</small>
+                </div>`;
+            logoCentral.style.display = 'block';
+            tablasContainer.style.display = 'none';
+            badgeTipo.style.display = 'none';
+            return;
+        }
+        
+        // Preparar datos para mostrar
         const datosParaTabla = {
             disciplina: datos.disciplina || 'Resultados en Directo',
-            datos: datosTraducidos
+            tipo: datos.tipo || 'resultado',
+            datos: datos.datos
         };
 
+        // Ocultar logo y mostrar tabla
         logoCentral.style.display = 'none';
         tablasContainer.style.display = 'block';
         infoElement.style.display = 'block';
+        
+        // Actualizar badge de tipo
+        badgeTipo.style.display = 'block';
+        if (datosParaTabla.tipo === 'seguimiento') {
+            badgeTipo.className = 'badge-tipo badge-seguimiento';
+            badgeTipo.textContent = '📊 SEGUIMIENTO';
+        } else {
+            badgeTipo.className = 'badge-tipo badge-resultado';
+            badgeTipo.textContent = '🏆 RESULTADO';
+        }
+        
+        // Mostrar tabla
         mostrarTablaUnificada(datosParaTabla);
         
+        // Actualizar info de conexión
         infoElement.className = 'status-box status-connected';
         infoElement.innerHTML = `
-          <div class="text-center">
-            <span class="fw-bold"><i class="bi bi-check-circle-fill"></i> EN DIRECTO</span><br>
-            <small>${(datos.disciplina || '').toUpperCase()}</small>
-            <div class="contador-actualizacion">Actualizado: ${new Date().toLocaleTimeString()}</div>
-          </div>`;
+            <div class="text-center">
+                <span class="fw-bold"><i class="bi bi-check-circle-fill"></i> EN DIRECTO</span><br>
+                <small>${(datos.disciplina || '').toUpperCase()}</small>
+                <div class="contador-actualizacion">Actualizado: ${new Date().toLocaleTimeString()}</div>
+            </div>`;
+            
+        console.log('✅ Resultados mostrados correctamente');
     }
 
-    // --- FUNCIÓN PARA DIBUJAR LA TABLA (VERSIÓN INTELIGENTE) ---
+    // --- FUNCIÓN PARA DIBUJAR LA TABLA ---
     function mostrarTablaUnificada(datos) {
         const resultados = datos.datos || [];
         const container = document.getElementById('tablasContainer');
+        
         if (!resultados.length) {
-            container.innerHTML = `<h2 class="text-center text-warning mt-5">Esperando resultados...</h2>`;
+            container.innerHTML = `<h2 class="text-center text-warning mt-5">⏳ Esperando resultados...</h2>`;
             return;
         }
 
-        const seriesData = resultados[0].series || resultados[0].parciales || [];
+        // Detectar tipo de datos (series o parciales)
+        const primerResultado = resultados[0];
+        const tieneSeriesIndividuales = primerResultado.series && primerResultado.series.length > 0;
+        const tieneParciales = primerResultado.parciales && primerResultado.parciales.length > 0;
+        
+        const seriesData = tieneSeriesIndividuales ? primerResultado.series : 
+                          tieneParciales ? primerResultado.parciales : [];
         const numSeries = seriesData.length;
+        
+        console.log('📋 Generando tabla con', numSeries, 'columnas');
 
-        let tablaHTML = `<div class="resultados-header">${datos.disciplina}</div><div class="scroll-animado table-wrapper"><table class="table table-dark table-bordered table-hover"><thead><tr><th>Pos.</th><th>Puesto</th><th>Nombre</th>${Array.from({ length: numSeries }, (_, i) => `<th>S${i+1}</th>`).join('')}<th>Total</th><th>X</th></tr></thead><tbody>`;
-        
-        resultados.sort((a,b) => parseFloat(b.total)-parseFloat(a.total) || parseFloat(b.xTotal)-parseFloat(a.xTotal));
-        
-        resultados.forEach((r,index) => {
-            const seriesColumnas = r.series || r.parciales || [];
-            tablaHTML += `<tr><td class="fw-bold text-warning">${index+1}º</td><td>Puesto ${r.puesto || '-'}</td><td>${r.nombre || 'Anónimo'}</td>${seriesColumnas.map(s => `<td>${s !== null ? s : '-'}</td>`).join('')}<td class="table-success fw-bold">${r.total}</td><td class="table-info fw-bold">${r.xTotal}</td></tr>`;
+        // Generar encabezados
+        let encabezados = '<th>Pos.</th><th>Puesto</th>';
+        for (let i = 0; i < numSeries; i++) {
+            encabezados += `<th>S${i+1}</th>`;
+        }
+        encabezados += '<th>Total</th><th>X</th>';
+
+        // Ordenar resultados por total (mayor a menor)
+        resultados.sort((a, b) => {
+            const totalA = parseFloat(a.total) || 0;
+            const totalB = parseFloat(b.total) || 0;
+            const xA = parseFloat(a.xTotal) || 0;
+            const xB = parseFloat(b.xTotal) || 0;
+            return totalB - totalA || xB - xA;
         });
 
-        tablaHTML += '</tbody></table></div>';
+        // Generar filas
+        let filas = '';
+        resultados.forEach((r, index) => {
+            const seriesColumnas = tieneSeriesIndividuales ? r.series : 
+                                  tieneParciales ? r.parciales : [];
+            
+            filas += `
+                <tr>
+                    <td class="fw-bold text-warning">${index + 1}º</td>
+                    <td>Puesto ${r.puesto || '-'}</td>
+                    ${seriesColumnas.map(s => `<td>${s !== null && s !== undefined ? s : '-'}</td>`).join('')}
+                    <td class="table-success fw-bold">${r.total || 0}</td>
+                    <td class="table-info fw-bold">${r.xTotal || 0}</td>
+                </tr>
+            `;
+        });
+
+        // Construir HTML completo
+        const tablaHTML = `
+            <div class="resultados-header">${datos.disciplina}</div>
+            <div class="scroll-animado table-wrapper">
+                <table class="table table-dark table-bordered table-hover">
+                    <thead>
+                        <tr>${encabezados}</tr>
+                    </thead>
+                    <tbody>
+                        ${filas}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
         container.innerHTML = tablaHTML;
     }
+    
+    // --- LIMPIEZA AL CERRAR ---
+    window.addEventListener('beforeunload', () => {
+        if (intervaloActualizacion) {
+            clearInterval(intervaloActualizacion);
+        }
+    });
 </script>
 
 </body>
