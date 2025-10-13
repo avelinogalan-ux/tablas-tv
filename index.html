@@ -123,7 +123,7 @@
                 modalAcceso.hide();
                 mainContent.style.display = 'flex';
                 mostrarResultados(data);
-                iniciarCargaDeResultados(); // Inicia las actualizaciones periódicas
+                iniciarCargaDeResultados();
             } else {
                 throw new Error('Código de acceso incorrecto.');
             }
@@ -137,7 +137,7 @@
     
     // --- LÓGICA DE CARGA PERIÓDICA ---
     function iniciarCargaDeResultados() {
-        consultarResultados(); // Carga inicial
+        consultarResultados();
         setInterval(consultarResultados, INTERVALO_ACTUALIZACION);
     }
 
@@ -172,7 +172,7 @@
         // "Traduce" los datos que llegan, añadiendo el nombre si falta.
         const datosTraducidos = datos.datos.map(tirador => ({
             ...tirador,
-            nombre: tirador.nombre || `Tirador ${tirador.puesto}` // Genera un nombre si no existe
+            nombre: tirador.nombre || `Tirador ${tirador.puesto}`
         }));
 
         const datosParaTabla = {
