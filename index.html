@@ -21,9 +21,62 @@
         .status-box { max-width:60vw; margin:1vh auto 0; padding:0.7rem; border-radius:0.5rem; font-size:clamp(1rem,1.6vw,1.7rem); font-weight:bold; text-align:center; }
         .status-connected { background: rgba(0,255,136,0.2); border:2px solid #00ff88; color:#00ff88; text-shadow:0 0 15px rgba(0,255,136,0.7); }
         .status-disconnected { background: rgba(255,0,60,0.2); border:2px solid #ff003c; color:#ff4d6d; }
-        .table-container { flex-grow:1; overflow-y:auto; scroll-behavior:smooth; margin:2vh auto; width:95%; }
+        .table-container { 
+            flex-grow:1; 
+            overflow-y:auto; 
+            scroll-behavior:smooth; 
+            margin:2vh auto; 
+            width:95%; 
+            max-height: 70vh; /* Limitar altura para forzar scroll */
+            position: relative;
+        }
+        .table-container::-webkit-scrollbar {
+            width: 12px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background: rgba(0, 20, 50, 0.5);
+            border-radius: 10px;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #0048ff, #00bfff);
+            border-radius: 10px;
+            border: 2px solid rgba(0, 20, 50, 0.5);
+        }
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #00bfff, #0048ff);
+        }
         .table { font-size:clamp(1rem,2vw,2.5rem); border-color:#00bfff; color:#fff; background:rgba(0,60,150,0.3); backdrop-filter:blur(8px); min-width:1500px; }
         .table thead { background: linear-gradient(90deg,#001f7a 0%,#0048ff 100%); color:#fff; text-transform:uppercase; border-bottom:0.5vh solid #ffc107; position:sticky; top:0; z-index:10; font-size:clamp(1rem,1.6vw,2rem); }
+        
+        /* Indicador de más contenido abajo */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 193, 7, 0.9);
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            z-index: 15;
+            animation: bounce 2s infinite;
+            pointer-events: none;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+        
+        /* Fila activa durante scroll */
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+        .table tbody tr.highlight-row {
+            background-color: rgba(255, 193, 7, 0.2) !important;
+            box-shadow: 0 0 20px rgba(255, 193, 7, 0.4);
+        }
         .table th,.table td { text-align:center; vertical-align:middle; padding:1.2rem; }
         .table-success { background-color:rgba(0,255,136,0.25)!important; color:#00ff9c; font-weight:700; }
         .table-info { background-color:rgba(0,229,255,0.25)!important; color:#00d8ff; font-weight:700; }
@@ -93,7 +146,7 @@
 <script>
     // --- CONFIGURACIÓN ---
     const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc';
-    const INTERVALO_ACTUALIZACION = 300000; 
+    const INTERVALO_ACTUALIZACION = 300000; // 4 minutos (240 segundos)
     let ultimoContenido = '';
 
     // --- ELEMENTOS DEL DOM ---
