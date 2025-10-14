@@ -184,7 +184,7 @@
 <script>
     // --- CONFIGURACIÓN ---
     const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc';
-    const INTERVALO_ACTUALIZACION = 240000; // 4 minutos (240 segundos)
+    const INTERVALO_ACTUALIZACION = 300000; // 4 minutos (240 segundos)
     let ultimoContenido = '';
 
     // --- ELEMENTOS DEL DOM ---
@@ -509,7 +509,7 @@
                 indicator.style.display = 'none';
             } else if (isAtTop && scrollDirection === 1) {
                 indicator.style.display = 'block';
-                indicator.textContent = '▼ Más puestos abajo ▼';
+                indicator.textContent = '▼▼';
             }
         });
         
@@ -531,7 +531,7 @@
                 // Pausa de 3 segundos al llegar abajo antes de subir
                 isPaused = true;
                 if (indicator) {
-                    indicator.textContent = '▲ Volviendo arriba ▲';
+                    indicator.textContent = '▲▲';
                 }
                 setTimeout(() => {
                     scrollDirection = -1;
@@ -542,7 +542,7 @@
                 isPaused = true;
                 if (indicator) {
                     indicator.style.display = 'block';
-                    indicator.textContent = '▼ Más puestos abajo ▼';
+                    indicator.textContent = '▼▼';
                 }
                 setTimeout(() => {
                     scrollDirection = 1;
@@ -589,4 +589,5 @@
 
 </body>
 </html>
+
 
