@@ -96,25 +96,39 @@ async function chequeoPeriodico() {
   try {
     const controlResponse = await fetch(`https://api.jsonbin.io/v3/b/${CODIGO_ACCESO_BIN_ID}/latest`);
     if (controlResponse.ok) {
-      const controlData = (await controlResponse.json()).record;
-      const nuevoComando = controlData.comando;
+  const controlData = (await controlResponse.json()).record;
+  const nuevoComando = controlData.comando;
 
-      if (nuevoComando !== ultimoComandoControl) {
-        ultimoComandoControl = nuevoComando;
+  if (nuevoComando !== ultimoComandoControl) {
+    ultimoComandoControl = nuevoComando;
 
-        if (nuevoComando === 'mostrar_escudo') {
-          console.log("🔴 Reinicio recibido -> solo escudo");
-          mostrarEscudo();
-          return; // ✅ Detener flujo aquí
+    if (nuevoComando === 'mostrar_escudo') {
+      console.log("🔴 Reinicio recibido -> solo escudo");
+      modoEscudoForzado = true;
+      mostrarEscudo();
+      return; // ✅ Detiene flujo solo en este caso
+    }
+
+    if (nuevoComando === 'mostrar_resultados') {
+      console.log("🟢 Señal de resultados recibida");
+      modoEscudoForzado = false;
+      ultimoContenidoResultados = ''; // Forzar recarga
+      // ✅ Mostrar resultados inmediatamente si hay datos
+      try {
+        const resultadosResponse = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
+        if (resultadosResponse.ok) {
+          const contenidoTexto = await resultadosResponse.text();
+          const datos = JSON.parse(contenidoTexto).record;
+          if (Array.isArray(datos?.datos) && datos.datos.length) {
+            mostrarResultados(datos);
+          }
         }
-
-        if (nuevoComando === 'mostrar_resultados') {
-          console.log("🟢 Señal de resultados recibida");
-          modoEscudoForzado = false;
-          ultimoContenidoResultados = '';
-        }
+      } catch (err) {
+        console.warn("⚠️ No se pudieron cargar resultados al salir del modo escudo:", err.message);
       }
     }
+  }
+}
 
     if (modoEscudoForzado) {
       console.log("⏸️ Escudo activo, no se muestran resultados");
@@ -204,3 +218,4 @@ function mostrarTablaUnificada(datos) {
 </script>
 </body>
 </html>
+
