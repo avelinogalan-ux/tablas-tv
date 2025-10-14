@@ -184,7 +184,7 @@
 <script>
     // --- CONFIGURACIÓN ---
     const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc';
-    const INTERVALO_ACTUALIZACION = 300000; // 4 minutos (240 segundos)
+    const INTERVALO_ACTUALIZACION = 240000; // 4 minutos (240 segundos)
     let ultimoContenido = '';
 
     // --- ELEMENTOS DEL DOM ---
@@ -461,7 +461,7 @@
                         ${filas}
                     </tbody>
                 </table>
-                ${resultados.length > 1 ? '<div class="scroll-indicator" id="scrollIndicator">▼▼</div>' : ''}
+                ${resultados.length > 8 ? '<div class="scroll-indicator" id="scrollIndicator">▼ Más puestos abajo ▼</div>' : ''}
             </div>
         `;
         
@@ -509,7 +509,7 @@
                 indicator.style.display = 'none';
             } else if (isAtTop && scrollDirection === 1) {
                 indicator.style.display = 'block';
-                indicator.textContent = '▼▼';
+                indicator.textContent = '▼ Más puestos abajo ▼';
             }
         });
         
@@ -531,7 +531,7 @@
                 // Pausa de 3 segundos al llegar abajo antes de subir
                 isPaused = true;
                 if (indicator) {
-                    indicator.textContent = '▲▲';
+                    indicator.textContent = '▲ Volviendo arriba ▲';
                 }
                 setTimeout(() => {
                     scrollDirection = -1;
@@ -542,7 +542,7 @@
                 isPaused = true;
                 if (indicator) {
                     indicator.style.display = 'block';
-                    indicator.textContent = '▼▼';
+                    indicator.textContent = '▼ Más puestos abajo ▼';
                 }
                 setTimeout(() => {
                     scrollDirection = 1;
@@ -589,5 +589,3 @@
 
 </body>
 </html>
-
-
