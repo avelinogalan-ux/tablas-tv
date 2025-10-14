@@ -9,25 +9,144 @@
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        body { background: radial-gradient(circle at center, #000428 0%, #004e92 100%); color: #fff; font-family: 'Rajdhani', sans-serif; margin:0; padding:0; overflow:hidden; }
-        .container-tv { width:100%; height:100vh; display:flex; flex-direction:column; justify-content:flex-start; }
-        header { position:relative; background:linear-gradient(90deg,#002bff 0%,#001242 100%); padding:1.5vh 3vw; border-bottom:0.5vh solid #ffc107; display:flex; align-items:center; justify-content:center; }
-        .logo-izquierdo { position:absolute; left:3vw; height:clamp(40px, 8vh, 130px); filter:drop-shadow(0 0 10px rgba(255,255,255,0.7)); }
-        h1.display-5 { font-size:clamp(2rem,4vw,4.5rem); text-transform:uppercase; text-shadow:0 0 25px rgba(255,255,255,0.9); margin:0; }
-        .logo-trasona { display:block; margin:5vh auto 4vh; height:clamp(180px,35vh,380px); width:auto; filter:drop-shadow(0 0 30px rgba(255,255,255,0.8)); animation:aparecerLogo 1.5s ease-out; }
-        @keyframes aparecerLogo { from {opacity:0; transform:scale(0.8);} to {opacity:1; transform:scale(1);} }
-        .status-box { max-width:60vw; margin:1vh auto 0; padding:clamp(0.4rem, 1vw, 0.7rem); border-radius:0.5rem; font-size:clamp(0.7rem, 1.3vw, 1.7rem); font-weight:bold; text-align:center; }
-        .status-connected { background: rgba(0,255,136,0.2); border:2px solid #00ff88; color:#00ff88; text-shadow:0 0 15px rgba(0,255,136,0.7); }
-        .status-disconnected { background: rgba(255,0,60,0.2); border:2px solid #ff003c; color:#ff4d6d; }
-        .table-container { flex-grow:1; overflow-y:auto; scroll-behavior:smooth; margin:2vh auto; width:95%; max-height: 70vh; }
-        .table { font-size:clamp(1rem,2vw,2.5rem); border-color:#00bfff; color:#fff; background:rgba(0,60,150,0.3); backdrop-filter:blur(8px); min-width:1500px; }
-        .table thead { background: linear-gradient(90deg,#001f7a 0%,#0048ff 100%); color:#fff; text-transform:uppercase; border-bottom:0.5vh solid #ffc107; position:sticky; top:0; z-index:10; font-size:clamp(1rem,1.6vw,2rem); }
-        .table th,.table td { text-align:center; vertical-align:middle; padding:1.2rem; }
-        .table-success { background-color:rgba(0,255,136,0.25)!important; color:#00ff9c; font-weight:700; }
-        .table-info { background-color:rgba(0,229,255,0.25)!important; color:#00d8ff; font-weight:700; }
-        tr:hover { background-color:rgba(255,255,255,0.08); }
-        .resultados-header { position:sticky; top:0; background:radial-gradient(circle at top, rgba(0,10,60,0.98), rgba(0,10,30,0.95)); padding:1.5vh 0; text-align:center; font-size:clamp(1.6rem,3vw,3rem); color:#ffc107; text-transform:uppercase; font-weight:700; z-index:25; box-shadow:0 6px 12px rgba(0,0,0,0.5); margin-bottom: 1vh; }
-        .contador-actualizacion { font-size:clamp(1rem,1.5vw,1.6rem); color:#00e6ff; text-shadow:0 0 8px rgba(0,230,255,0.9); margin-top:0.5vh; }
+        body { 
+            background: radial-gradient(circle at center, #000428 0%, #004e92 100%); 
+            color: #fff; 
+            font-family: 'Rajdhani', sans-serif; 
+            margin:0; 
+            padding:0; 
+            overflow:hidden; 
+        }
+        .container-tv { 
+            width:100%; 
+            height:100vh; 
+            display:flex; 
+            flex-direction:column; 
+            justify-content:flex-start; 
+        }
+        header { 
+            position:relative; 
+            background:linear-gradient(90deg,#002bff 0%,#001242 100%); 
+            padding:1.5vh 3vw; 
+            border-bottom:0.5vh solid #ffc107; 
+            display:flex; 
+            align-items:center; 
+            justify-content:center; 
+        }
+        .logo-izquierdo { 
+            position:absolute; 
+            left:3vw; 
+            height:clamp(40px, 8vh, 130px); 
+            filter:drop-shadow(0 0 10px rgba(255,255,255,0.7)); 
+        }
+        h1.display-5 { 
+            font-size:clamp(2rem,4vw,4.5rem); 
+            text-transform:uppercase; 
+            text-shadow:0 0 25px rgba(255,255,255,0.9); 
+            margin:0; 
+        }
+        .logo-trasona { 
+            display:block; 
+            margin:5vh auto 4vh; 
+            height:clamp(180px,35vh,380px); 
+            width:auto; 
+            filter:drop-shadow(0 0 30px rgba(255,255,255,0.8)); 
+            animation:aparecerLogo 1.5s ease-out; 
+        }
+        @keyframes aparecerLogo { 
+            from {opacity:0; transform:scale(0.8);} 
+            to {opacity:1; transform:scale(1);} 
+        }
+        .status-box { 
+            max-width:60vw; 
+            margin:1vh auto 0; 
+            padding:clamp(0.4rem, 1vw, 0.7rem); 
+            border-radius:0.5rem; 
+            font-size:clamp(0.7rem, 1.3vw, 1.7rem); 
+            font-weight:bold; 
+            text-align:center; 
+        }
+        .status-connected { 
+            background: rgba(0,255,136,0.2); 
+            border:2px solid #00ff88; 
+            color:#00ff88; 
+            text-shadow:0 0 15px rgba(0,255,136,0.7); 
+        }
+        .status-disconnected { 
+            background: rgba(255,0,60,0.2); 
+            border:2px solid #ff003c; 
+            color:#ff4d6d; 
+        }
+        .table-container { 
+            flex-grow:1; 
+            overflow-y:auto; 
+            scroll-behavior:smooth; 
+            margin:2vh auto; 
+            width:95%; 
+            max-height: 70vh; 
+        }
+        .table { 
+            font-size:clamp(1rem,2vw,2.5rem); 
+            border-color:#00bfff; 
+            color:#fff; 
+            background:rgba(0,60,150,0.3); 
+            backdrop-filter:blur(8px); 
+            min-width:1500px; 
+        }
+        .table thead { 
+            background: linear-gradient(90deg,#001f7a 0%,#0048ff 100%); 
+            color:#fff; 
+            text-transform:uppercase; 
+            border-bottom:0.5vh solid #ffc107; 
+            position:sticky; 
+            top:0; 
+            z-index:10; 
+            font-size:clamp(1rem,1.6vw,2rem); 
+        }
+        .table th,.table td { 
+            text-align:center; 
+            vertical-align:middle; 
+            padding:1.2rem; 
+        }
+        .table-success { 
+            background-color:rgba(0,255,136,0.25)!important; 
+            color:#00ff9c; 
+            font-weight:700; 
+        }
+        .table-info { 
+            background-color:rgba(0,229,255,0.25)!important; 
+            color:#00d8ff; 
+            font-weight:700; 
+        }
+        tr:hover { 
+            background-color:rgba(255,255,255,0.08); 
+        }
+        .resultados-header { 
+            position:sticky; 
+            top:0; 
+            background:radial-gradient(circle at top, rgba(0,10,60,0.98), rgba(0,10,30,0.95)); 
+            padding:1.5vh 0; 
+            text-align:center; 
+            font-size:clamp(1.6rem,3vw,3rem); 
+            color:#ffc107; 
+            text-transform:uppercase; 
+            font-weight:700; 
+            z-index:25; 
+            box-shadow:0 6px 12px rgba(0,0,0,0.5); 
+            margin-bottom: 1vh; 
+        }
+        .contador-actualizacion { 
+            font-size:clamp(1rem,1.5vw,1.6rem); 
+            color:#00e6ff; 
+            text-shadow:0 0 8px rgba(0,230,255,0.9); 
+            margin-top:0.5vh; 
+        }
+        .modo-escudo-activo {
+            background: rgba(255,193,7,0.2);
+            border: 2px solid #ffc107;
+            color: #ffc107;
+            text-shadow: 0 0 15px rgba(255,193,7,0.7);
+        }
     </style>
 </head>
 <body>
@@ -52,12 +171,14 @@
 <script>
     // --- CONFIGURACIÓN ---
     const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc'; // Bin de resultados
-    const CODIGO_ACCESO_BIN_ID = '68ead4c4d0ea881f409e35e6'; // ✅ Bin de reinici TV
+    const CODIGO_ACCESO_BIN_ID = '68ead4c4d0ea881f409e35e6'; // Bin de control TV
     const INTERVALO_ACTUALIZACION = 10000; // Chequea cada 10 segundos
     
+    // --- VARIABLES GLOBALES ---
     let ultimoContenidoResultados = '';
     let ultimoComandoControl = '';
     let updateIntervalId = null;
+    let modoEscudoForzado = false; // ✅ NUEVA: Bandera para bloquear en modo escudo
 
     // --- ELEMENTOS DEL DOM ---
     const mainContent = document.getElementById('mainContent');
@@ -76,7 +197,16 @@
         console.log("🛡️ Mostrando el escudo del club.");
         logoCentral.style.display = 'block';
         tablasContainer.style.display = 'none';
-        infoElement.style.display = 'none';
+        infoElement.style.display = 'block';
+        
+        // ✅ Actualizar info para mostrar que estamos en modo escudo
+        infoElement.className = 'status-box modo-escudo-activo';
+        infoElement.innerHTML = `
+          <div class="text-center">
+            <span class="fw-bold"><i class="bi bi-shield-check"></i> MODO ESCUDO ACTIVO</span><br>
+            <small>Esperando nueva competición</small>
+            <div class="contador-actualizacion">Última actualización: ${new Date().toLocaleTimeString()}</div>
+          </div>`;
     }
 
     function iniciarChequeos() {
@@ -93,36 +223,71 @@
                 const controlData = (await controlResponse.json()).record;
                 const nuevoComando = controlData.comando;
 
-                // Si la orden es "mostrar_escudo" y es una orden nueva
+                // ✅ MODIFICADO: Si recibimos "mostrar_escudo", activamos el modo bloqueado
                 if (nuevoComando !== ultimoComandoControl && nuevoComando === 'mostrar_escudo') {
-                    console.log("🔴 ¡Señal de reinicio recibida! Volviendo al escudo.");
+                    console.log("🔴 ¡Señal de reinicio recibida! Activando modo escudo.");
                     ultimoComandoControl = nuevoComando;
+                    modoEscudoForzado = true; // ✅ BLOQUEAMOS en modo escudo
                     mostrarEscudo();
-                    // Al recibir la orden, también limpiamos el contenido de resultados para forzar una recarga visual la próxima vez
-                    ultimoContenidoResultados = ''; 
-                    return; // Detenemos este ciclo para mostrar el escudo inmediatamente
+                    return; // Salimos inmediatamente
                 }
+                
+                // ✅ NUEVO: Si recibimos "mostrar_resultados", desactivamos modo escudo
+                if (nuevoComando !== ultimoComandoControl && nuevoComando === 'mostrar_resultados') {
+                    console.log("🟢 ¡Señal para mostrar resultados recibida!");
+                    ultimoComandoControl = nuevoComando;
+                    modoEscudoForzado = false; // ✅ DESBLOQUEAMOS modo escudo
+                    ultimoContenidoResultados = ''; // Forzar recarga de resultados
+                }
+                
                 ultimoComandoControl = nuevoComando;
             }
 
-            // 2. Si no hay orden de reinicio, consultamos los resultados
+            // ✅ NUEVO: Si estamos en modo escudo forzado, NO consultamos resultados
+            if (modoEscudoForzado) {
+                console.log("⏸️  Modo escudo activo - omitiendo consulta de resultados");
+                return;
+            }
+
+            // 2. Solo si NO estamos en modo escudo, consultamos resultados
             const resultadosResponse = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
-            if (!resultadosResponse.ok) return; // Si no hay resultados, no hacemos nada
+            if (!resultadosResponse.ok) {
+                console.log("❌ No se pudieron obtener resultados");
+                return;
+            }
 
             const contenidoTexto = await resultadosResponse.text();
-            if (contenidoTexto === ultimoContenidoResultados) return;
+            if (contenidoTexto === ultimoContenidoResultados) {
+                console.log("ℹ️  Mismos resultados, no hay cambios");
+                return;
+            }
+            
             ultimoContenidoResultados = contenidoTexto;
 
             const datos = JSON.parse(contenidoTexto).record;
             
             // Si hay datos de competición válidos, mostramos la tabla
             if (datos && datos.datos && datos.datos.length > 0) {
+                console.log("📊 Mostrando resultados actualizados");
                 mostrarResultados(datos);
+            } else {
+                // ✅ NUEVO: Si el bin de resultados está vacío, también mostramos escudo
+                console.log("📭 Bin de resultados vacío - mostrando escudo");
+                mostrarEscudo();
             }
 
         } catch (error) {
             console.error("Error en el chequeo periódico:", error.message);
+            // En caso de error, mantener el estado actual
         }
+    }
+
+    // ✅ NUEVA FUNCIÓN: Para reactivar la visualización de resultados (opcional)
+    function reactivarModoResultados() {
+        modoEscudoForzado = false;
+        ultimoContenidoResultados = ''; // Forzar recarga
+        ultimoComandoControl = ''; // Resetear comando
+        console.log("🟢 Modo resultados reactivado");
     }
 
     function mostrarResultados(datos) {
@@ -178,4 +343,3 @@
 
 </body>
 </html>
-
