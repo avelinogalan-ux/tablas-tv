@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TV - Conexión a Resultados</title>
-    <!-- ✅ AGREGAR FAVICON PARA ELIMINAR ERROR 404 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -21,13 +20,14 @@
         .status-box { max-width:60vw; margin:1vh auto 0; padding:0.7rem; border-radius:0.5rem; font-size:clamp(1rem,1.6vw,1.7rem); font-weight:bold; text-align:center; }
         .status-connected { background: rgba(0,255,136,0.2); border:2px solid #00ff88; color:#00ff88; text-shadow:0 0 15px rgba(0,255,136,0.7); }
         .status-disconnected { background: rgba(255,0,60,0.2); border:2px solid #ff003c; color:#ff4d6d; }
+        .status-finalizado { background: rgba(255,193,7,0.2); border:2px solid #ffc107; color:#ffc107; text-shadow:0 0 15px rgba(255,193,7,0.7); }
         .table-container { 
             flex-grow:1; 
             overflow-y:auto; 
             scroll-behavior:smooth; 
             margin:2vh auto; 
             width:95%; 
-            max-height: 70vh; /* Limitar altura para forzar scroll */
+            max-height: 70vh;
             position: relative;
         }
         .table-container::-webkit-scrollbar {
@@ -48,7 +48,6 @@
         .table { font-size:clamp(1rem,2vw,2.5rem); border-color:#00bfff; color:#fff; background:rgba(0,60,150,0.3); backdrop-filter:blur(8px); min-width:1500px; }
         .table thead { background: linear-gradient(90deg,#001f7a 0%,#0048ff 100%); color:#fff; text-transform:uppercase; border-bottom:0.5vh solid #ffc107; position:sticky; top:0; z-index:10; font-size:clamp(1rem,1.6vw,2rem); }
         
-        /* Indicador de más contenido abajo */
         .scroll-indicator {
             position: absolute;
             bottom: 10px;
@@ -69,7 +68,6 @@
             50% { transform: translateX(-50%) translateY(-10px); }
         }
         
-        /* Fila activa durante scroll */
         .table tbody tr {
             transition: all 0.3s ease;
         }
@@ -96,7 +94,6 @@
             margin-bottom: 1vh;
         }
         
-        /* Wrapper para la tabla con scroll interno */
         .table-scroll-wrapper {
             max-height: 65vh;
             overflow-y: auto;
@@ -122,7 +119,6 @@
         }
         .contador-actualizacion { font-size:clamp(1rem,1.5vw,1.6rem); color:#00e6ff; text-shadow:0 0 8px rgba(0,230,255,0.9); margin-top:0.5vh; }
         
-        /* ✅ INDICADOR DE TIPO DE DATOS */
         .badge-tipo {
             position: absolute;
             top: 10px;
@@ -134,6 +130,55 @@
         }
         .badge-seguimiento { background: rgba(0,123,255,0.3); border: 2px solid #007bff; color: #00d8ff; }
         .badge-resultado { background: rgba(40,167,69,0.3); border: 2px solid #28a745; color: #00ff88; }
+        
+        /* ESTILOS PARA FINALIZACIÓN */
+        .mensaje-finalizacion {
+            text-align: center;
+            margin-top: 3vh;
+            animation: fadeInScale 1.5s ease-out;
+        }
+        .mensaje-finalizacion h2 {
+            font-size: clamp(2.5rem, 5vw, 5rem);
+            color: #ffc107;
+            text-shadow: 0 0 30px rgba(255, 193, 7, 0.8);
+            margin-bottom: 2vh;
+        }
+        .mensaje-finalizacion .info-final {
+            font-size: clamp(1.2rem, 2vw, 2.5rem);
+            color: #00d8ff;
+            margin: 1vh 0;
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .btn-reactivar {
+            margin-top: 3vh;
+            padding: 1rem 3rem;
+            font-size: clamp(1rem, 1.5vw, 1.8rem);
+            font-weight: bold;
+            background: linear-gradient(90deg, #ffc107, #ff9800);
+            border: none;
+            border-radius: 0.5rem;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 193, 7, 0.5);
+        }
+        .btn-reactivar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 193, 7, 0.8);
+        }
+        
+        /* Transición suave al cambiar vistas */
+        .fade-transition {
+            animation: fadeIn 0.8s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -169,11 +214,20 @@
       <h1 class="display-5 fw-bold">Resultados en Directo</h1>
       <div id="infoActualizacion" class="status-box rounded mx-auto" style="display:none;"></div>
     </div>
-    <!-- ✅ BADGE INDICADOR DE TIPO -->
     <div id="badgeTipo" class="badge-tipo" style="display:none;"></div>
   </header>
   <div id="logoCentral">
     <img src="trasona-logo.png" alt="Club de Tiro Ensidesa Trasona" class="logo-trasona" onerror="this.style.display='none'">
+    <div id="mensajeFinalizacion" class="mensaje-finalizacion" style="display:none;">
+      <h2>🏁 COMPETICIÓN FINALIZADA</h2>
+      <div class="info-final">
+        <p id="disciplinaFinal"></p>
+        <p id="horaFinalizacion"></p>
+      </div>
+      <button class="btn-reactivar" onclick="reactivarSistema()">
+        <i class="bi bi-arrow-clockwise"></i> Reactivar Sistema
+      </button>
+    </div>
   </div>
   <main id="contenido">
     <div class="table-container" id="tablasContainer" style="display:none;"></div>
@@ -184,8 +238,14 @@
 <script>
     // --- CONFIGURACIÓN ---
     const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc';
-    const INTERVALO_ACTUALIZACION = 240000; // 4 minutos (240 segundos)
+    const INTERVALO_ACTUALIZACION = 240000; // 4 minutos
+    const TIMEOUT_FINALIZACION = 30 * 60 * 1000; // 30 minutos
+    const INTERVALO_CHEQUEO_TIMEOUT = 60000; // 1 minuto
+    
     let ultimoContenido = '';
+    let ultimaActualizacion = Date.now();
+    let competicionFinalizada = false;
+    let disciplinaGuardada = '';
 
     // --- ELEMENTOS DEL DOM ---
     const modalAcceso = new bootstrap.Modal('#modalAcceso');
@@ -198,13 +258,15 @@
     const logoCentral = document.getElementById('logoCentral');
     const tablasContainer = document.getElementById('tablasContainer');
     const badgeTipo = document.getElementById('badgeTipo');
+    const mensajeFinalizacion = document.getElementById('mensajeFinalizacion');
+    const disciplinaFinal = document.getElementById('disciplinaFinal');
+    const horaFinalizacion = document.getElementById('horaFinalizacion');
 
     // --- LÓGICA DE INICIO ---
     document.addEventListener('DOMContentLoaded', () => {
         console.log('✅ Sistema TV iniciado');
         console.log('📡 Bin ID:', DATOS_COMPETICION_BIN_ID);
         
-        // Si ya hay sesión activa, cargar directamente
         if (sessionStorage.getItem('acceso_concedido_tv') === 'true') {
             console.log('✅ Sesión activa detectada');
             mainContent.style.display = 'flex';
@@ -214,7 +276,6 @@
             modalAcceso.show();
         }
         
-        // Auto-focus en el input
         accessCodeInput.focus();
     });
 
@@ -240,7 +301,6 @@
             const data = (await response.json()).record;
             console.log('📦 Datos recibidos:', data);
             
-            // Verificar estructura del Bin
             if (typeof data.codigo_acceso === 'undefined') {
                 console.error('❌ Estructura del Bin incorrecta:', data);
                 throw new Error('Configuración del servidor incorrecta. Contacta al administrador.');
@@ -255,10 +315,7 @@
                 modalAcceso.hide();
                 mainContent.style.display = 'flex';
                 
-                // Mostrar datos iniciales
                 mostrarResultados(data);
-                
-                // Iniciar actualizaciones periódicas
                 iniciarCargaDeResultados();
             } else {
                 console.warn('❌ Código incorrecto');
@@ -275,9 +332,14 @@
     
     // --- LÓGICA DE CARGA PERIÓDICA ---
     let intervaloActualizacion;
+    let intervaloChequeoTimeout;
     
     function iniciarCargaDeResultados() {
         console.log('🔄 Iniciando actualizaciones automáticas');
+        
+        // Resetear estado
+        competicionFinalizada = false;
+        ultimaActualizacion = Date.now();
         
         // Carga inicial inmediata
         consultarResultados();
@@ -287,9 +349,86 @@
             clearInterval(intervaloActualizacion);
         }
         intervaloActualizacion = setInterval(consultarResultados, INTERVALO_ACTUALIZACION);
+        
+        // Configurar chequeo de timeout
+        if (intervaloChequeoTimeout) {
+            clearInterval(intervaloChequeoTimeout);
+        }
+        intervaloChequeoTimeout = setInterval(verificarTimeout, INTERVALO_CHEQUEO_TIMEOUT);
+    }
+
+    // --- VERIFICAR TIMEOUT DE 30 MINUTOS ---
+    function verificarTimeout() {
+        if (competicionFinalizada) return;
+        
+        const tiempoSinActualizar = Date.now() - ultimaActualizacion;
+        const minutosTranscurridos = Math.floor(tiempoSinActualizar / 60000);
+        
+        console.log(`⏱️ Tiempo sin actualizaciones: ${minutosTranscurridos} minutos`);
+        
+        if (tiempoSinActualizar >= TIMEOUT_FINALIZACION) {
+            console.log('🏁 Timeout alcanzado - Finalizando competición');
+            finalizarCompeticion();
+        }
+    }
+
+    // --- FINALIZAR COMPETICIÓN ---
+    function finalizarCompeticion() {
+        competicionFinalizada = true;
+        
+        // Detener todas las consultas
+        if (intervaloActualizacion) {
+            clearInterval(intervaloActualizacion);
+        }
+        if (intervaloChequeoTimeout) {
+            clearInterval(intervaloChequeoTimeout);
+        }
+        if (autoScrollInterval) {
+            clearInterval(autoScrollInterval);
+        }
+        
+        console.log('✅ Sistema detenido - Mostrando pantalla final');
+        
+        // Guardar datos finales
+        const horaFin = new Date();
+        disciplinaFinal.textContent = disciplinaGuardada || 'Competición';
+        horaFinalizacion.textContent = `Finalizado: ${horaFin.toLocaleTimeString()} - ${horaFin.toLocaleDateString()}`;
+        
+        // Transición suave
+        tablasContainer.classList.add('fade-transition');
+        logoCentral.classList.add('fade-transition');
+        
+        // Ocultar tabla y mostrar logo con mensaje
+        tablasContainer.style.display = 'none';
+        logoCentral.style.display = 'block';
+        mensajeFinalizacion.style.display = 'block';
+        badgeTipo.style.display = 'none';
+        
+        // Actualizar estado
+        infoElement.style.display = 'block';
+        infoElement.className = 'status-box status-finalizado';
+        infoElement.innerHTML = `
+            <div class="text-center">
+                <span class="fw-bold"><i class="bi bi-flag-fill"></i> COMPETICIÓN FINALIZADA</span><br>
+                <small>Sin actualizaciones en 30 minutos</small>
+            </div>`;
+    }
+
+    // --- REACTIVAR SISTEMA ---
+    function reactivarSistema() {
+        console.log('🔄 Reactivando sistema manualmente');
+        
+        competicionFinalizada = false;
+        mensajeFinalizacion.style.display = 'none';
+        ultimaActualizacion = Date.now();
+        
+        // Reiniciar consultas
+        iniciarCargaDeResultados();
     }
 
     async function consultarResultados() {
+        if (competicionFinalizada) return;
+        
         try {
             const respuesta = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
             
@@ -307,6 +446,7 @@
             
             console.log('🔄 Datos actualizados detectados');
             ultimoContenido = contenidoTexto;
+            ultimaActualizacion = Date.now(); // ✅ RESETEAR TIMER
 
             const datos = JSON.parse(contenidoTexto).record;
             mostrarResultados(datos);
@@ -323,7 +463,9 @@
     function mostrarResultados(datos) {
         console.log('📊 Procesando resultados:', datos);
         
-        // Validar estructura de datos
+        // Guardar disciplina
+        disciplinaGuardada = datos.disciplina || 'Resultados en Directo';
+        
         if (!datos || !datos.datos) {
             console.warn('⚠️ Formato de datos incorrecto');
             infoElement.style.display = 'block';
@@ -332,10 +474,10 @@
             logoCentral.style.display = 'block';
             tablasContainer.style.display = 'none';
             badgeTipo.style.display = 'none';
+            mensajeFinalizacion.style.display = 'none';
             return;
         }
         
-        // Si no hay datos todavía
         if (datos.datos.length === 0) {
             console.log('⏳ Sin datos de competición aún');
             infoElement.style.display = 'block';
@@ -343,27 +485,26 @@
             infoElement.innerHTML = `
                 <div class="text-center">
                     <span class="fw-bold"><i class="bi bi-hourglass-split"></i> ESPERANDO DATOS</span><br>
-                    <small>${(datos.disciplina || 'SISTEMA LISTO').toUpperCase()}</small>
+                    <small>${disciplinaGuardada.toUpperCase()}</small>
                 </div>`;
             logoCentral.style.display = 'block';
             tablasContainer.style.display = 'none';
             badgeTipo.style.display = 'none';
+            mensajeFinalizacion.style.display = 'none';
             return;
         }
         
-        // Preparar datos para mostrar
         const datosParaTabla = {
-            disciplina: datos.disciplina || 'Resultados en Directo',
+            disciplina: disciplinaGuardada,
             tipo: datos.tipo || 'resultado',
             datos: datos.datos
         };
 
-        // Ocultar logo y mostrar tabla
         logoCentral.style.display = 'none';
+        mensajeFinalizacion.style.display = 'none';
         tablasContainer.style.display = 'block';
         infoElement.style.display = 'block';
         
-        // Actualizar badge de tipo
         badgeTipo.style.display = 'block';
         if (datosParaTabla.tipo === 'seguimiento') {
             badgeTipo.className = 'badge-tipo badge-seguimiento';
@@ -373,15 +514,13 @@
             badgeTipo.textContent = '🏆 RESULTADO';
         }
         
-        // Mostrar tabla
         mostrarTablaUnificada(datosParaTabla);
         
-        // Actualizar info de conexión
         infoElement.className = 'status-box status-connected';
         infoElement.innerHTML = `
             <div class="text-center">
                 <span class="fw-bold"><i class="bi bi-check-circle-fill"></i> EN DIRECTO</span><br>
-                <small>${(datos.disciplina || '').toUpperCase()}</small>
+                <small>${disciplinaGuardada.toUpperCase()}</small>
                 <div class="contador-actualizacion">Actualizado: ${new Date().toLocaleTimeString()}</div>
             </div>`;
             
@@ -398,7 +537,6 @@
             return;
         }
 
-        // Detectar tipo de datos (series o parciales)
         const primerResultado = resultados[0];
         const tieneSeriesIndividuales = primerResultado.series && primerResultado.series.length > 0;
         const tieneParciales = primerResultado.parciales && primerResultado.parciales.length > 0;
@@ -409,30 +547,18 @@
         
         console.log('📋 Generando tabla con', numSeries, 'columnas');
 
-        // Generar encabezados
         let encabezados = '<th>Pos.</th><th>Puesto</th>';
         for (let i = 0; i < numSeries; i++) {
             encabezados += `<th>S${i+1}</th>`;
         }
         encabezados += '<th>Total</th><th>X</th>';
 
-        // OPCIÓN A: Ordenar por PUNTUACIÓN (Mayor a menor) - Para ranking
-        // resultados.sort((a, b) => {
-        //     const totalA = parseFloat(a.total) || 0;
-        //     const totalB = parseFloat(b.total) || 0;
-        //     const xA = parseFloat(a.xTotal) || 0;
-        //     const xB = parseFloat(b.xTotal) || 0;
-        //     return totalB - totalA || xB - xA;
-        // });
-
-        // OPCIÓN B: Ordenar por NÚMERO DE PUESTO (1, 2, 3...) - Para seguimiento
         resultados.sort((a, b) => {
             const puestoA = parseInt(a.puesto) || 0;
             const puestoB = parseInt(b.puesto) || 0;
             return puestoA - puestoB;
         });
 
-        // Generar filas
         let filas = '';
         resultados.forEach((r, index) => {
             const seriesColumnas = tieneSeriesIndividuales ? r.series : 
@@ -449,7 +575,6 @@
             `;
         });
 
-        // Construir HTML completo con wrapper de scroll separado
         const tablaHTML = `
             <div class="resultados-header">${datos.disciplina}</div>
             <div class="table-scroll-wrapper" id="tableScrollWrapper">
@@ -467,7 +592,6 @@
         
         container.innerHTML = tablaHTML;
         
-        // Iniciar auto-scroll si hay muchos puestos
         if (resultados.length > 8) {
             iniciarAutoScroll();
         }
@@ -475,11 +599,10 @@
     
     // --- SISTEMA DE AUTO-SCROLL ---
     let autoScrollInterval;
-    let scrollDirection = 1; // 1 = abajo, -1 = arriba
+    let scrollDirection = 1;
     let isPaused = false;
     
     function iniciarAutoScroll() {
-        // Limpiar intervalo anterior si existe
         if (autoScrollInterval) {
             clearInterval(autoScrollInterval);
         }
@@ -489,7 +612,6 @@
         
         if (!scrollWrapper) return;
         
-        // Pausar scroll al pasar el mouse por encima
         scrollWrapper.addEventListener('mouseenter', () => {
             isPaused = true;
         });
@@ -498,7 +620,6 @@
             isPaused = false;
         });
         
-        // Ocultar indicador cuando llegue al final
         scrollWrapper.addEventListener('scroll', () => {
             if (!indicator) return;
             
@@ -513,22 +634,18 @@
             }
         });
         
-        // Auto-scroll suave
         autoScrollInterval = setInterval(() => {
             if (isPaused) return;
             
-            const scrollSpeed = 1.2; // Velocidad más lenta para mejor lectura
+            const scrollSpeed = 1.2;
             scrollWrapper.scrollTop += scrollSpeed * scrollDirection;
             
-            // Resaltar fila visible en el centro
             resaltarFilaCentral();
             
-            // Detectar límites y cambiar dirección
             const isAtBottom = scrollWrapper.scrollHeight - scrollWrapper.scrollTop <= scrollWrapper.clientHeight + 10;
             const isAtTop = scrollWrapper.scrollTop <= 10;
             
             if (isAtBottom) {
-                // Pausa de 3 segundos al llegar abajo antes de subir
                 isPaused = true;
                 if (indicator) {
                     indicator.textContent = '▲ Volviendo arriba ▲';
@@ -538,7 +655,6 @@
                     isPaused = false;
                 }, 3000);
             } else if (isAtTop && scrollDirection === -1) {
-                // Pausa de 3 segundos al llegar arriba antes de bajar
                 isPaused = true;
                 if (indicator) {
                     indicator.style.display = 'block';
@@ -550,7 +666,7 @@
                 }, 3000);
             }
             
-        }, 50); // Intervalo estándar para movimiento suave
+        }, 50);
     }
     
     function resaltarFilaCentral() {
@@ -567,7 +683,6 @@
             const filaRect = fila.getBoundingClientRect();
             const filaCenterY = filaRect.top + filaRect.height / 2;
             
-            // Si la fila está cerca del centro, resaltarla
             if (Math.abs(filaCenterY - centerY) < 50) {
                 fila.classList.add('highlight-row');
             } else {
@@ -576,10 +691,12 @@
         });
     }
     
-    // --- LIMPIEZA AL CERRAR ---
     window.addEventListener('beforeunload', () => {
         if (intervaloActualizacion) {
             clearInterval(intervaloActualizacion);
+        }
+        if (intervaloChequeoTimeout) {
+            clearInterval(intervaloChequeoTimeout);
         }
         if (autoScrollInterval) {
             clearInterval(autoScrollInterval);
