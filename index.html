@@ -118,6 +118,22 @@
             background: linear-gradient(180deg, #00bfff, #0048ff);
         }
         .contador-actualizacion { font-size:clamp(1rem,1.5vw,1.6rem); color:#00e6ff; text-shadow:0 0 8px rgba(0,230,255,0.9); margin-top:0.5vh; }
+        .contador-timeout { 
+            font-size:clamp(0.9rem,1.3vw,1.4rem); 
+            color:#ffc107; 
+            text-shadow:0 0 8px rgba(255,193,7,0.9); 
+            margin-top:0.3vh;
+            font-weight: 600;
+        }
+        .contador-timeout.alerta { 
+            color:#ff4d6d; 
+            text-shadow:0 0 12px rgba(255,77,109,0.9);
+            animation: parpadeo 1.5s infinite;
+        }
+        @keyframes parpadeo {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
         
         .badge-tipo {
             position: absolute;
@@ -355,6 +371,12 @@
             clearInterval(intervaloChequeoTimeout);
         }
         intervaloChequeoTimeout = setInterval(verificarTimeout, INTERVALO_CHEQUEO_TIMEOUT);
+        
+        // También actualizar el contador cada segundo para mayor precisión visual
+        if (window.intervaloContadorSegundos) {
+            clearInterval(window.intervaloContadorSegundos);
+        }
+        window.intervaloContadorSegundos = setInterval(actualizarContadorTimeout, 1000);
     }
 
     // --- VERIFICAR TIMEOUT DE 30 MINUTOS ---
@@ -366,10 +388,38 @@
         
         console.log(`⏱️ Tiempo sin actualizaciones: ${minutosTranscurridos} minutos`);
         
+        // Actualizar contador visual
+        actualizarContadorTimeout();
+        
         if (tiempoSinActualizar >= TIMEOUT_FINALIZACION) {
             console.log('🏁 Timeout alcanzado - Finalizando competición');
             finalizarCompeticion();
         }
+    }
+    
+    // --- ACTUALIZAR CONTADOR VISUAL ---
+    function actualizarContadorTimeout() {
+        const contadorElement = document.getElementById('contadorTimeout');
+        if (!contadorElement || competicionFinalizada) return;
+        
+        const tiempoSinActualizar = Date.now() - ultimaActualizacion;
+        const totalSegundosRestantes = Math.max(0, Math.floor((TIMEOUT_FINALIZACION - tiempoSinActualizar) / 1000));
+        
+        // Formatear tiempo restante
+        const minutos = Math.floor(totalSegundosRestantes / 60);
+        const segundos = totalSegundosRestantes % 60;
+        const tiempoFormateado = `${minutos}:${segundos.toString().padStart(2, '0')}`;
+        
+        contadorElement.textContent = `⏱️ Tiempo restante: ${tiempoFormateado}`;
+        
+        // Cambiar color si quedan menos de 5 minutos
+        if (minutos < 5) {
+            contadorElement.classList.add('alerta');
+        } else {
+            contadorElement.classList.remove('alerta');
+        }
+        
+        console.log(`⏱️ Contador actualizado: ${tiempoFormateado}`);
     }
 
     // --- FINALIZAR COMPETICIÓN ---
@@ -486,6 +536,7 @@
                 <div class="text-center">
                     <span class="fw-bold"><i class="bi bi-hourglass-split"></i> ESPERANDO DATOS</span><br>
                     <small>${disciplinaGuardada.toUpperCase()}</small>
+                    <div class="contador-timeout" id="contadorTimeout">⏱️ Tiempo restante: 30:00</div>
                 </div>`;
             logoCentral.style.display = 'block';
             tablasContainer.style.display = 'none';
@@ -522,6 +573,7 @@
                 <span class="fw-bold"><i class="bi bi-check-circle-fill"></i> EN DIRECTO</span><br>
                 <small>${disciplinaGuardada.toUpperCase()}</small>
                 <div class="contador-actualizacion">Actualizado: ${new Date().toLocaleTimeString()}</div>
+                <div class="contador-timeout" id="contadorTimeout">⏱️ Tiempo restante: 30:00</div>
             </div>`;
             
         console.log('✅ Resultados mostrados correctamente');
@@ -697,6 +749,9 @@
         }
         if (intervaloChequeoTimeout) {
             clearInterval(intervaloChequeoTimeout);
+        }
+        if (window.intervaloContadorSegundos) {
+            clearInterval(window.intervaloContadorSegundos);
         }
         if (autoScrollInterval) {
             clearInterval(autoScrollInterval);
