@@ -14,11 +14,26 @@
         body { background: radial-gradient(circle at center, #000428 0%, #004e92 100%); color: #fff; font-family: 'Rajdhani', sans-serif; margin:0; padding:0; overflow:hidden; }
         .container-tv { width:100%; height:100vh; display:flex; flex-direction:column; justify-content:flex-start; }
         header { position:relative; background:linear-gradient(90deg,#002bff 0%,#001242 100%); padding:1.5vh 3vw; border-bottom:0.5vh solid #ffc107; display:flex; align-items:center; justify-content:center; }
-        .logo-izquierdo { position:absolute; left:3vw; height:clamp(60px,10vh,130px); filter:drop-shadow(0 0 10px rgba(255,255,255,0.7)); }
+        .logo-izquierdo { 
+            position:absolute; 
+            left:3vw; 
+            height:clamp(40px, 8vh, 130px); 
+            max-width: 20vw;
+            object-fit: contain;
+            filter:drop-shadow(0 0 10px rgba(255,255,255,0.7)); 
+        }
         h1.display-5 { font-size:clamp(2rem,4vw,4.5rem); text-transform:uppercase; text-shadow:0 0 25px rgba(255,255,255,0.9); margin:0; }
         .logo-trasona { display:block; margin:5vh auto 4vh; height:clamp(180px,35vh,380px); width:auto; filter:drop-shadow(0 0 30px rgba(255,255,255,0.8)); animation:aparecerLogo 1.5s ease-out; }
         @keyframes aparecerLogo { from {opacity:0; transform:scale(0.8);} to {opacity:1; transform:scale(1);} }
-        .status-box { max-width:60vw; margin:1vh auto 0; padding:0.7rem; border-radius:0.5rem; font-size:clamp(1rem,1.6vw,1.7rem); font-weight:bold; text-align:center; }
+        .status-box { 
+            max-width:60vw; 
+            margin:1vh auto 0; 
+            padding:clamp(0.4rem, 1vw, 0.7rem); 
+            border-radius:0.5rem; 
+            font-size:clamp(0.7rem, 1.3vw, 1.7rem); 
+            font-weight:bold; 
+            text-align:center; 
+        }
         .status-connected { background: rgba(0,255,136,0.2); border:2px solid #00ff88; color:#00ff88; text-shadow:0 0 15px rgba(0,255,136,0.7); }
         .status-disconnected { background: rgba(255,0,60,0.2); border:2px solid #ff003c; color:#ff4d6d; }
         .table-container { 
