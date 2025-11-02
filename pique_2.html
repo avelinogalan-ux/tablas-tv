@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Seguimiento - Resultados</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { 
+            background: radial-gradient(circle at center, #000428 0%, #004e92 100%); 
+            color: #fff; 
+            font-family: 'Rajdhani', sans-serif; 
+            margin:0; 
+            padding:0; 
+            min-height: 100vh;
+        }
+        
+        .header {
+            position: relative;
+            background: linear-gradient(90deg, #002bff 0%, #001242 100%);
+            padding: 1.5rem 1rem;
+            border-bottom: 0.5vh solid #ffc107;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        .logo-izquierdo { 
+            position: absolute; 
+            left: 1rem; 
+            top: 50%;
+            transform: translateY(-50%);
+            height: 60px; 
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.7)); 
+        }
+        
+        .header h1 {
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            margin: 0;
+            text-transform: uppercase;
+            text-shadow: 0 0 25px rgba(255,255,255,0.9);
+            text-align: center;
+        }
+        
+        .disciplina-badge {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: #00d8ff;
+            text-shadow: 0 0 10px rgba(0,216,255,0.5);
+        }
+        
+        .status-box {
+            max-width: 90%;
+            margin: 1rem auto;
+            padding: 0.7rem;
+            border-radius: 0.5rem;
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .status-connected {
+            background: rgba(0,255,136,0.2);
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            text-shadow: 0 0 15px rgba(0,255,136,0.7);
+        }
+        
+        .status-disconnected {
+            background: rgba(255,0,60,0.2);
+            border: 2px solid #ff003c;
+            color: #ff4d6d;
+        }
+        
+        .container-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        /* CARD PRINCIPAL (MI PUESTO) - Estilo TV */
+        .card-tirador {
+            background: linear-gradient(135deg, rgba(255,193,7,0.2) 0%, rgba(255,152,0,0.15) 100%);
+            border: 4px solid #ffc107;
+            border-radius: 15px;
+            padding: 2rem 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 40px rgba(255,193,7,0.4);
+            animation: pulseGlow 3s infinite;
+            backdrop-filter: blur(10px);
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 40px rgba(255,193,7,0.4); }
+            50% { box-shadow: 0 0 60px rgba(255,193,7,0.7); }
+        }
+        
+        .posicion-grande {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: #000;
+            font-size: clamp(3rem, 10vw, 5rem);
+            font-weight: 900;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        .nombre-principal {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 700;
+            margin: 1rem 0;
+            color: #ffc107;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(255,193,7,0.7);
+        }
+        
+        /* TABLA ESTILO TV PARA MI PUESTO */
+        .tabla-mi-puesto {
+            width: 100%;
+            background: rgba(0,60,150,0.3);
+            border: 2px solid #00bfff;
+            border-radius: 10px;
+            backdrop-filter: blur(8px);
+            overflow: hidden;
+        }
+        
+        .tabla-mi-puesto thead {
+            background: linear-gradient(90deg, #001f7a 0%, #0048ff 100%);
+        }
+        
+        .tabla-mi-puesto th {
+            padding: 0.8rem 0.4rem;
+            text-align: center;
+            font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+            text-transform: uppercase;
+            border-bottom: 3px solid #ffc107;
+        }
+        
+        .tabla-mi-puesto td {
+            padding: 0.8rem 0.4rem;
+            text-align: center;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            font-weight: 700;
+        }
+        
+        .stat-total-grande {
+            background-color: rgba(0,255,136,0.3) !important;
+            color: #00ff9c;
+            font-size: clamp(1.5rem, 4vw, 2.5rem) !important;
+        }
+        
+        .stat-x-grande {
+            background-color: rgba(0,229,255,0.3) !important;
+            color: #00d8ff;
+            font-size: clamp(1.5rem, 4vw, 2.5rem) !important;
+        }
+        
+        /* SECCIÓN RIVALES */
+        .seccion-rivales {
+            margin-top: 2rem;
+        }
+        
+        .seccion-rivales h3 {
+            font-size: clamp(1.3rem, 4vw, 2rem);
+            color: #00d8ff;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(0,216,255,0.7);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        /* CARDS DE RIVALES - Estilo TV */
+        .card-rival {
+            background: rgba(0,60,150,0.2);
+            border: 3px solid #007bff;
+            border-radius: 12px;
+            padding: 1.5rem 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 20px rgba(0,123,255,0.3);
+            backdrop-filter: blur(8px);
+        }
+        
+        .rival-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(0,123,255,0.5);
+        }
+        
+        .posicion-rival {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: #fff;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 900;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        
+        .nombre-rival {
+            font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+            font-weight: 700;
+            color: #00d8ff;
+            text-transform: uppercase;
+        }
+        
+        .diferencia-puntos {
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+        
+        .diferencia-positiva { color: #ff4d6d; }
+        .diferencia-negativa { color: #00ff9c; }
+        
+        /* TABLA RIVAL */
+        .tabla-rival {
+            width: 100%;
+            background: rgba(0,40,100,0.2);
+            border: 1px solid rgba(0,123,255,0.3);
+            border-radius: 8px;
+        }
+        
+        .tabla-rival th {
+            background: rgba(0,60,150,0.4);
+            padding: 0.6rem 0.3rem;
+            text-align: center;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            text-transform: uppercase;
+            border-bottom: 2px solid rgba(0,123,255,0.5);
+        }
+        
+        .tabla-rival td {
+            padding: 0.6rem 0.3rem;
+            text-align: center;
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            font-weight: 600;
+        }
+        
+        .tabla-rival .stat-total {
+            background-color: rgba(0,255,136,0.2);
+            color: #00ff9c;
+            font-weight: 700;
+        }
+        
+        .tabla-rival .stat-x {
+            background-color: rgba(0,229,255,0.2);
+            color: #00d8ff;
+            font-weight: 700;
+        }
+        
+        /* BOTÓN RECONFIGURAR */
+        .btn-reconfigurar {
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            font-weight: 700;
+            background: linear-gradient(90deg, #ffc107, #ff9800);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(255,193,7,0.4);
+            text-transform: uppercase;
+        }
+        
+        .btn-reconfigurar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(255,193,7,0.7);
+        }
+        
+        /* UPDATE INFO */
+        .update-info {
+            text-align: center;
+            color: #00e6ff;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            margin-top: 1.5rem;
+            text-shadow: 0 0 8px rgba(0,230,255,0.9);
+        }
+        
+        /* LOADING */
+        .loading-area {
+            text-align: center;
+            padding: 4rem 1rem;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255,193,7,0.3);
+            border-top: 5px solid #ffc107;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 1.5rem;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: #ffc107;
+        }
+        
+        /* MENSAJE SIN RIVALES */
+        .sin-rivales {
+            background: rgba(255,255,255,0.05);
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            color: #aaa;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+        }
+    </style>
+</head>
+<body>
+
+<!-- MODAL DE CONFIGURACIÓN INICIAL -->
+<div class="modal fade" id="modalConfig" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-white" style="backdrop-filter: blur(10px); background: rgba(0,20,50,0.95) !important; border: 3px solid #007bff;">
+      <div class="modal-header" style="border-bottom: 3px solid #ffc107;">
+        <h5 class="modal-title" style="font-size: 1.5rem;"><i class="bi bi-gear-fill"></i> Configurar Mi Seguimiento</h5>
+      </div>
+      <div class="modal-body">
+        <div class="mb-4">
+          <label class="form-label fw-bold" style="font-size: 1.1rem;">🔐 Código de Acceso (4 dígitos)</label>
+          <input type="text" id="codigoAcceso" class="form-control form-control-lg text-center" maxlength="4" placeholder="----" required style="background: rgba(255,255,255,0.1); border: 2px solid #007bff; color: #fff; font-size: 1.5rem;">
+        </div>
+        
+        <div class="mb-4">
+          <label class="form-label fw-bold" style="font-size: 1.1rem;">👤 Selecciona Tu Puesto</label>
+          <select id="miPuesto" class="form-select form-select-lg" style="background: rgba(255,255,255,0.1); border: 2px solid #ffc107; color: #fff; font-size: 1.2rem;">
+            <option value="">-- Cargando puestos --</option>
+          </select>
+        </div>
+        
+        <div class="mb-4">
+          <label class="form-label fw-bold" style="font-size: 1.1rem;">🎯 Rival 1 (opcional)</label>
+          <select id="rival1" class="form-select" style="background: rgba(255,255,255,0.1); border: 2px solid #007bff; color: #fff;">
+            <option value="">-- No seguir a nadie --</option>
+          </select>
+        </div>
+        
+        <div class="mb-4">
+          <label class="form-label fw-bold" style="font-size: 1.1rem;">🎯 Rival 2 (opcional)</label>
+          <select id="rival2" class="form-select" style="background: rgba(255,255,255,0.1); border: 2px solid #007bff; color: #fff;">
+            <option value="">-- No seguir a nadie --</option>
+          </select>
+        </div>
+        
+        <button class="btn w-100" onclick="guardarConfiguracion()" style="background: linear-gradient(90deg, #ffc107, #ff9800); border: none; color: #000; font-weight: 700; font-size: 1.2rem; padding: 0.8rem;">
+          <i class="bi bi-check-circle-fill"></i> Guardar y Comenzar
+        </button>
+        
+        <div id="errorConfig" class="text-danger text-center mt-3 fw-bold" style="min-height: 24px;"></div>
+        
+        <div class="mt-3 text-center">
+          <small class="text-muted">Código por defecto: 1234</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div id="mainContent" style="display: none;">
+  <div class="header">
+    <img src="shooting_logo.png" alt="Logo" class="logo-izquierdo" onerror="this.style.display='none'">
+    <h1><i class="bi bi-bullseye"></i> Mi Seguimiento</h1>
+    <div class="disciplina-badge" id="disciplinaName"></div>
+  </div>
+  
+  <div class="status-box status-connected" id="statusBox">
+    <i class="bi bi-wifi"></i> Conectado
+  </div>
+  
+  <div class="container-main">
+    <div id="loadingArea" class="loading-area">
+      <div class="spinner"></div>
+      <p class="loading-text">Cargando resultados...</p>
+    </div>
+    
+    <div id="contentArea" style="display: none;">
+      <!-- MI PUESTO -->
+      <div id="miCard" class="card-tirador"></div>
+      
+      <!-- RIVALES -->
+      <div class="seccion-rivales">
+        <h3><i class="bi bi-eye-fill"></i> Rivales Seguidos</h3>
+        <div id="rival1Card"></div>
+        <div id="rival2Card"></div>
+        <div id="sinRivales" style="display: none;" class="sin-rivales">
+          <i class="bi bi-info-circle" style="font-size: 2rem; color: #007bff;"></i>
+          <p class="mt-2">No estás siguiendo a ningún rival</p>
+          <small>Puedes configurarlos desde el botón de abajo</small>
+        </div>
+      </div>
+      
+      <!-- BOTÓN RECONFIGURAR -->
+      <div class="text-center">
+        <button class="btn-reconfigurar" onclick="reconfigurar()">
+          <i class="bi bi-gear-fill"></i> Cambiar Configuración
+        </button>
+      </div>
+      
+      <div class="update-info" id="updateInfo"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc';
+    const INTERVALO_ACTUALIZACION = 10000; // 10 segundos
+    
+    let modalConfig;
+    let datosCompletos = null;
+    let configuracion = {
+        miPuesto: null,
+        rival1: null,
+        rival2: null
+    };
+    let intervaloActualizacion;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        modalConfig = new bootstrap.Modal('#modalConfig');
+        
+        const configGuardada = localStorage.getItem('config_tirador');
+        if (configGuardada) {
+            configuracion = JSON.parse(configGuardada);
+            document.getElementById('mainContent').style.display = 'block';
+            iniciarSeguimiento();
+        } else {
+            modalConfig.show();
+            cargarPuestosDisponibles();
+        }
+    });
+    
+    async function cargarPuestosDisponibles() {
+        try {
+            const response = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
+            const data = (await response.json()).record;
+            
+            if (typeof data.codigo_acceso === 'undefined') {
+                throw new Error('Configuración incorrecta del servidor');
+            }
+            
+            datosCompletos = data;
+            
+            if (data.datos && data.datos.length > 0) {
+                const selectMiPuesto = document.getElementById('miPuesto');
+                const selectRival1 = document.getElementById('rival1');
+                const selectRival2 = document.getElementById('rival2');
+                
+                selectMiPuesto.innerHTML = '<option value="">-- Selecciona tu puesto --</option>';
+                selectRival1.innerHTML = '<option value="">-- No seguir a nadie --</option>';
+                selectRival2.innerHTML = '<option value="">-- No seguir a nadie --</option>';
+                
+                data.datos.forEach(tirador => {
+                    const option = `<option value="${tirador.puesto}">Puesto ${tirador.puesto}</option>`;
+                    selectMiPuesto.innerHTML += option;
+                    selectRival1.innerHTML += option;
+                    selectRival2.innerHTML += option;
+                });
+            }
+        } catch (error) {
+            console.error('Error cargando puestos:', error);
+            document.getElementById('errorConfig').textContent = 'Error al cargar datos del servidor';
+        }
+    }
+    
+    async function guardarConfiguracion() {
+        const codigo = document.getElementById('codigoAcceso').value.trim();
+        const miPuesto = document.getElementById('miPuesto').value;
+        const rival1 = document.getElementById('rival1').value;
+        const rival2 = document.getElementById('rival2').value;
+        const errorDiv = document.getElementById('errorConfig');
+        
+        errorDiv.textContent = '';
+        
+        if (!codigo || codigo.length !== 4) {
+            errorDiv.textContent = 'Introduce un código de 4 dígitos';
+            return;
+        }
+        
+        if (!miPuesto) {
+            errorDiv.textContent = 'Selecciona tu puesto';
+            return;
+        }
+        
+        try {
+            const response = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
+            const data = (await response.json()).record;
+            
+            if (String(data.codigo_acceso) !== codigo) {
+                errorDiv.textContent = 'Código de acceso incorrecto';
+                return;
+            }
+            
+            configuracion = {
+                miPuesto: miPuesto,
+                rival1: rival1 || null,
+                rival2: rival2 || null
+            };
+            
+            localStorage.setItem('config_tirador', JSON.stringify(configuracion));
+            
+            modalConfig.hide();
+            document.getElementById('mainContent').style.display = 'block';
+            iniciarSeguimiento();
+            
+        } catch (error) {
+            console.error('Error:', error);
+            errorDiv.textContent = 'Error de conexión';
+        }
+    }
+    
+    function iniciarSeguimiento() {
+        cargarYMostrarDatos();
+        
+        if (intervaloActualizacion) {
+            clearInterval(intervaloActualizacion);
+        }
+        intervaloActualizacion = setInterval(cargarYMostrarDatos, INTERVALO_ACTUALIZACION);
+    }
+    
+    async function cargarYMostrarDatos() {
+        try {
+            const response = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
+            const data = (await response.json()).record;
+            
+            document.getElementById('disciplinaName').textContent = data.disciplina || 'Competición en Directo';
+            document.getElementById('statusBox').className = 'status-box status-connected';
+            document.getElementById('statusBox').innerHTML = '<i class="bi bi-check-circle-fill"></i> EN DIRECTO';
+            
+            if (data.datos && data.datos.length > 0) {
+                mostrarDatos(data.datos);
+                document.getElementById('loadingArea').style.display = 'none';
+                document.getElementById('contentArea').style.display = 'block';
+            }
+            
+            const ahora = new Date();
+            document.getElementById('updateInfo').innerHTML = `
+                <i class="bi bi-clock-fill"></i> Actualizado: ${ahora.toLocaleTimeString()}
+            `;
+            
+        } catch (error) {
+            console.error('Error cargando datos:', error);
+            document.getElementById('statusBox').className = 'status-box status-disconnected';
+            document.getElementById('statusBox').innerHTML = '<i class="bi bi-wifi-off"></i> SIN CONEXIÓN';
+        }
+    }
+    
+    function mostrarDatos(datos) {
+        const miDatos = datos.find(t => String(t.puesto) === String(configuracion.miPuesto));
+        const rival1Datos = configuracion.rival1 ? datos.find(t => String(t.puesto) === String(configuracion.rival1)) : null;
+        const rival2Datos = configuracion.rival2 ? datos.find(t => String(t.puesto) === String(configuracion.rival2)) : null;
+        
+        const clasificacion = [...datos].sort((a, b) => (b.total || 0) - (a.total || 0));
+        const miPosicion = clasificacion.findIndex(t => String(t.puesto) === String(configuracion.miPuesto)) + 1;
+        
+        if (miDatos) {
+            document.getElementById('miCard').innerHTML = crearCardPrincipal(miDatos, miPosicion);
+        }
+        
+        let hayRivales = false;
+        
+        if (rival1Datos) {
+            const posRival1 = clasificacion.findIndex(t => String(t.puesto) === String(configuracion.rival1)) + 1;
+            document.getElementById('rival1Card').innerHTML = crearCardRival(rival1Datos, posRival1, 1, miDatos.total);
+            document.getElementById('rival1Card').style.display = 'block';
+            hayRivales = true;
+        } else {
+            document.getElementById('rival1Card').style.display = 'none';
+        }
+        
+        if (rival2Datos) {
+            const posRival2 = clasificacion.findIndex(t => String(t.puesto) === String(configuracion.rival2)) + 1;
+            document.getElementById('rival2Card').innerHTML = crearCardRival(rival2Datos, posRival2, 2, miDatos.total);
+            document.getElementById('rival2Card').style.display = 'block';
+            hayRivales = true;
+        } else {
+            document.getElementById('rival2Card').style.display = 'none';
+        }
+        
+        document.getElementById('sinRivales').style.display = hayRivales ? 'none' : 'block';
+    }
+    
+    function crearCardPrincipal(datos, posicion) {
+        const series = datos.series || datos.parciales || [];
+        
+        let seriesHTML = '';
+        if (series.length > 0) {
+            seriesHTML = '<tr>';
+            series.forEach((s, i) => {
+                seriesHTML += `<td style="font-size: clamp(0.9rem, 2.5vw, 1.3rem);">${s !== null ? s : '-'}</td>`;
+            });
+            seriesHTML += '</tr>';
+        }
+        
+        return `
+            <div class="text-center">
+                <div class="posicion-grande">${posicion}º</div>
+                <div class="nombre-principal">Puesto ${datos.puesto}</div>
+            </div>
+            
+            <table class="tabla-mi-puesto">
+                <thead>
+                    <tr>
+                        ${series.map((_, i) => `<th>S${i+1}</th>`).join('')}
+                        <th>Total</th>
+                        <th>X</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        ${series.map(s => `<td>${s !== null ? s : '-'}</td>`).join('')}
+                        <td class="stat-total-grande">${datos.total || 0}</td>
+                        <td class="stat-x-grande">${datos.xTotal || 0}</td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
+    }
+    
+    function crearCardRival(datos, posicion, numeroRival, miTotal) {
+        const series = datos.series || datos.parciales || [];
+        const diferencia = datos.total - miTotal;
+        const textoDiferencia = diferencia > 0 ? `+${diferencia}` : diferencia;
+        const claseDiferencia = diferencia >= 0 ? 'diferencia-positiva' : 'diferencia-negativa';
+        
+        return `
+            <div class="card-rival">
+                <div class="rival-header">
+                    <div>
+                        <div class="nombre-rival">Rival ${numeroRival} - Puesto ${datos.puesto}</div>
+                        <div class="diferencia-puntos ${claseDiferencia}">
+                            ${diferencia >= 0 ? '▲' : '▼'} ${textoDiferencia} puntos
+                        </div>
+                    </div>
+                    <div class="posicion-rival">${posicion}º</div>
+                </div>
+                
+                <table class="tabla-rival">
+                    <thead>
+                        <tr>
+                            ${series.map((_, i) => `<th>S${i+1}</th>`).join('')}
+                            <th>Total</th>
+                            <th>X</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            ${series.map(s => `<td>${s !== null ? s : '-'}</td>`).join('')}
+                            <td class="stat-total">${datos.total || 0}</td>
+                            <td class="stat-x">${datos.xTotal || 0}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+    
+    function reconfigurar() {
+        localStorage.removeItem('config_tirador');
+        location.reload();
+    }
+    
+    window.addEventListener('beforeunload', () => {
+        if (intervaloActualizacion) {
+            clearInterval(intervaloActualizacion);
+        }
+    });
+</script>
+
+</body>
+</html>
