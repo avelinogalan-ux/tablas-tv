@@ -2,8 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Seguimiento - Resultados</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Mi Seguimiento - Resultados</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -316,40 +315,19 @@
         }
 
         /* ====================================================== */
-        /* == INICIO: ESTILOS PARA ADAPTACIÓN A MÓVILES (NUEVO) == */
+        /* == INICIO: ESTILOS PARA ADAPTACIÓN A MÓVILES       == */
         /* ====================================================== */
-        
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: clamp(1.5rem, 6vw, 2rem);
-            }
-            .logo-izquierdo {
-                height: 45px; 
-            }
-            .container-main {
-                padding: 0 0.5rem;
-            }
-            .card-tirador, .card-rival {
-                padding: 1rem;
-            }
-            .nombre-principal {
-                font-size: clamp(1.3rem, 5vw, 2rem);
-            }
-            
-            /* Ocultamos las cabeceras de las tablas */
-            .tabla-mi-puesto thead, .tabla-rival thead {
-                display: none;
-            }
-        
-            /* Forzamos a que las tablas y sus elementos se comporten como bloques */
-            .tabla-mi-puesto, .tabla-rival,
-            .tabla-mi-puesto tbody, .tabla-rival tbody,
-            .tabla-mi-puesto tr, .tabla-rival tr {
+            .header h1 { font-size: clamp(1.5rem, 6vw, 2rem); }
+            .logo-izquierdo { height: 45px; }
+            .container-main { padding: 0 0.5rem; }
+            .card-tirador, .card-rival { padding: 1rem; }
+            .nombre-principal { font-size: clamp(1.3rem, 5vw, 2rem); }
+            .tabla-mi-puesto thead, .tabla-rival thead { display: none; }
+            .tabla-mi-puesto, .tabla-rival, .tabla-mi-puesto tbody, .tabla-rival tbody, .tabla-mi-puesto tr, .tabla-rival tr {
                 display: block;
                 width: 100%;
             }
-        
-            /* Hacemos que cada celda de datos sea un item de lista */
             .tabla-mi-puesto td, .tabla-rival td {
                 display: flex;
                 justify-content: space-between;
@@ -358,45 +336,42 @@
                 padding: 0.8rem;
                 border-bottom: 1px solid rgba(0, 191, 255, 0.2);
             }
-
-            /* Quitamos el borde de la última celda para un look más limpio */
-            .tabla-mi-puesto td:last-child, .tabla-rival td:last-child {
-                border-bottom: none;
-            }
-        
-            /* Añadimos el texto de la cabecera (S1, S2, Total...) delante de cada valor */
-            .tabla-mi-puesto td::before,
-            .tabla-rival td::before {
+            .tabla-mi-puesto td:last-child, .tabla-rival td:last-child { border-bottom: none; }
+            .tabla-mi-puesto td::before, .tabla-rival td::before {
                 content: attr(data-label);
                 font-weight: 600;
                 color: #00d8ff;
                 text-align: left;
                 padding-right: 1rem;
             }
-            
-            /* Ajustamos tamaño de Total y X para móvil */
-            .stat-total-grande, .stat-x-grande,
-            .tabla-rival .stat-total, .tabla-rival .stat-x {
+            .stat-total-grande, .stat-x-grande, .tabla-rival .stat-total, .tabla-rival .stat-x {
                 font-size: 1.5rem !important;
             }
         }
         
+        /* --- BLOQUE MODIFICADO CON LA OPCIÓN 2 --- */
         @media (max-width: 480px) {
-            /* Ajustes finos para pantallas muy pequeñas */
             .header { padding: 1rem 0.5rem; }
-            .posicion-grande { font-size: 3rem; padding: 0.5rem 1rem; }
-            .posicion-rival { font-size: 1.8rem; }
+            /* Etiquetas de puesto más pequeñas (Opción 2 - Agresiva) */
+            .posicion-grande { 
+                font-size: 2rem; 
+                padding: 0.3rem 0.6rem; 
+                margin-bottom: 0.5rem;
+            }
+            .posicion-rival { 
+                font-size: 1.2rem; 
+                padding: 0.2rem 0.5rem; 
+            }
             .nombre-rival { font-size: 1.2rem; }
         }
         /* ================================================== */
-        /* == FIN: ESTILOS PARA ADAPTACIÓN A MÓVILES (NUEVO) == */
+        /* == FIN: ESTILOS PARA ADAPTACIÓN A MÓVILES       == */
         /* ================================================== */
-
     </style>
 </head>
 <body>
 
-<!-- MODAL DE CONFIGURACIÓN INICIAL (Sin cambios) -->
+<!-- MODAL DE CONFIGURACIÓN INICIAL -->
 <div class="modal fade" id="modalConfig" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-dark text-white" style="backdrop-filter: blur(10px); background: rgba(0,20,50,0.95) !important; border: 3px solid #007bff;">
@@ -438,7 +413,7 @@
   </div>
 </div>
 
-<!-- CONTENIDO PRINCIPAL (Sin cambios) -->
+<!-- CONTENIDO PRINCIPAL -->
 <div id="mainContent" style="display: none;">
   <div class="header">
     <img src="shooting_logo.png" alt="Logo" class="logo-izquierdo" onerror="this.style.display='none'">
@@ -477,7 +452,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // --- LÓGICA JAVASCRIPT ---
     const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc';
     const INTERVALO_ACTUALIZACION = 10000;
     
@@ -486,7 +460,6 @@
     let configuracion = { miPuesto: null, rival1: null, rival2: null };
     let intervaloActualizacion;
     
-    // Funciones de configuración y carga de datos (sin cambios)
     document.addEventListener('DOMContentLoaded', () => {
         modalConfig = new bootstrap.Modal('#modalConfig');
         const configGuardada = localStorage.getItem('config_tirador');
@@ -603,9 +576,6 @@
         }
         document.getElementById('sinRivales').style.display = hayRivales ? 'none' : 'block';
     }
-
-    // --- **MODIFICACIÓN CLAVE EN JAVASCRIPT** ---
-    // Se añade "data-label" para que funcione el CSS de móvil.
 
     function crearCardPrincipal(datos, posicion) {
         const series = datos.series || datos.parciales || [];
