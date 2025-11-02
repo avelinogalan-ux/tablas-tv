@@ -106,25 +106,40 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ================================================================================================ -->
+<!-- SCRIPT CORREGIDO: IMPLEMENTA LA LÓGICA DE DOS BINS (PINES Y PUNTUACIONES) -->
+<!-- ================================================================================================ -->
 <script>
-    const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc'; // <-- ¡¡IMPORTANTE!! Cambia esto por el ID de tu Bin
-    const INTERVALO_ACTUALIZACION = 10000;
+    // --- PASO 1: CONFIGURA TUS IDs DE BIN ---
+    // Este Bin contiene la lista de usuarios y sus pines para el login.
+    const PIN_BIN_ID = 'ID_DEL_BIN_CON_LOS_PINS'; // <-- ¡IMPORTANTE! Pega aquí el ID de tu Bin de usuarios/pines.
     
+    // Este Bin contiene los datos de la competición (puntuaciones, series, etc.).
+    const DATOS_COMPETICION_BIN_ID = 'ID_DEL_BIN_CON_LAS_PUNTUACIONES'; // <-- Pega aquí el ID de tu Bin de puntuaciones.
+    
+    const INTERVALO_ACTUALIZACION = 10000; // Actualiza cada 10 segundos
+
+    // --- Variables Globales ---
     let modalConfigVisor;
-    let datosCompletos = null;
     let configuracion = { miPuesto: null };
     let intervaloActualizacion;
 
+    // Al cargar la página, muestra el modal de login.
     document.addEventListener('DOMContentLoaded', () => {
         modalConfigVisor = new bootstrap.Modal('#modalConfigVisor');
         modalConfigVisor.show();
     });
 
+    /**
+     * Valida el puesto y el PIN contra el PIN_BIN_ID.
+     * Esta función se ejecuta cuando el usuario hace clic en "Entrar".
+     */
     async function validarYComenzar() {
         const miPuestoInput = document.getElementById('miPuestoInput').value.trim();
         const miPinInput = document.getElementById('miPinInput').value.trim();
         const errorDiv = document.getElementById('errorConfig');
-        errorDiv.textContent = '';
+        errorDiv.textContent = ''; // Limpia errores previos
 
         if (!miPuestoInput || !miPinInput || miPinInput.length !== 4) {
             errorDiv.textContent = 'Debes introducir tu puesto y un PIN de 4 dígitos.';
@@ -132,44 +147,60 @@
         }
 
         try {
-            const response = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
-            datosCompletos = (await response.json()).record;
+            // 1. Llama al Bin de USUARIOS/PINES para validar.
+            const response = await fetch(`https://api.jsonbin.io/v3/b/${PIN_BIN_ID}/latest`);
+            if (!response.ok) throw new Error('Error conectando al servidor de validación.');
+            
+            const data = await response.json();
+            const listaUsuarios = data.record.usuarios; // Accede al array "usuarios" de tu JSON
 
-            const tiradorValidado = datosCompletos.datos.find(
-                t => String(t.puesto) === miPuestoInput && String(t.pin) === miPinInput
+            // 2. Busca si existe un usuario que coincida con el puesto y el PIN introducidos.
+            const tiradorValidado = listaUsuarios.find(
+                user => String(user.puesto) === miPuestoInput && String(user.pin) === miPinInput
             );
 
+            // 3. Si no se encuentra, muestra un error y detiene el proceso.
             if (!tiradorValidado) {
                 errorDiv.textContent = 'Puesto o PIN incorrecto. Inténtalo de nuevo.';
                 return;
             }
             
-            configuracion.miPuesto = miPuestoInput;
-            
-            modalConfigVisor.hide();
-            document.getElementById('mainContent').style.display = 'block';
-            iniciarSeguimiento();
+            // 4. Si la validación es correcta:
+            configuracion.miPuesto = miPuestoInput; // Guarda el puesto del usuario para futuras consultas
+            modalConfigVisor.hide(); // Oculta el modal de login
+            document.getElementById('mainContent').style.display = 'block'; // Muestra la pantalla de puntuaciones
+            iniciarSeguimiento(); // Comienza a cargar los datos de la competición
 
         } catch (error) {
             console.error('Error de validación:', error);
-            errorDiv.textContent = 'Error de conexión con el servidor.';
+            errorDiv.textContent = 'Error de conexión. Verifica la configuración y el ID del Bin de PINs.';
         }
     }
 
+    /**
+     * Inicia el ciclo de carga periódica de datos desde DATOS_COMPETICION_BIN_ID.
+     */
     function iniciarSeguimiento() {
-        cargarYMostrarDatos();
-        if (intervaloActualizacion) clearInterval(intervaloActualizacion);
+        cargarYMostrarDatos(); // Llama una vez de inmediato
+        if (intervaloActualizacion) clearInterval(intervaloActualizacion); // Limpia cualquier intervalo anterior
+        // Establece la llamada periódica para refrescar los datos
         intervaloActualizacion = setInterval(cargarYMostrarDatos, INTERVALO_ACTUALIZACION);
     }
     
+    /**
+     * Carga y muestra los datos desde el Bin de PUNTUACIONES.
+     */
     async function cargarYMostrarDatos() {
         try {
+            // Llama al Bin de PUNTUACIONES.
             const response = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
             const data = (await response.json()).record;
 
+            // Actualiza la UI con los datos recibidos
             document.getElementById('disciplinaName').textContent = data.disciplina || 'Competición en Directo';
             document.getElementById('statusBox').className = 'status-box status-connected';
             document.getElementById('statusBox').innerHTML = '<i class="bi bi-check-circle-fill"></i> EN DIRECTO';
+            
             if (data.datos && data.datos.length > 0) {
                 mostrarDatos(data.datos);
                 document.getElementById('loadingArea').style.display = 'none';
@@ -178,27 +209,37 @@
             const ahora = new Date();
             document.getElementById('updateInfo').innerHTML = `<i class="bi bi-clock-fill"></i> Actualizado: ${ahora.toLocaleTimeString()}`;
         } catch (error) {
-            console.error('Error cargando datos:', error);
+            console.error('Error cargando datos de puntuación:', error);
             document.getElementById('statusBox').className = 'status-box status-disconnected';
             document.getElementById('statusBox').innerHTML = '<i class="bi bi-wifi-off"></i> SIN CONEXIÓN';
         }
     }
     
+    /**
+     * Renderiza los datos del tirador en la tarjeta principal.
+     */
     function mostrarDatos(datos) {
+        // Busca los datos específicos para el puesto del usuario logueado.
         const miDatos = datos.find(t => String(t.puesto) === String(configuracion.miPuesto));
         
         if (!miDatos) {
-            console.error("No se encontraron los datos del puesto configurado. Recargando...");
-            location.reload();
+            console.warn(`No se encontraron datos para el puesto ${configuracion.miPuesto} en este ciclo.`);
+            // Muestra un mensaje amigable en lugar de recargar la página.
+            document.getElementById('miCard').innerHTML = `<div class="text-center nombre-principal text-warning">Esperando datos para el Puesto ${configuracion.miPuesto}...</div>`;
             return;
         }
 
+        // Calcula la posición en la clasificación
         const clasificacion = [...datos].sort((a, b) => (b.total || 0) - (a.total || 0));
         const miPosicion = clasificacion.findIndex(t => String(t.puesto) === String(configuracion.miPuesto)) + 1;
         
+        // Dibuja la tarjeta del tirador
         document.getElementById('miCard').innerHTML = crearCardPrincipal(miDatos, miPosicion);
     }
 
+    /**
+     * Construye el HTML de la tarjeta de puntuación del tirador.
+     */
     function crearCardPrincipal(datos, posicion) {
         const series = datos.series || [];
         return `
@@ -217,6 +258,7 @@
             </table>`;
     }
     
+    // Limpia el intervalo si el usuario cierra la página para optimizar recursos.
     window.addEventListener('beforeunload', () => {
         if (intervaloActualizacion) clearInterval(intervaloActualizacion);
     });
