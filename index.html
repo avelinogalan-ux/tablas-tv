@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TV - Conexión a Resultados</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
-    s
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -45,8 +45,28 @@
         .table-container::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(180deg, #00bfff, #0048ff);
         }
-        .table { font-size:clamp(1rem,2vw,2.5rem); border-color:#00bfff; color:#fff; background:rgba(0,60,150,0.3); backdrop-filter:blur(8px); min-width:1500px; }
-        .table thead { background: linear-gradient(90deg,#001f7a 0%,#0048ff 100%); color:#fff; text-transform:uppercase; border-bottom:0.5vh solid #ffc107; position:sticky; top:0; z-index:10; font-size:clamp(1rem,1.6vw,2rem); }
+        
+        /* TABLA CON ANCHOS FIJOS PARA VER COLUMNA X */
+        .table { 
+            font-size:clamp(0.9rem,1.6vw,2rem); 
+            border-color:#00bfff; 
+            color:#fff; 
+            background:rgba(0,60,150,0.3); 
+            backdrop-filter:blur(8px); 
+            width: 100%; 
+            table-layout: fixed;
+        }
+        
+        .table thead { 
+            background: linear-gradient(90deg,#001f7a 0%,#0048ff 100%); 
+            color:#fff; 
+            text-transform:uppercase; 
+            border-bottom:0.5vh solid #ffc107; 
+            position:sticky; 
+            top:0; 
+            z-index:10; 
+            font-size:clamp(1rem,1.6vw,2rem); 
+        }
         
         .scroll-indicator {
             position: absolute;
@@ -75,14 +95,22 @@
             background-color: rgba(255, 193, 7, 0.2) !important;
             box-shadow: 0 0 20px rgba(255, 193, 7, 0.4);
         }
-        .table th,.table td { text-align:center; vertical-align:middle; padding:0.3rem; }
-        .table td:nth-child(2),
-.table th:nth-child(2) {
-    width: 150px;
-    min-width: 150px;
-    max-width: 150px;
-    padding: 0.4rem; /* Opcional: menos padding */
-}
+        
+        .table th,.table td { 
+            text-align:center; 
+            vertical-align:middle; 
+            padding:0.4rem 0.2rem;
+            white-space: nowrap;
+            overflow: visible;
+        }
+        
+        /* Anchos específicos para cada columna */
+        .col-pos { width: 7%; }
+        .col-puesto { width: 12%; }
+        .col-serie { width: 6%; }
+        .col-total { width: 9%; }
+        .col-x { width: 7%; }
+        
         .table-success { background-color:rgba(0,255,136,0.25)!important; color:#00ff9c; font-weight:700; }
         .table-info { background-color:rgba(0,229,255,0.25)!important; color:#00d8ff; font-weight:700; }
         tr:hover { background-color:rgba(255,255,255,0.08); }
@@ -111,6 +139,7 @@
         
         .table-scroll-wrapper::-webkit-scrollbar {
             width: 12px;
+            height: 12px;
         }
         .table-scroll-wrapper::-webkit-scrollbar-track {
             background: rgba(0, 20, 50, 0.5);
@@ -606,11 +635,11 @@
         
         console.log('📋 Generando tabla con', numSeries, 'columnas');
 
-        let encabezados = '<th>Pos.</th><th>Puesto</th>';
+        let encabezados = '<th class="col-pos">Pos.</th><th class="col-puesto">Puesto</th>';
         for (let i = 0; i < numSeries; i++) {
-            encabezados += `<th>S${i+1}</th>`;
+            encabezados += `<th class="col-serie">S${i+1}</th>`;
         }
-        encabezados += '<th>Total</th><th>X</th>';
+        encabezados += '<th class="col-total">Total</th><th class="col-x">X</th>';
 
         resultados.sort((a, b) => {
             const puestoA = parseInt(a.puesto) || 0;
@@ -625,11 +654,11 @@
             
             filas += `
                 <tr data-row-index="${index}">
-                    <td class="fw-bold text-warning">${index + 1}º</td>
-                    <td>Puesto ${r.puesto || '-'}</td>
-                    ${seriesColumnas.map(s => `<td>${s !== null && s !== undefined ? s : '-'}</td>`).join('')}
-                    <td class="table-success fw-bold">${r.total || 0}</td>
-                    <td class="table-info fw-bold">${r.xTotal || 0}</td>
+                    <td class="col-pos fw-bold text-warning">${index + 1}º</td>
+                    <td class="col-puesto">Puesto ${r.puesto || '-'}</td>
+                    ${seriesColumnas.map(s => `<td class="col-serie">${s !== null && s !== undefined ? s : '-'}</td>`).join('')}
+                    <td class="col-total table-success fw-bold">${r.total || 0}</td>
+                    <td class="col-x table-info fw-bold">${r.xTotal || 0}</td>
                 </tr>
             `;
         });
@@ -645,7 +674,6 @@
                         ${filas}
                     </tbody>
                 </table>
-          
             </div>
         `;
         
@@ -768,22 +796,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
