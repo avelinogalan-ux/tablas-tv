@@ -81,7 +81,6 @@
             padding: 1rem;
         }
         
-        /* CARD PRINCIPAL (MI PUESTO) - Estilo TV */
         .card-tirador {
             background: linear-gradient(135deg, rgba(255,193,7,0.2) 0%, rgba(255,152,0,0.15) 100%);
             border: 4px solid #ffc107;
@@ -120,7 +119,6 @@
             text-shadow: 0 0 20px rgba(255,193,7,0.7);
         }
         
-        /* TABLA ESTILO TV PARA MI PUESTO */
         .tabla-mi-puesto {
             width: 100%;
             background: rgba(0,60,150,0.3);
@@ -161,7 +159,6 @@
             font-size: clamp(1.5rem, 4vw, 2.5rem) !important;
         }
         
-        /* SECCIÓN RIVALES */
         .seccion-rivales {
             margin-top: 2rem;
         }
@@ -175,7 +172,6 @@
             text-align: center;
         }
         
-        /* CARDS DE RIVALES - Estilo TV */
         .card-rival {
             background: rgba(0,60,150,0.2);
             border: 3px solid #007bff;
@@ -221,7 +217,6 @@
         .diferencia-positiva { color: #ff4d6d; }
         .diferencia-negativa { color: #00ff9c; }
         
-        /* TABLA RIVAL */
         .tabla-rival {
             width: 100%;
             background: rgba(0,40,100,0.2);
@@ -257,7 +252,6 @@
             font-weight: 700;
         }
         
-        /* BOTÓN RECONFIGURAR */
         .btn-reconfigurar {
             margin-top: 2rem;
             padding: 1rem 2rem;
@@ -278,7 +272,6 @@
             box-shadow: 0 0 30px rgba(255,193,7,0.7);
         }
         
-        /* UPDATE INFO */
         .update-info {
             text-align: center;
             color: #00e6ff;
@@ -287,7 +280,6 @@
             text-shadow: 0 0 8px rgba(0,230,255,0.9);
         }
         
-        /* LOADING */
         .loading-area {
             text-align: center;
             padding: 4rem 1rem;
@@ -313,7 +305,6 @@
             color: #ffc107;
         }
         
-        /* MENSAJE SIN RIVALES */
         .sin-rivales {
             background: rgba(255,255,255,0.05);
             border: 2px dashed rgba(255,255,255,0.2);
@@ -323,11 +314,89 @@
             color: #aaa;
             font-size: clamp(0.9rem, 2.5vw, 1.1rem);
         }
+
+        /* ====================================================== */
+        /* == INICIO: ESTILOS PARA ADAPTACIÓN A MÓVILES (NUEVO) == */
+        /* ====================================================== */
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: clamp(1.5rem, 6vw, 2rem);
+            }
+            .logo-izquierdo {
+                height: 45px; 
+            }
+            .container-main {
+                padding: 0 0.5rem;
+            }
+            .card-tirador, .card-rival {
+                padding: 1rem;
+            }
+            .nombre-principal {
+                font-size: clamp(1.3rem, 5vw, 2rem);
+            }
+            
+            /* Ocultamos las cabeceras de las tablas */
+            .tabla-mi-puesto thead, .tabla-rival thead {
+                display: none;
+            }
+        
+            /* Forzamos a que las tablas y sus elementos se comporten como bloques */
+            .tabla-mi-puesto, .tabla-rival,
+            .tabla-mi-puesto tbody, .tabla-rival tbody,
+            .tabla-mi-puesto tr, .tabla-rival tr {
+                display: block;
+                width: 100%;
+            }
+        
+            /* Hacemos que cada celda de datos sea un item de lista */
+            .tabla-mi-puesto td, .tabla-rival td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                text-align: right;
+                padding: 0.8rem;
+                border-bottom: 1px solid rgba(0, 191, 255, 0.2);
+            }
+
+            /* Quitamos el borde de la última celda para un look más limpio */
+            .tabla-mi-puesto td:last-child, .tabla-rival td:last-child {
+                border-bottom: none;
+            }
+        
+            /* Añadimos el texto de la cabecera (S1, S2, Total...) delante de cada valor */
+            .tabla-mi-puesto td::before,
+            .tabla-rival td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #00d8ff;
+                text-align: left;
+                padding-right: 1rem;
+            }
+            
+            /* Ajustamos tamaño de Total y X para móvil */
+            .stat-total-grande, .stat-x-grande,
+            .tabla-rival .stat-total, .tabla-rival .stat-x {
+                font-size: 1.5rem !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Ajustes finos para pantallas muy pequeñas */
+            .header { padding: 1rem 0.5rem; }
+            .posicion-grande { font-size: 3rem; padding: 0.5rem 1rem; }
+            .posicion-rival { font-size: 1.8rem; }
+            .nombre-rival { font-size: 1.2rem; }
+        }
+        /* ================================================== */
+        /* == FIN: ESTILOS PARA ADAPTACIÓN A MÓVILES (NUEVO) == */
+        /* ================================================== */
+
     </style>
 </head>
 <body>
 
-<!-- MODAL DE CONFIGURACIÓN INICIAL -->
+<!-- MODAL DE CONFIGURACIÓN INICIAL (Sin cambios) -->
 <div class="modal fade" id="modalConfig" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-dark text-white" style="backdrop-filter: blur(10px); background: rgba(0,20,50,0.95) !important; border: 3px solid #007bff;">
@@ -339,34 +408,28 @@
           <label class="form-label fw-bold" style="font-size: 1.1rem;">🔐 Código de Acceso (4 dígitos)</label>
           <input type="text" id="codigoAcceso" class="form-control form-control-lg text-center" maxlength="4" placeholder="----" required style="background: rgba(255,255,255,0.1); border: 2px solid #007bff; color: #fff; font-size: 1.5rem;">
         </div>
-        
         <div class="mb-4">
           <label class="form-label fw-bold" style="font-size: 1.1rem;">👤 Selecciona Tu Puesto</label>
           <select id="miPuesto" class="form-select form-select-lg" style="background: rgba(255,255,255,0.1); border: 2px solid #ffc107; color: #fff; font-size: 1.2rem;">
             <option value="">-- Cargando puestos --</option>
           </select>
         </div>
-        
         <div class="mb-4">
           <label class="form-label fw-bold" style="font-size: 1.1rem;">🎯 Rival 1 (opcional)</label>
           <select id="rival1" class="form-select" style="background: rgba(255,255,255,0.1); border: 2px solid #007bff; color: #fff;">
             <option value="">-- No seguir a nadie --</option>
           </select>
         </div>
-        
         <div class="mb-4">
           <label class="form-label fw-bold" style="font-size: 1.1rem;">🎯 Rival 2 (opcional)</label>
           <select id="rival2" class="form-select" style="background: rgba(255,255,255,0.1); border: 2px solid #007bff; color: #fff;">
             <option value="">-- No seguir a nadie --</option>
           </select>
         </div>
-        
         <button class="btn w-100" onclick="guardarConfiguracion()" style="background: linear-gradient(90deg, #ffc107, #ff9800); border: none; color: #000; font-weight: 700; font-size: 1.2rem; padding: 0.8rem;">
           <i class="bi bi-check-circle-fill"></i> Guardar y Comenzar
         </button>
-        
         <div id="errorConfig" class="text-danger text-center mt-3 fw-bold" style="min-height: 24px;"></div>
-        
         <div class="mt-3 text-center">
           <small class="text-muted">Código por defecto: 1234</small>
         </div>
@@ -375,29 +438,23 @@
   </div>
 </div>
 
-<!-- CONTENIDO PRINCIPAL -->
+<!-- CONTENIDO PRINCIPAL (Sin cambios) -->
 <div id="mainContent" style="display: none;">
   <div class="header">
     <img src="shooting_logo.png" alt="Logo" class="logo-izquierdo" onerror="this.style.display='none'">
     <h1><i class="bi bi-bullseye"></i> Mi Seguimiento</h1>
     <div class="disciplina-badge" id="disciplinaName"></div>
   </div>
-  
   <div class="status-box status-connected" id="statusBox">
     <i class="bi bi-wifi"></i> Conectado
   </div>
-  
   <div class="container-main">
     <div id="loadingArea" class="loading-area">
       <div class="spinner"></div>
       <p class="loading-text">Cargando resultados...</p>
     </div>
-    
     <div id="contentArea" style="display: none;">
-      <!-- MI PUESTO -->
       <div id="miCard" class="card-tirador"></div>
-      
-      <!-- RIVALES -->
       <div class="seccion-rivales">
         <h3><i class="bi bi-eye-fill"></i> Rivales Seguidos</h3>
         <div id="rival1Card"></div>
@@ -408,14 +465,11 @@
           <small>Puedes configurarlos desde el botón de abajo</small>
         </div>
       </div>
-      
-      <!-- BOTÓN RECONFIGURAR -->
       <div class="text-center">
         <button class="btn-reconfigurar" onclick="reconfigurar()">
           <i class="bi bi-gear-fill"></i> Cambiar Configuración
         </button>
       </div>
-      
       <div class="update-info" id="updateInfo"></div>
     </div>
   </div>
@@ -423,21 +477,18 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // --- LÓGICA JAVASCRIPT ---
     const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc';
-    const INTERVALO_ACTUALIZACION = 10000; // 10 segundos
+    const INTERVALO_ACTUALIZACION = 10000;
     
     let modalConfig;
     let datosCompletos = null;
-    let configuracion = {
-        miPuesto: null,
-        rival1: null,
-        rival2: null
-    };
+    let configuracion = { miPuesto: null, rival1: null, rival2: null };
     let intervaloActualizacion;
     
+    // Funciones de configuración y carga de datos (sin cambios)
     document.addEventListener('DOMContentLoaded', () => {
         modalConfig = new bootstrap.Modal('#modalConfig');
-        
         const configGuardada = localStorage.getItem('config_tirador');
         if (configGuardada) {
             configuracion = JSON.parse(configGuardada);
@@ -453,22 +504,15 @@
         try {
             const response = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
             const data = (await response.json()).record;
-            
-            if (typeof data.codigo_acceso === 'undefined') {
-                throw new Error('Configuración incorrecta del servidor');
-            }
-            
+            if (typeof data.codigo_acceso === 'undefined') throw new Error('Configuración incorrecta del servidor');
             datosCompletos = data;
-            
             if (data.datos && data.datos.length > 0) {
                 const selectMiPuesto = document.getElementById('miPuesto');
                 const selectRival1 = document.getElementById('rival1');
                 const selectRival2 = document.getElementById('rival2');
-                
                 selectMiPuesto.innerHTML = '<option value="">-- Selecciona tu puesto --</option>';
                 selectRival1.innerHTML = '<option value="">-- No seguir a nadie --</option>';
                 selectRival2.innerHTML = '<option value="">-- No seguir a nadie --</option>';
-                
                 data.datos.forEach(tirador => {
                     const option = `<option value="${tirador.puesto}">Puesto ${tirador.puesto}</option>`;
                     selectMiPuesto.innerHTML += option;
@@ -488,40 +532,18 @@
         const rival1 = document.getElementById('rival1').value;
         const rival2 = document.getElementById('rival2').value;
         const errorDiv = document.getElementById('errorConfig');
-        
         errorDiv.textContent = '';
-        
-        if (!codigo || codigo.length !== 4) {
-            errorDiv.textContent = 'Introduce un código de 4 dígitos';
-            return;
-        }
-        
-        if (!miPuesto) {
-            errorDiv.textContent = 'Selecciona tu puesto';
-            return;
-        }
-        
+        if (!codigo || codigo.length !== 4) { errorDiv.textContent = 'Introduce un código de 4 dígitos'; return; }
+        if (!miPuesto) { errorDiv.textContent = 'Selecciona tu puesto'; return; }
         try {
             const response = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
             const data = (await response.json()).record;
-            
-            if (String(data.codigo_acceso) !== codigo) {
-                errorDiv.textContent = 'Código de acceso incorrecto';
-                return;
-            }
-            
-            configuracion = {
-                miPuesto: miPuesto,
-                rival1: rival1 || null,
-                rival2: rival2 || null
-            };
-            
+            if (String(data.codigo_acceso) !== codigo) { errorDiv.textContent = 'Código de acceso incorrecto'; return; }
+            configuracion = { miPuesto: miPuesto, rival1: rival1 || null, rival2: rival2 || null };
             localStorage.setItem('config_tirador', JSON.stringify(configuracion));
-            
             modalConfig.hide();
             document.getElementById('mainContent').style.display = 'block';
             iniciarSeguimiento();
-            
         } catch (error) {
             console.error('Error:', error);
             errorDiv.textContent = 'Error de conexión';
@@ -530,10 +552,7 @@
     
     function iniciarSeguimiento() {
         cargarYMostrarDatos();
-        
-        if (intervaloActualizacion) {
-            clearInterval(intervaloActualizacion);
-        }
+        if (intervaloActualizacion) clearInterval(intervaloActualizacion);
         intervaloActualizacion = setInterval(cargarYMostrarDatos, INTERVALO_ACTUALIZACION);
     }
     
@@ -541,22 +560,16 @@
         try {
             const response = await fetch(`https://api.jsonbin.io/v3/b/${DATOS_COMPETICION_BIN_ID}/latest`);
             const data = (await response.json()).record;
-            
             document.getElementById('disciplinaName').textContent = data.disciplina || 'Competición en Directo';
             document.getElementById('statusBox').className = 'status-box status-connected';
             document.getElementById('statusBox').innerHTML = '<i class="bi bi-check-circle-fill"></i> EN DIRECTO';
-            
             if (data.datos && data.datos.length > 0) {
                 mostrarDatos(data.datos);
                 document.getElementById('loadingArea').style.display = 'none';
                 document.getElementById('contentArea').style.display = 'block';
             }
-            
             const ahora = new Date();
-            document.getElementById('updateInfo').innerHTML = `
-                <i class="bi bi-clock-fill"></i> Actualizado: ${ahora.toLocaleTimeString()}
-            `;
-            
+            document.getElementById('updateInfo').innerHTML = `<i class="bi bi-clock-fill"></i> Actualizado: ${ahora.toLocaleTimeString()}`;
         } catch (error) {
             console.error('Error cargando datos:', error);
             document.getElementById('statusBox').className = 'status-box status-disconnected';
@@ -568,16 +581,10 @@
         const miDatos = datos.find(t => String(t.puesto) === String(configuracion.miPuesto));
         const rival1Datos = configuracion.rival1 ? datos.find(t => String(t.puesto) === String(configuracion.rival1)) : null;
         const rival2Datos = configuracion.rival2 ? datos.find(t => String(t.puesto) === String(configuracion.rival2)) : null;
-        
         const clasificacion = [...datos].sort((a, b) => (b.total || 0) - (a.total || 0));
         const miPosicion = clasificacion.findIndex(t => String(t.puesto) === String(configuracion.miPuesto)) + 1;
-        
-        if (miDatos) {
-            document.getElementById('miCard').innerHTML = crearCardPrincipal(miDatos, miPosicion);
-        }
-        
+        if (miDatos) document.getElementById('miCard').innerHTML = crearCardPrincipal(miDatos, miPosicion);
         let hayRivales = false;
-        
         if (rival1Datos) {
             const posRival1 = clasificacion.findIndex(t => String(t.puesto) === String(configuracion.rival1)) + 1;
             document.getElementById('rival1Card').innerHTML = crearCardRival(rival1Datos, posRival1, 1, miDatos.total);
@@ -586,7 +593,6 @@
         } else {
             document.getElementById('rival1Card').style.display = 'none';
         }
-        
         if (rival2Datos) {
             const posRival2 = clasificacion.findIndex(t => String(t.puesto) === String(configuracion.rival2)) + 1;
             document.getElementById('rival2Card').innerHTML = crearCardRival(rival2Datos, posRival2, 2, miDatos.total);
@@ -595,28 +601,19 @@
         } else {
             document.getElementById('rival2Card').style.display = 'none';
         }
-        
         document.getElementById('sinRivales').style.display = hayRivales ? 'none' : 'block';
     }
-    
+
+    // --- **MODIFICACIÓN CLAVE EN JAVASCRIPT** ---
+    // Se añade "data-label" para que funcione el CSS de móvil.
+
     function crearCardPrincipal(datos, posicion) {
         const series = datos.series || datos.parciales || [];
-        
-        let seriesHTML = '';
-        if (series.length > 0) {
-            seriesHTML = '<tr>';
-            series.forEach((s, i) => {
-                seriesHTML += `<td style="font-size: clamp(0.9rem, 2.5vw, 1.3rem);">${s !== null ? s : '-'}</td>`;
-            });
-            seriesHTML += '</tr>';
-        }
-        
         return `
             <div class="text-center">
                 <div class="posicion-grande">${posicion}º</div>
                 <div class="nombre-principal">Puesto ${datos.puesto}</div>
             </div>
-            
             <table class="tabla-mi-puesto">
                 <thead>
                     <tr>
@@ -627,21 +624,20 @@
                 </thead>
                 <tbody>
                     <tr>
-                        ${series.map(s => `<td>${s !== null ? s : '-'}</td>`).join('')}
-                        <td class="stat-total-grande">${datos.total || 0}</td>
-                        <td class="stat-x-grande">${datos.xTotal || 0}</td>
+                        ${series.map((s, i) => `<td data-label="S${i+1}">${s !== null ? s : '-'}</td>`).join('')}
+                        <td class="stat-total-grande" data-label="Total">${datos.total || 0}</td>
+                        <td class="stat-x-grande" data-label="X">${datos.xTotal || 0}</td>
                     </tr>
                 </tbody>
             </table>
         `;
     }
-    
+
     function crearCardRival(datos, posicion, numeroRival, miTotal) {
         const series = datos.series || datos.parciales || [];
         const diferencia = datos.total - miTotal;
         const textoDiferencia = diferencia > 0 ? `+${diferencia}` : diferencia;
         const claseDiferencia = diferencia >= 0 ? 'diferencia-positiva' : 'diferencia-negativa';
-        
         return `
             <div class="card-rival">
                 <div class="rival-header">
@@ -653,7 +649,6 @@
                     </div>
                     <div class="posicion-rival">${posicion}º</div>
                 </div>
-                
                 <table class="tabla-rival">
                     <thead>
                         <tr>
@@ -664,9 +659,9 @@
                     </thead>
                     <tbody>
                         <tr>
-                            ${series.map(s => `<td>${s !== null ? s : '-'}</td>`).join('')}
-                            <td class="stat-total">${datos.total || 0}</td>
-                            <td class="stat-x">${datos.xTotal || 0}</td>
+                            ${series.map((s, i) => `<td data-label="S${i+1}">${s !== null ? s : '-'}</td>`).join('')}
+                            <td class="stat-total" data-label="Total">${datos.total || 0}</td>
+                            <td class="stat-x" data-label="X">${datos.xTotal || 0}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -680,9 +675,7 @@
     }
     
     window.addEventListener('beforeunload', () => {
-        if (intervaloActualizacion) {
-            clearInterval(intervaloActualizacion);
-        }
+        if (intervaloActualizacion) clearInterval(intervaloActualizacion);
     });
 </script>
 
