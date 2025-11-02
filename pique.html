@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        /* CSS GENERAL (SIN CAMBIOS) */
+        /* CSS GENERAL */
         body { background: radial-gradient(circle at center, #000428 0%, #004e92 100%); color: #fff; font-family: 'Rajdhani', sans-serif; margin:0; padding:0; min-height: 100vh; }
         .header { position: relative; background: linear-gradient(90deg, #002bff 0%, #001242 100%); padding: 1.5rem 1rem; border-bottom: 0.5vh solid #ffc107; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .logo-izquierdo { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); height: 60px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.7)); }
@@ -22,7 +22,6 @@
         .container-main { max-width: 1200px; margin: 0 auto; padding: 1rem; }
         .card-tirador { background: linear-gradient(135deg, rgba(255,193,7,0.2) 0%, rgba(255,152,0,0.15) 100%); border: 4px solid #ffc107; border-radius: 15px; padding: 2rem 1.5rem; margin-bottom: 2rem; box-shadow: 0 0 40px rgba(255,193,7,0.4); animation: pulseGlow 3s infinite; backdrop-filter: blur(10px); }
         @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 40px rgba(255,193,7,0.4); } 50% { box-shadow: 0 0 60px rgba(255,193,7,0.7); } }
-        .posicion-grande { display: inline-block; background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #000; font-size: clamp(3rem, 10vw, 5rem); font-weight: 900; padding: 1rem 2rem; border-radius: 15px; margin-bottom: 1rem; text-shadow: 0 3px 6px rgba(0,0,0,0.3); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         .nombre-principal { font-size: clamp(1.5rem, 5vw, 2.5rem); font-weight: 700; margin: 1rem 0; color: #ffc107; text-transform: uppercase; text-shadow: 0 0 20px rgba(255,193,7,0.7); }
         .tabla-mi-puesto { width: 100%; background: rgba(0,60,150,0.3); border: 2px solid #00bfff; border-radius: 10px; backdrop-filter: blur(8px); overflow: hidden; }
         .tabla-mi-puesto thead { background: linear-gradient(90deg, #001f7a 0%, #0048ff 100%); }
@@ -36,9 +35,10 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .loading-text { margin-top: 1.5rem; font-size: clamp(1rem, 3vw, 1.5rem); color: #ffc107; }
         
-        /* CSS RESPONSIVE (SIN CAMBIOS) */
+        /* CSS RESPONSIVE */
         @media (max-width: 768px) {
-            .header h1 { font-size: clamp(1.5rem, 6vw, 2rem); } .logo-izquierdo { height: 45px; } .container-main { padding: 0 0.5rem; } .card-tirador { padding: 1rem; } .nombre-principal { font-size: clamp(1.3rem, 5vw, 2rem); }
+            .header h1 { font-size: clamp(1.5rem, 6vw, 2rem); } .logo-izquierdo { height: 45px; } .container-main { padding: 0 0.5rem; } .card-tirador { padding: 1rem; }
+            .nombre-principal { font-size: clamp(1.3rem, 5vw, 2rem); }
             .tabla-mi-puesto thead { display: none; }
             .tabla-mi-puesto, .tabla-mi-puesto tbody, .tabla-mi-puesto tr { display: block; width: 100%; }
             .tabla-mi-puesto td { display: flex; justify-content: space-between; align-items: center; text-align: right; padding: 0.8rem; border-bottom: 1px solid rgba(0, 191, 255, 0.2); }
@@ -48,13 +48,13 @@
         }
         @media (max-width: 480px) {
             .header { padding: 1rem 0.5rem; }
-            .posicion-grande { font-size: 2rem; padding: 0.3rem 0.6rem; margin-bottom: 0.5rem; }
+            .nombre-principal { font-size: clamp(1.1rem, 5vw, 1.6rem); }
         }
     </style>
 </head>
 <body>
 
-<!-- Modal de Acceso por Puesto y PIN (Simplificado) -->
+<!-- Modal de Acceso por Puesto y PIN -->
 <div class="modal fade" id="modalConfigVisor" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-dark text-white" style="backdrop-filter: blur(10px); background: rgba(0,20,50,0.95) !important; border: 3px solid #007bff;">
@@ -81,7 +81,7 @@
   </div>
 </div>
 
-<!-- Contenido Principal (Simplificado) -->
+<!-- Contenido Principal -->
 <div id="mainContent" style="display: none;">
   <div class="header">
     <img src="shooting_logo.png" alt="Logo" class="logo-izquierdo" onerror="this.style.display='none'">
@@ -112,7 +112,7 @@
     
     let modalConfigVisor;
     let datosCompletos = null;
-    let configuracion = { miPuesto: null }; // Configuración simplificada
+    let configuracion = { miPuesto: null };
     let intervaloActualizacion;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -203,8 +203,7 @@
         const series = datos.series || [];
         return `
             <div class="text-center">
-                <div class="posicion-grande">${posicion}º</div>
-                <div class="nombre-principal">Puesto ${datos.puesto}</div>
+                <div class="nombre-principal">Puesto ${datos.puesto} ( ${posicion}º Clasif. )</div>
             </div>
             <table class="tabla-mi-puesto">
                 <thead><tr>${series.map((_, i) => `<th>S${i+1}</th>`).join('')}<th>Total</th><th>X</th></tr></thead>
