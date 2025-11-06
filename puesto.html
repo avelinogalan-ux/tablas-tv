@@ -3,384 +3,349 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Puntuación - Visor</title>
+    <title>ScoreView - Seguimiento en Tiempo Real</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        :root {
+            --primary: #00ff88;
+            --secondary: #00d8ff;
+            --accent: #ffc107;
+            --dark: #001242;
+            --darker: #000428;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-light: #ffffff;
+        }
+        
         body { 
-            background: radial-gradient(circle at center, #000428 0%, #004e92 100%); 
-            color: #fff; 
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 50%, #1a0033 100%);
+            color: var(--text-light); 
             font-family: 'Rajdhani', sans-serif; 
-            margin:0; 
-            padding:0; 
-            min-height: 100vh; 
-        }
-        
-        /* ENCABEZADO REDISEÑADO COMPLETO */
-        .header-redisenado {
-            position: relative;
-            background: linear-gradient(135deg, #002bff 0%, #001242 50%, #8a2be2 100%);
-            padding: 2.5rem 1rem;
-            border-bottom: 0.5vh solid #ffc107;
-            box-shadow: 0 8px 35px rgba(0,0,0,0.6);
-            overflow: hidden;
-            text-align: center;
+            margin: 0; 
+            padding: 0; 
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .header-content-mejorado {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.2rem;
-        }
-
-        .logo-icono-mejorado {
-            height: 90px;
-            width: 90px;
-            border-radius: 50%;
-            object-fit: cover;
-            filter: 
-                drop-shadow(0 0 25px rgba(255, 193, 7, 0.9))
-                drop-shadow(0 0 50px rgba(255, 193, 7, 0.6))
-                brightness(1.2)
-                contrast(1.1);
-            border: 3px solid rgba(255, 255, 255, 0.9);
-            animation: floatLogo 3s ease-in-out infinite;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        @keyframes floatLogo {
-            0%, 100% { 
-                transform: translateY(0px) rotate(0deg);
-                filter: drop-shadow(0 0 25px rgba(255, 193, 7, 0.9));
-            }
-            50% { 
-                transform: translateY(-10px) rotate(3deg);
-                filter: drop-shadow(0 0 35px rgba(255, 193, 7, 1));
-            }
-        }
-
-        .logo-icono-mejorado:hover {
-            transform: scale(1.15) rotate(8deg);
-            filter: 
-                drop-shadow(0 0 30px rgba(255, 193, 7, 1))
-                drop-shadow(0 0 60px rgba(255, 193, 7, 0.8));
-        }
-
-        .titulo-principal {
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
-            font-weight: 800;
-            margin: 0;
-            text-transform: uppercase;
-            background: linear-gradient(45deg, #ffc107, #ffeb3b, #ff9800, #ffc107, #ffeb3b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-size: 400% 400%;
-            animation: gradientText 3s ease infinite;
-            text-shadow: 
-                0 4px 8px rgba(0,0,0,0.4),
-                0 8px 16px rgba(0,0,0,0.3);
-            letter-spacing: 2px;
-            position: relative;
-            line-height: 1.1;
-        }
-
-        @keyframes gradientText {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .subtitulo {
-            font-size: clamp(1.1rem, 3.5vw, 1.6rem);
-            color: #00e5ff;
-            text-shadow: 
-                0 0 20px rgba(0, 229, 255, 0.8),
-                0 0 40px rgba(0, 229, 255, 0.4);
-            font-weight: 700;
-            margin-top: 0.2rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            padding: 0.5rem 1.5rem;
+        /* HEADER MINIMALISTA Y ELEGANTE */
+        .header-minimal {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 25px;
-            border: 1px solid rgba(0, 229, 255, 0.3);
-        }
-
-        /* Efectos de partículas */
-        .particulas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .particula {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 50%;
-            animation: floatParticula 8s infinite linear;
-        }
-
-        @keyframes floatParticula {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100px) rotate(720deg);
-                opacity: 0;
-            }
-        }
-
-        /* STATUS BOX MEJORADO */
-        .status-box { 
-            max-width: 90%; 
-            margin: 1.5rem auto; 
-            padding: 1rem; 
-            border-radius: 20px; 
-            font-size: clamp(1rem, 2.8vw, 1.3rem); 
-            font-weight: bold; 
-            text-align: center;
-            background: rgba(0,255,136,0.15);
-            border: 2px solid #00ff88;
-            color: #00ff88;
-            text-shadow: 0 0 15px rgba(0,255,136,0.7);
-            box-shadow: 0 0 25px rgba(0,255,136,0.4);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
             position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
         }
-        .status-box::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(0,255,136,0.1), transparent);
-            animation: statusShine 4s linear infinite;
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
         }
-        @keyframes statusShine {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
-        
-        .status-connected { 
-            background: rgba(0,255,136,0.15); 
-            border: 2px solid #00ff88; 
-            color: #00ff88; 
-        }
-        .status-disconnected { 
-            background: rgba(255,0,60,0.2); 
-            border: 2px solid #ff003c; 
-            color: #ff4d6d; 
-        }
-        
-        .container-main { max-width: 1200px; margin: 0 auto; padding: 1rem; }
-        .card-tirador { 
-            background: linear-gradient(135deg, rgba(255,193,7,0.2) 0%, rgba(255,152,0,0.15) 100%); 
-            border: 4px solid #ffc107; 
-            border-radius: 20px; 
-            padding: 2.5rem 2rem; 
-            margin-bottom: 2.5rem; 
-            box-shadow: 0 0 50px rgba(255,193,7,0.4); 
-            animation: pulseGlow 3s infinite; 
-            backdrop-filter: blur(15px); 
-        }
-        @keyframes pulseGlow { 
-            0%, 100% { box-shadow: 0 0 50px rgba(255,193,7,0.4); } 
-            50% { box-shadow: 0 0 70px rgba(255,193,7,0.7); } 
-        }
-        .nombre-principal { 
-            font-size: clamp(1.8rem, 6vw, 3rem); 
-            font-weight: 800; 
-            margin: 1.5rem 0; 
-            color: #ffc107; 
-            text-transform: uppercase; 
-            text-shadow: 0 0 25px rgba(255,193,7,0.8);
-            text-align: center;
-        }
-        .tabla-mi-puesto { 
-            width: 100%; 
-            background: rgba(0,60,150,0.4); 
-            border: 2px solid #00bfff; 
-            border-radius: 15px; 
-            backdrop-filter: blur(12px); 
-            overflow: hidden; 
-            margin-bottom: 2.5rem; 
-            box-shadow: 0 0 30px rgba(0, 191, 255, 0.3);
-        }
-        .tabla-mi-puesto thead { 
-            background: linear-gradient(90deg, #001f7a 0%, #0048ff 100%); 
-        }
-        .tabla-mi-puesto th { 
-            padding: 1.2rem 0.8rem; 
-            text-align: center; 
-            font-size: clamp(1rem, 2.8vw, 1.5rem); 
-            text-transform: uppercase; 
-            border-bottom: 3px solid #ffc107; 
-            letter-spacing: 1px;
-        }
-        .tabla-mi-puesto td { 
-            padding: 1.2rem 0.8rem; 
-            text-align: center; 
-            font-size: clamp(1.2rem, 3.5vw, 1.8rem); 
-            font-weight: 700; 
-        }
-        .stat-total-grande { 
-            background-color: rgba(0,255,136,0.4) !important; 
-            color: #00ff9c; 
-            font-size: clamp(1.8rem, 5vw, 3rem) !important; 
-            text-shadow: 0 0 15px rgba(0,255,156,0.7);
-        }
-        .stat-x-grande { 
-            background-color: rgba(0,229,255,0.4) !important; 
-            color: #00d8ff; 
-            font-size: clamp(1.8rem, 5vw, 3rem) !important; 
-            text-shadow: 0 0 15px rgba(0,216,255,0.7);
-        }
-        
-        /* Estilos para la tabla comparativa */
-        .comparativa-primero { background-color: rgba(255, 215, 0, 0.25) !important; color: #ffd700 !important; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
-        .comparativa-segundo { background-color: rgba(192, 192, 192, 0.25) !important; color: #c0c0c0 !important; text-shadow: 0 0 10px rgba(192,192,192,0.5); }
-        .comparativa-tercero { background-color: rgba(205, 127, 50, 0.25) !important; color: #cd7f32 !important; text-shadow: 0 0 10px rgba(205,127,50,0.5); }
-        .comparativa-mi-puesto { background-color: rgba(0, 255, 136, 0.4) !important; color: #00ff88 !important; font-weight: 900; text-shadow: 0 0 15px rgba(0,255,136,0.7); }
-        .comparativa-anterior { background-color: rgba(0, 191, 255, 0.2) !important; }
-        .comparativa-siguiente { background-color: rgba(255, 69, 0, 0.2) !important; }
-        
-        .logo-bottom { 
-            display: block; 
-            margin: 3rem auto 1rem auto; 
-            height: 60px; 
-            width: 60px;
-            border-radius: 50%;
-            filter: 
-                drop-shadow(0 0 15px rgba(255,255,255,0.6))
-                brightness(1.1);
-            opacity: 0.8;
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover;
+            filter: drop-shadow(0 0 10px var(--accent));
             transition: all 0.3s ease;
         }
-        .logo-bottom:hover {
-            opacity: 1;
-            transform: scale(1.1);
-            filter: 
-                drop-shadow(0 0 20px rgba(255,255,255,0.8))
-                brightness(1.2);
-        }
-        
-        .update-info { 
-            text-align: center; 
-            color: #00e6ff; 
-            font-size: clamp(0.9rem, 2.2vw, 1.1rem); 
-            margin-top: 2rem; 
-            text-shadow: 0 0 10px rgba(0,230,255,0.9);
-            padding: 1rem;
-            background: rgba(0,0,0,0.2);
-            border-radius: 10px;
-            border: 1px solid rgba(0,230,255,0.2);
+
+        .logo-icon:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 15px var(--accent));
         }
 
-        /* Estilos para el contenedor del gráfico */
+        .app-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .competition-info {
+            text-align: right;
+        }
+
+        .competition-name {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .competition-status {
+            font-size: 0.9rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.2rem 0 0 0;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* TARJETA DE PUNTUACIÓN PRINCIPAL */
+        .score-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .shooter-info {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .shooter-position {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 0;
+            line-height: 1;
+        }
+
+        .shooter-details {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            margin: 0.5rem 0;
+        }
+
+        /* TABLA DE SERIES */
+        .series-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .series-table th {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            color: var(--secondary);
+            border-bottom: 2px solid var(--secondary);
+        }
+
+        .series-table td {
+            padding: 1.2rem;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .total-score {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--primary);
+            font-size: 1.8rem !important;
+        }
+
+        .x-count {
+            background: rgba(0, 216, 255, 0.1);
+            color: var(--secondary);
+            font-size: 1.8rem !important;
+        }
+
+        /* GRÁFICO */
+        .chart-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
         .chart-container {
+            height: 300px;
             position: relative;
-            margin: 2.5rem auto;
-            height: 45vh;
-            min-height: 350px;
-            width: 92vw;
-            max-width: 1000px;
-            background: rgba(0, 20, 50, 0.5);
-            border-radius: 15px;
-            padding: 1.5rem;
-            border: 2px solid #00bfff;
-            box-shadow: 0 0 30px rgba(0, 191, 255, 0.4);
-            backdrop-filter: blur(10px);
         }
-        
-        .loading-area { text-align: center; padding: 5rem 1rem; }
-        .spinner { 
-            display: inline-block; 
-            width: 70px; 
-            height: 70px; 
-            border: 6px solid rgba(255,193,7,0.3); 
-            border-top: 6px solid #ffc107; 
-            border-radius: 50%; 
-            animation: spin 1s linear infinite; 
+
+        /* TABLA COMPARATIVA */
+        .comparison-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-text { 
-            margin-top: 2rem; 
-            font-size: clamp(1.2rem, 3.5vw, 1.8rem); 
-            color: #ffc107; 
-            text-shadow: 0 0 15px rgba(255,193,7,0.7);
+
+        .comparison-title {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
         }
-        
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            color: var(--secondary);
+            border-bottom: 2px solid var(--secondary);
+        }
+
+        .comparison-table td {
+            padding: 1rem;
+            text-align: center;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .position-1 { background: rgba(255, 215, 0, 0.1); color: #ffd700; }
+        .position-2 { background: rgba(192, 192, 192, 0.1); color: #c0c0c0; }
+        .position-3 { background: rgba(205, 127, 50, 0.1); color: #cd7f32; }
+        .current-shooter { 
+            background: rgba(0, 255, 136, 0.2); 
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .adjacent-shooter { background: rgba(255, 255, 255, 0.05); }
+
+        /* LOADING Y ESTADOS */
+        .loading-container {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--secondary);
+            font-size: 1.1rem;
+        }
+
+        .update-info {
+            text-align: center;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        /* RESPONSIVE */
         @media (max-width: 768px) {
-            .header-redisenado { padding: 2rem 1rem; }
-            .logo-icono-mejorado { 
-                height: 70px; 
-                width: 70px; 
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
             }
-            .header-content-mejorado { gap: 1rem; }
-            .container-main { padding: 0 0.5rem; }
-            .card-tirador { padding: 1.5rem 1rem; }
-            .tabla-mi-puesto thead { display: none; }
-            .tabla-mi-puesto, .tabla-mi-puesto tbody, .tabla-mi-puesto tr { display: block; width: 100%; }
-            .tabla-mi-puesto td { 
-                display: flex; 
-                justify-content: space-between; 
-                align-items: center; 
-                text-align: right; 
-                padding: 1rem; 
-                border-bottom: 1px solid rgba(0, 191, 255, 0.3); 
+
+            .competition-info {
+                text-align: center;
             }
-            .tabla-mi-puesto td:last-child { border-bottom: none; }
-            .tabla-mi-puesto td::before { 
-                content: attr(data-label); 
-                font-weight: 700; 
-                color: #00d8ff; 
-                text-align: left; 
-                padding-right: 1rem; 
-                text-shadow: 0 0 8px rgba(0,216,255,0.5);
+
+            .shooter-position {
+                font-size: 2.5rem;
             }
-            .stat-total-grande, .stat-x-grande { font-size: 1.8rem !important; }
-            .chart-container {
-                height: 40vh;
-                min-height: 300px;
-                padding: 1rem;
-                margin: 2rem auto;
+
+            .series-table th,
+            .series-table td {
+                padding: 0.8rem 0.5rem;
+                font-size: 1.1rem;
             }
-            .logo-bottom {
-                height: 50px;
-                width: 50px;
-                margin: 2rem auto 0.5rem auto;
+
+            .total-score,
+            .x-count {
+                font-size: 1.5rem !important;
+            }
+
+            .main-container {
+                margin: 1rem auto;
+                padding: 0 0.5rem;
+            }
+
+            .score-card,
+            .chart-section,
+            .comparison-section {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
             }
         }
-        
+
         @media (max-width: 480px) {
-            .header-redisenado { padding: 1.5rem 0.5rem; }
-            .logo-icono-mejorado { 
-                height: 60px; 
-                width: 60px; 
+            .app-title {
+                font-size: 1.5rem;
             }
-            .titulo-principal { font-size: clamp(1.8rem, 7vw, 2.5rem); }
-            .subtitulo { font-size: clamp(0.9rem, 3vw, 1.2rem); letter-spacing: 2px; }
+
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .shooter-position {
+                font-size: 2rem;
+            }
+
+            .series-table {
+                font-size: 0.9rem;
+            }
         }
+
+        /* UTILITIES */
+        .text-accent { color: var(--accent); }
+        .text-primary { color: var(--primary); }
+        .text-secondary { color: var(--secondary); }
+        .bg-dark { background: var(--dark); }
     </style>
 </head>
 <body>
@@ -388,23 +353,23 @@
 <!-- Modal de Acceso -->
 <div class="modal fade" id="modalConfigVisor" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark text-white" style="backdrop-filter: blur(10px); background: rgba(0,20,50,0.95) !important; border: 3px solid #007bff;">
-            <div class="modal-header" style="border-bottom: 3px solid #ffc107;">
-                <h5 class="modal-title" style="font-size: 1.5rem;"><i class="bi bi-shield-lock-fill"></i> Acceso Tirador</h5>
+        <div class="modal-content bg-dark text-white" style="border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px); background: rgba(0,20,50,0.9) !important;">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <h5 class="modal-title" style="font-size: 1.3rem;"><i class="bi bi-shield-lock-fill text-accent"></i> Acceso Tirador</h5>
             </div>
             <div class="modal-body">
-                <div class="mb-4">
-                    <label class="form-label fw-bold" style="font-size: 1.1rem;">👤 Tu Número de Puesto</label>
-                    <input type="number" id="miPuestoInput" class="form-control form-control-lg text-center" placeholder="Ej: 7" required style="background: rgba(255,255,255,0.1); border: 2px solid #ffc107; color: #fff; font-size: 1.5rem;">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">👤 Tu Número de Puesto</label>
+                    <input type="number" id="miPuestoInput" class="form-control form-control-lg text-center" placeholder="Ej: 7" required style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff;">
                 </div>
-                <div class="mb-4">
-                    <label class="form-label fw-bold" style="font-size: 1.1rem;">🔐 Tu PIN Secreto (4 dígitos)</label>
-                    <input type="password" id="miPinInput" class="form-control form-control-lg text-center" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" required style="background: rgba(255,255,255,0.1); border: 2px solid #007bff; color: #fff; font-size: 1.5rem;">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">🔐 Tu PIN Secreto</label>
+                    <input type="password" id="miPinInput" class="form-control form-control-lg text-center" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" required style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff;">
                 </div>
-                <button class="btn w-100 mt-4" onclick="validarYComenzar()" style="background: linear-gradient(90deg, #ffc107, #ff9800); border: none; color: #000; font-weight: 700; font-size: 1.2rem; padding: 0.8rem;">
-                    <i class="bi bi-box-arrow-in-right"></i> Entrar
+                <button class="btn w-100 mt-3" onclick="validarYComenzar()" style="background: linear-gradient(45deg, var(--primary), var(--secondary)); border: none; color: #000; font-weight: 600; padding: 0.8rem;">
+                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
                 </button>
-                <div id="errorConfig" class="text-danger text-center mt-3 fw-bold" style="min-height: 24px;"></div>
+                <div id="errorConfig" class="text-danger text-center mt-2 fw-bold" style="min-height: 24px;"></div>
             </div>
         </div>
     </div>
@@ -412,38 +377,91 @@
 
 <!-- Contenido Principal -->
 <div id="mainContent" style="display: none;">
-    <!-- NUEVO HEADER REDISEÑADO -->
-    <div class="header-redisenado">
-        <div class="particulas" id="particulas"></div>
-        <div class="header-content-mejorado">
-            <img src="shooting_logo.png" alt="Logo" class="logo-icono-mejorado">
-            <div>
-                <h1 class="titulo-principal">Mi Puntuación</h1>
-                <div class="subtitulo" id="disciplinaName">Competición en Directo</div>
+    <!-- Header Minimalista -->
+    <header class="header-minimal">
+        <div class="header-content">
+            <div class="brand">
+                <img src="shooting_logo.png" alt="Logo" class="logo-icon" onerror="this.style.display='none'">
+                <h1 class="app-title">ScoreView</h1>
+            </div>
+            <div class="competition-info">
+                <h2 class="competition-name" id="disciplinaName">Competición Activa</h2>
+                <div class="competition-status">
+                    <i class="bi bi-circle-fill" style="color: var(--primary);"></i>
+                    <span>EN DIRECTO</span>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <div class="status-box status-connected" id="statusBox">
-        <i class="bi bi-wifi"></i> Conectado
-    </div>
-    
-    <div class="container-main">
-        <div id="loadingArea" class="loading-area">
-            <div class="spinner"></div>
-            <p class="loading-text">Validando y cargando...</p>
+    </header>
+
+    <!-- Contenido Principal -->
+    <div class="main-container">
+        <!-- Loading -->
+        <div id="loadingArea" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Cargando datos en tiempo real...</p>
         </div>
-        
+
+        <!-- Contenido Dinámico -->
         <div id="contentArea" style="display: none;">
-            <div id="miCard" class="card-tirador"></div>
-            
-            <div class="chart-container">
-                <canvas id="graficoSeries"></canvas>
+            <!-- Tarjeta de Puntuación Principal -->
+            <div class="score-card">
+                <div class="shooter-info">
+                    <h2 class="shooter-position" id="currentPosition">-</h2>
+                    <p class="shooter-details" id="shooterDetails">Puesto • Clasificación</p>
+                </div>
+                
+                <table class="series-table">
+                    <thead>
+                        <tr>
+                            <th>S1</th>
+                            <th>S2</th>
+                            <th>S3</th>
+                            <th>S4</th>
+                            <th>S5</th>
+                            <th>S6</th>
+                            <th>Total</th>
+                            <th>X</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="seriesData">
+                            <!-- Los datos se insertarán aquí -->
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            
-            <img src="shooting_logo.png" alt="Logo" class="logo-bottom" onerror="this.style.display='none'">
-            
-            <div class="update-info" id="updateInfo"></div>
+
+            <!-- Gráfico -->
+            <div class="chart-section">
+                <h3 class="chart-title">Evolución por Series</h3>
+                <div class="chart-container">
+                    <canvas id="graficoSeries"></canvas>
+                </div>
+            </div>
+
+            <!-- Comparativa -->
+            <div class="comparison-section">
+                <h3 class="comparison-title">Comparativa de Posiciones</h3>
+                <table class="comparison-table" id="comparisonTable">
+                    <thead>
+                        <tr>
+                            <th>Pos</th>
+                            <th>Puesto</th>
+                            <th>Total</th>
+                            <th>X</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Los datos de comparación se insertarán aquí -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Información de Actualización -->
+            <div class="update-info" id="updateInfo">
+                <i class="bi bi-clock"></i> Última actualización: --
+            </div>
         </div>
     </div>
 </div>
@@ -451,39 +469,20 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // --- CONFIGURACIÓN OBLIGATORIA ---
+    // Configuración
     const PIN_BIN_ID = '6907c714d0ea881f40cf7e3d';
     const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc';
     const INTERVALO_ACTUALIZACION = 10000;
 
-    // --- Variables Globales ---
+    // Variables Globales
     let modalConfigVisor;
     let configuracion = { miPuesto: null };
     let intervaloActualizacion;
     let miGrafico = null;
 
-    // Función para crear partículas
-    function crearParticulas() {
-        const contenedor = document.getElementById('particulas');
-        if (!contenedor) return;
-        
-        for (let i = 0; i < 20; i++) {
-            const particula = document.createElement('div');
-            particula.className = 'particula';
-            particula.style.width = Math.random() * 5 + 2 + 'px';
-            particula.style.height = particula.style.width;
-            particula.style.left = Math.random() * 100 + '%';
-            particula.style.animationDelay = Math.random() * 6 + 's';
-            particula.style.animationDuration = (Math.random() * 4 + 6) + 's';
-            particula.style.background = `rgba(255, 255, 255, ${Math.random() * 0.8 + 0.2})`;
-            contenedor.appendChild(particula);
-        }
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
         modalConfigVisor = new bootstrap.Modal('#modalConfigVisor');
         modalConfigVisor.show();
-        crearParticulas();
     });
 
     async function validarYComenzar() {
@@ -491,10 +490,12 @@
         const miPinInput = document.getElementById('miPinInput').value.trim();
         const errorDiv = document.getElementById('errorConfig');
         errorDiv.textContent = '';
+        
         if (!miPuestoInput || !miPinInput || miPinInput.length !== 4) {
             errorDiv.textContent = 'Debes introducir tu puesto y un PIN de 4 dígitos.';
             return;
         }
+        
         try {
             const response = await fetch(`https://api.jsonbin.io/v3/b/${PIN_BIN_ID}/latest`);
             if (!response.ok) throw new Error('Error conectando al servidor de validación.');
@@ -503,17 +504,19 @@
             const tiradorValidado = listaUsuarios.find(
                 user => String(user.puesto) === miPuestoInput && String(user.pin) === miPinInput
             );
+            
             if (!tiradorValidado) {
                 errorDiv.textContent = 'Puesto o PIN incorrecto. Inténtalo de nuevo.';
                 return;
             }
+            
             configuracion.miPuesto = miPuestoInput;
             modalConfigVisor.hide();
             document.getElementById('mainContent').style.display = 'block';
             iniciarSeguimiento();
         } catch (error) {
             console.error('Error de validación:', error);
-            errorDiv.textContent = 'Error de conexión. Verifica la configuración y el ID del Bin de PINs.';
+            errorDiv.textContent = 'Error de conexión. Verifica tu conexión a internet.';
         }
     }
 
@@ -538,9 +541,7 @@
             }
             
             const data = result.record;
-            document.getElementById('disciplinaName').textContent = data.disciplina || 'Competición en Directo';
-            document.getElementById('statusBox').className = 'status-box status-connected';
-            document.getElementById('statusBox').innerHTML = '<i class="bi bi-check-circle-fill"></i> EN DIRECTO';
+            document.getElementById('disciplinaName').textContent = data.disciplina || 'Competición Activa';
             
             if (data.datos && data.datos.length > 0) {
                 mostrarDatos(data.datos);
@@ -549,13 +550,11 @@
             }
             
             const ahora = new Date();
-            document.getElementById('updateInfo').innerHTML = `<i class="bi bi-clock-fill"></i> Actualizado: ${ahora.toLocaleTimeString()}`;
+            document.getElementById('updateInfo').innerHTML = `<i class="bi bi-clock"></i> Actualizado: ${ahora.toLocaleTimeString()}`;
             
         } catch (error) {
-            console.error('Error cargando datos de puntuación:', error);
-            document.getElementById('statusBox').className = 'status-box status-disconnected';
-            document.getElementById('statusBox').innerHTML = '<i class="bi bi-wifi-off"></i> SIN CONEXIÓN';
-            document.getElementById('updateInfo').innerHTML = `<i class="bi bi-exclamation-triangle"></i> Error: ${error.message}`;
+            console.error('Error cargando datos:', error);
+            document.getElementById('updateInfo').innerHTML = `<i class="bi bi-exclamation-triangle"></i> Error de conexión`;
         }
     }
     
@@ -568,68 +567,87 @@
         const miDatos = datos.find(t => String(t.puesto) === String(configuracion.miPuesto));
         if (!miDatos) {
             console.warn(`No se encontraron datos para el puesto ${configuracion.miPuesto}`);
-            document.getElementById('miCard').innerHTML = 
-                `<div class="text-center nombre-principal text-warning">
-                    Esperando datos para el Puesto ${configuracion.miPuesto}...
-                </div>`;
-            
-            if (miGrafico) {
-                miGrafico.destroy();
-                miGrafico = null;
-            }
             return;
         }
 
         const clasificacion = [...datos].sort((a, b) => (b.total || 0) - (a.total || 0));
         const miPosicion = clasificacion.findIndex(t => String(t.puesto) === String(configuracion.miPuesto)) + 1;
 
-        document.getElementById('miCard').innerHTML = crearCardPrincipal(miDatos, miPosicion);
-        renderizarGrafico(miDatos.series || []);
+        // Actualizar información principal
+        document.getElementById('currentPosition').textContent = `${miPosicion}º`;
+        document.getElementById('shooterDetails').textContent = `Puesto ${miDatos.puesto} • Clasificación General`;
 
-        const primero = clasificacion[0];
-        const segundo = clasificacion[1] || null;
-        const tercero = clasificacion[2] || null;
-        const ultimo = clasificacion[clasificacion.length - 1];
-        const anterior = clasificacion[miPosicion - 2] || null;
-        const siguiente = clasificacion[miPosicion] || null;
+        // Actualizar tabla de series
+        const series = miDatos.series || [];
+        let seriesHTML = '';
+        for (let i = 0; i < 6; i++) {
+            seriesHTML += `<td>${series[i] !== null ? series[i] : '-'}</td>`;
+        }
+        seriesHTML += `<td class="total-score">${miDatos.total || 0}</td>`;
+        seriesHTML += `<td class="x-count">${miDatos.xTotal || 0}</td>`;
+        document.getElementById('seriesData').innerHTML = seriesHTML;
 
-        const comparativaHTML = `
-            <div class="mt-4">
-                <h4 style="text-align:center; color:#00d8ff; text-shadow:0 0 15px rgba(0,216,255,0.7); margin-bottom: 1.5rem; font-size: 1.5rem;">COMPARATIVA DE PUESTOS</h4>
-                <table class="tabla-mi-puesto">
-                    <thead><tr><th>Posición</th><th>Puesto</th><th>Total</th><th>X</th></tr></thead>
-                    <tbody>
-                        <tr class="comparativa-primero"><td data-label="Posición">🥇 1º</td><td data-label="Puesto">${primero.puesto}</td><td data-label="Total">${primero.total}</td><td data-label="X">${primero.xTotal}</td></tr>
-                        ${segundo ? `<tr class="comparativa-segundo"><td data-label="Posición">🥈 2º</td><td data-label="Puesto">${segundo.puesto}</td><td data-label="Total">${segundo.total}</td><td data-label="X">${segundo.xTotal}</td></tr>` : ''}
-                        ${tercero ? `<tr class="comparativa-tercero"><td data-label="Posición">🥉 3º</td><td data-label="Puesto">${tercero.puesto}</td><td data-label="Total">${tercero.total}</td><td data-label="X">${tercero.xTotal}</td></tr>` : ''}
-                        ${anterior && miPosicion > 4 ? `<tr class="comparativa-anterior"><td data-label="Posición">${miPosicion - 1}º</td><td data-label="Puesto">${anterior.puesto}</td><td data-label="Total">${anterior.total}</td><td data-label="X">${anterior.xTotal}</td></tr>` : ''}
-                        <tr class="comparativa-mi-puesto"><td data-label="Posición">🎯 ${miPosicion}º</td><td data-label="Puesto">${miDatos.puesto}</td><td data-label="Total">${miDatos.total}</td><td data-label="X">${miDatos.xTotal}</td></tr>
-                        ${siguiente && miPosicion < clasificacion.length - 3 ? `<tr class="comparativa-siguiente"><td data-label="Posición">${miPosicion + 1}º</td><td data-label="Puesto">${siguiente.puesto}</td><td data-label="Total">${siguiente.total}</td><td data-label="X">${siguiente.xTotal}</td></tr>` : ''}
-                        <tr><td data-label="Posición">${clasificacion.length}º</td><td data-label="Puesto">${ultimo.puesto}</td><td data-label="Total">${ultimo.total}</td><td data-label="X">${ultimo.xTotal}</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        `;
+        // Actualizar gráfico
+        renderizarGrafico(series);
 
-        document.getElementById('miCard').innerHTML += comparativaHTML;
+        // Actualizar tabla comparativa
+        actualizarTablaComparativa(clasificacion, miPosicion);
     }
 
-    function crearCardPrincipal(datos, posicion) {
-        const series = datos.series || [];
-        return `
-            <div class="text-center">
-                <div class="nombre-principal">Puesto ${datos.puesto} • ${posicion}º Clasificación</div>
-            </div>
-            <table class="tabla-mi-puesto">
-                <thead><tr>${series.map((_, i) => `<th>S${i+1}</th>`).join('')}<th>Total</th><th>X</th></tr></thead>
-                <tbody>
-                    <tr>
-                        ${series.map((s, i) => `<td data-label="S${i+1}">${s !== null ? s : '-'}</td>`).join('')}
-                        <td class="stat-total-grande" data-label="Total">${datos.total || 0}</td>
-                        <td class="stat-x-grande" data-label="X">${datos.xTotal || 0}</td>
-                    </tr>
-                </tbody>
-            </table>`;
+    function actualizarTablaComparativa(clasificacion, miPosicion) {
+        const tabla = document.querySelector('#comparisonTable tbody');
+        let html = '';
+        
+        // Primer puesto
+        if (clasificacion[0]) {
+            html += `<tr class="position-1">
+                <td>🥇 1º</td>
+                <td>${clasificacion[0].puesto}</td>
+                <td>${clasificacion[0].total}</td>
+                <td>${clasificacion[0].xTotal}</td>
+            </tr>`;
+        }
+
+        // Puestos adyacentes y actual
+        const inicio = Math.max(0, miPosicion - 3);
+        const fin = Math.min(clasificacion.length, miPosicion + 2);
+        
+        for (let i = inicio; i < fin; i++) {
+            const tirador = clasificacion[i];
+            const posicion = i + 1;
+            
+            let clase = 'adjacent-shooter';
+            if (posicion === 1) clase = 'position-1';
+            else if (posicion === 2) clase = 'position-2';
+            else if (posicion === 3) clase = 'position-3';
+            else if (posicion === miPosicion) clase = 'current-shooter';
+            
+            let emoji = '';
+            if (posicion === 1) emoji = '🥇 ';
+            else if (posicion === 2) emoji = '🥈 ';
+            else if (posicion === 3) emoji = '🥉 ';
+            else if (posicion === miPosicion) emoji = '🎯 ';
+            
+            html += `<tr class="${clase}">
+                <td>${emoji}${posicion}º</td>
+                <td>${tirador.puesto}</td>
+                <td>${tirador.total}</td>
+                <td>${tirador.xTotal}</td>
+            </tr>`;
+        }
+
+        // Último puesto
+        if (clasificacion.length > 0) {
+            const ultimo = clasificacion[clasificacion.length - 1];
+            html += `<tr class="adjacent-shooter">
+                <td>${clasificacion.length}º</td>
+                <td>${ultimo.puesto}</td>
+                <td>${ultimo.total}</td>
+                <td>${ultimo.xTotal}</td>
+            </tr>`;
+        }
+
+        tabla.innerHTML = html;
     }
 
     function renderizarGrafico(seriesData) {
@@ -637,13 +655,6 @@
         const ctx = canvas.getContext('2d');
         
         if (!Array.isArray(seriesData) || seriesData.length === 0 || seriesData.every(item => item === null)) {
-            console.warn('No hay datos de series para mostrar en el gráfico');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '18px Rajdhani';
-            ctx.textAlign = 'center';
-            ctx.fillText('No hay datos de series disponibles', canvas.width / 2, canvas.height / 2);
-            
             if (miGrafico) {
                 miGrafico.destroy();
                 miGrafico = null;
@@ -652,23 +663,24 @@
         }
         
         const datosFiltrados = seriesData.map(puntaje => puntaje !== null ? puntaje : 0);
-        const labels = seriesData.map((_, index) => `Serie ${index + 1}`);
+        const labels = seriesData.map((_, index) => `S${index + 1}`);
 
         if (miGrafico) {
             miGrafico.destroy();
         }
 
         miGrafico = new Chart(ctx, {
-            type: 'bar',
+            type: 'line',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Puntuación por Serie',
+                    label: 'Puntuación',
                     data: datosFiltrados,
-                    backgroundColor: 'rgba(255, 193, 7, 0.7)',
-                    borderColor: '#ffc107',
+                    borderColor: '#00ff88',
+                    backgroundColor: 'rgba(0, 255, 136, 0.1)',
                     borderWidth: 3,
-                    borderRadius: 8,
+                    fill: true,
+                    tension: 0.4
                 }]
             },
             options: {
@@ -677,33 +689,25 @@
                 plugins: {
                     legend: {
                         display: false
-                    },
-                    title: {
-                        display: true,
-                        text: 'Evolución de Puntuación por Series',
-                        color: '#fff',
-                        font: { size: 20, family: "'Rajdhani', sans-serif", weight: 'bold' }
                     }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
                         max: 100,
-                        ticks: {
-                            color: '#00d8ff',
-                            font: { weight: 'bold', size: 14 }
-                        },
                         grid: {
-                            color: 'rgba(0, 191, 255, 0.3)'
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#00d8ff'
                         }
                     },
                     x: {
-                        ticks: {
-                            color: '#00d8ff',
-                            font: { weight: 'bold', size: 14 }
-                        },
                         grid: {
-                            display: false
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#00d8ff'
                         }
                     }
                 }
