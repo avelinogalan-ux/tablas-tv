@@ -10,115 +10,161 @@
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
-    <!-- PASO 1: AÑADIR LIBRERÍA DE GRÁFICOS (Chart.js) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        body { background: radial-gradient(circle at center, #000428 0%, #004e92 100%); color: #fff; font-family: 'Rajdhani', sans-serif; margin:0; padding:0; min-height: 100vh; }
-        
-        /* ENCABEZADO MEJORADO */
-        .header { 
-            position: relative; 
-            background: linear-gradient(135deg, #002bff 0%, #001242 50%, #8a2be2 100%); 
-            padding: 1.5rem 1rem; 
-            border-bottom: 0.5vh solid #ffc107; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5); 
-            overflow: hidden;
-        }
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(255,215,0,0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(0,255,255,0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(255,0,255,0.2) 0%, transparent 50%);
-            animation: headerShine 8s ease-in-out infinite;
-        }
-        @keyframes headerShine {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 0.8; }
+        body { 
+            background: radial-gradient(circle at center, #000428 0%, #004e92 100%); 
+            color: #fff; 
+            font-family: 'Rajdhani', sans-serif; 
+            margin:0; 
+            padding:0; 
+            min-height: 100vh; 
         }
         
-        .logo-top { 
-            display: block; 
-            margin: 0 auto 1rem auto; 
-            height: 80px; 
-            filter: drop-shadow(0 0 15px rgba(255,255,255,0.8))
-                    drop-shadow(0 0 30px rgba(255,193,7,0.6));
-            animation: logoFloat 3s ease-in-out infinite;
-            transition: transform 0.3s ease;
-        }
-        .logo-top:hover {
-            transform: scale(1.05) rotate(5deg);
-        }
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        .header h1 { 
-            font-size: clamp(2rem, 6vw, 3.5rem); 
-            margin: 0; 
-            text-transform: uppercase; 
-            text-shadow: 
-                0 0 20px rgba(255,255,255,0.9),
-                0 0 30px rgba(255,193,7,0.7),
-                0 0 40px rgba(255,193,7,0.5);
-            text-align: center;
+        /* ENCABEZADO REDISEÑADO COMPLETO */
+        .header-redisenado {
             position: relative;
-            background: linear-gradient(45deg, #ffc107, #ffeb3b, #ff9800, #ffc107);
+            background: linear-gradient(135deg, #002bff 0%, #001242 50%, #8a2be2 100%);
+            padding: 2.5rem 1rem;
+            border-bottom: 0.5vh solid #ffc107;
+            box-shadow: 0 8px 35px rgba(0,0,0,0.6);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .header-content-mejorado {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .logo-icono-mejorado {
+            height: 90px;
+            width: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            filter: 
+                drop-shadow(0 0 25px rgba(255, 193, 7, 0.9))
+                drop-shadow(0 0 50px rgba(255, 193, 7, 0.6))
+                brightness(1.2)
+                contrast(1.1);
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            animation: floatLogo 3s ease-in-out infinite;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes floatLogo {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg);
+                filter: drop-shadow(0 0 25px rgba(255, 193, 7, 0.9));
+            }
+            50% { 
+                transform: translateY(-10px) rotate(3deg);
+                filter: drop-shadow(0 0 35px rgba(255, 193, 7, 1));
+            }
+        }
+
+        .logo-icono-mejorado:hover {
+            transform: scale(1.15) rotate(8deg);
+            filter: 
+                drop-shadow(0 0 30px rgba(255, 193, 7, 1))
+                drop-shadow(0 0 60px rgba(255, 193, 7, 0.8));
+        }
+
+        .titulo-principal {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 800;
+            margin: 0;
+            text-transform: uppercase;
+            background: linear-gradient(45deg, #ffc107, #ffeb3b, #ff9800, #ffc107, #ffeb3b);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-size: 300% 300%;
-            animation: titleGradient 4s ease infinite;
+            background-size: 400% 400%;
+            animation: gradientText 3s ease infinite;
+            text-shadow: 
+                0 4px 8px rgba(0,0,0,0.4),
+                0 8px 16px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+            position: relative;
+            line-height: 1.1;
         }
-        @keyframes titleGradient {
+
+        @keyframes gradientText {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
         }
-        
-        .disciplina-badge { 
-            text-align: center; 
-            margin-top: 0.8rem; 
-            font-size: clamp(1.1rem, 3vw, 1.5rem); 
-            color: #00d8ff; 
+
+        .subtitulo {
+            font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+            color: #00e5ff;
             text-shadow: 
-                0 0 10px rgba(0,216,255,0.7),
-                0 0 20px rgba(0,216,255,0.4);
+                0 0 20px rgba(0, 229, 255, 0.8),
+                0 0 40px rgba(0, 229, 255, 0.4);
             font-weight: 700;
-            position: relative;
-            padding: 0.3rem 1rem;
-            background: rgba(0,0,0,0.3);
+            margin-top: 0.2rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 0.5rem 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 25px;
-            border: 1px solid rgba(0,216,255,0.3);
-            display: inline-block;
+            border: 1px solid rgba(0, 229, 255, 0.3);
         }
-        
-        .header-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
+
+        /* Efectos de partículas */
+        .particulas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
         }
-        
+
+        .particula {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            animation: floatParticula 8s infinite linear;
+        }
+
+        @keyframes floatParticula {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* STATUS BOX MEJORADO */
         .status-box { 
             max-width: 90%; 
-            margin: 1rem auto; 
-            padding: 0.7rem; 
-            border-radius: 15px; 
-            font-size: clamp(0.9rem, 2.5vw, 1.2rem); 
+            margin: 1.5rem auto; 
+            padding: 1rem; 
+            border-radius: 20px; 
+            font-size: clamp(1rem, 2.8vw, 1.3rem); 
             font-weight: bold; 
             text-align: center;
             background: rgba(0,255,136,0.15);
             border: 2px solid #00ff88;
             color: #00ff88;
             text-shadow: 0 0 15px rgba(0,255,136,0.7);
-            box-shadow: 0 0 20px rgba(0,255,136,0.3);
+            box-shadow: 0 0 25px rgba(0,255,136,0.4);
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(10px);
         }
         .status-box::before {
             content: '';
@@ -128,7 +174,7 @@
             width: 200%;
             height: 200%;
             background: linear-gradient(45deg, transparent, rgba(0,255,136,0.1), transparent);
-            animation: statusShine 3s linear infinite;
+            animation: statusShine 4s linear infinite;
         }
         @keyframes statusShine {
             0% { transform: rotate(0deg); }
@@ -147,77 +193,193 @@
         }
         
         .container-main { max-width: 1200px; margin: 0 auto; padding: 1rem; }
-        .card-tirador { background: linear-gradient(135deg, rgba(255,193,7,0.2) 0%, rgba(255,152,0,0.15) 100%); border: 4px solid #ffc107; border-radius: 15px; padding: 2rem 1.5rem; margin-bottom: 2rem; box-shadow: 0 0 40px rgba(255,193,7,0.4); animation: pulseGlow 3s infinite; backdrop-filter: blur(10px); }
-        @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 40px rgba(255,193,7,0.4); } 50% { box-shadow: 0 0 60px rgba(255,193,7,0.7); } }
-        .nombre-principal { font-size: clamp(1.5rem, 5vw, 2.5rem); font-weight: 700; margin: 1rem 0; color: #ffc107; text-transform: uppercase; text-shadow: 0 0 20px rgba(255,193,7,0.7); }
-        .tabla-mi-puesto { width: 100%; background: rgba(0,60,150,0.3); border: 2px solid #00bfff; border-radius: 10px; backdrop-filter: blur(8px); overflow: hidden; margin-bottom: 2rem; }
-        .tabla-mi-puesto thead { background: linear-gradient(90deg, #001f7a 0%, #0048ff 100%); }
-        .tabla-mi-puesto th { padding: 0.8rem 0.4rem; text-align: center; font-size: clamp(0.9rem, 2.5vw, 1.3rem); text-transform: uppercase; border-bottom: 3px solid #ffc107; }
-        .tabla-mi-puesto td { padding: 0.8rem 0.4rem; text-align: center; font-size: clamp(1rem, 3vw, 1.5rem); font-weight: 700; }
-        .stat-total-grande { background-color: rgba(0,255,136,0.3) !important; color: #00ff9c; font-size: clamp(1.5rem, 4vw, 2.5rem) !important; }
-        .stat-x-grande { background-color: rgba(0,229,255,0.3) !important; color: #00d8ff; font-size: clamp(1.5rem, 4vw, 2.5rem) !important; }
+        .card-tirador { 
+            background: linear-gradient(135deg, rgba(255,193,7,0.2) 0%, rgba(255,152,0,0.15) 100%); 
+            border: 4px solid #ffc107; 
+            border-radius: 20px; 
+            padding: 2.5rem 2rem; 
+            margin-bottom: 2.5rem; 
+            box-shadow: 0 0 50px rgba(255,193,7,0.4); 
+            animation: pulseGlow 3s infinite; 
+            backdrop-filter: blur(15px); 
+        }
+        @keyframes pulseGlow { 
+            0%, 100% { box-shadow: 0 0 50px rgba(255,193,7,0.4); } 
+            50% { box-shadow: 0 0 70px rgba(255,193,7,0.7); } 
+        }
+        .nombre-principal { 
+            font-size: clamp(1.8rem, 6vw, 3rem); 
+            font-weight: 800; 
+            margin: 1.5rem 0; 
+            color: #ffc107; 
+            text-transform: uppercase; 
+            text-shadow: 0 0 25px rgba(255,193,7,0.8);
+            text-align: center;
+        }
+        .tabla-mi-puesto { 
+            width: 100%; 
+            background: rgba(0,60,150,0.4); 
+            border: 2px solid #00bfff; 
+            border-radius: 15px; 
+            backdrop-filter: blur(12px); 
+            overflow: hidden; 
+            margin-bottom: 2.5rem; 
+            box-shadow: 0 0 30px rgba(0, 191, 255, 0.3);
+        }
+        .tabla-mi-puesto thead { 
+            background: linear-gradient(90deg, #001f7a 0%, #0048ff 100%); 
+        }
+        .tabla-mi-puesto th { 
+            padding: 1.2rem 0.8rem; 
+            text-align: center; 
+            font-size: clamp(1rem, 2.8vw, 1.5rem); 
+            text-transform: uppercase; 
+            border-bottom: 3px solid #ffc107; 
+            letter-spacing: 1px;
+        }
+        .tabla-mi-puesto td { 
+            padding: 1.2rem 0.8rem; 
+            text-align: center; 
+            font-size: clamp(1.2rem, 3.5vw, 1.8rem); 
+            font-weight: 700; 
+        }
+        .stat-total-grande { 
+            background-color: rgba(0,255,136,0.4) !important; 
+            color: #00ff9c; 
+            font-size: clamp(1.8rem, 5vw, 3rem) !important; 
+            text-shadow: 0 0 15px rgba(0,255,156,0.7);
+        }
+        .stat-x-grande { 
+            background-color: rgba(0,229,255,0.4) !important; 
+            color: #00d8ff; 
+            font-size: clamp(1.8rem, 5vw, 3rem) !important; 
+            text-shadow: 0 0 15px rgba(0,216,255,0.7);
+        }
         
         /* Estilos para la tabla comparativa */
-        .comparativa-primero { background-color: rgba(255, 215, 0, 0.2) !important; color: #ffd700 !important; }
-        .comparativa-segundo { background-color: rgba(192, 192, 192, 0.2) !important; color: #c0c0c0 !important; }
-        .comparativa-tercero { background-color: rgba(205, 127, 50, 0.2) !important; color: #cd7f32 !important; }
-        .comparativa-mi-puesto { background-color: rgba(0, 255, 136, 0.3) !important; color: #00ff88 !important; font-weight: 900; }
-        .comparativa-anterior { background-color: rgba(0, 191, 255, 0.15) !important; }
-        .comparativa-siguiente { background-color: rgba(255, 69, 0, 0.15) !important; }
+        .comparativa-primero { background-color: rgba(255, 215, 0, 0.25) !important; color: #ffd700 !important; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+        .comparativa-segundo { background-color: rgba(192, 192, 192, 0.25) !important; color: #c0c0c0 !important; text-shadow: 0 0 10px rgba(192,192,192,0.5); }
+        .comparativa-tercero { background-color: rgba(205, 127, 50, 0.25) !important; color: #cd7f32 !important; text-shadow: 0 0 10px rgba(205,127,50,0.5); }
+        .comparativa-mi-puesto { background-color: rgba(0, 255, 136, 0.4) !important; color: #00ff88 !important; font-weight: 900; text-shadow: 0 0 15px rgba(0,255,136,0.7); }
+        .comparativa-anterior { background-color: rgba(0, 191, 255, 0.2) !important; }
+        .comparativa-siguiente { background-color: rgba(255, 69, 0, 0.2) !important; }
         
         .logo-bottom { 
             display: block; 
-            margin: 2rem auto 0 auto; 
-            height: 50px; 
-            filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
+            margin: 3rem auto 1rem auto; 
+            height: 60px; 
+            width: 60px;
+            border-radius: 50%;
+            filter: 
+                drop-shadow(0 0 15px rgba(255,255,255,0.6))
+                brightness(1.1);
+            opacity: 0.8;
+            transition: all 0.3s ease;
         }
         .logo-bottom:hover {
             opacity: 1;
+            transform: scale(1.1);
+            filter: 
+                drop-shadow(0 0 20px rgba(255,255,255,0.8))
+                brightness(1.2);
         }
         
-        .update-info { text-align: center; color: #00e6ff; font-size: clamp(0.8rem, 2vw, 1rem); margin-top: 1.5rem; text-shadow: 0 0 8px rgba(0,230,255,0.9); }
+        .update-info { 
+            text-align: center; 
+            color: #00e6ff; 
+            font-size: clamp(0.9rem, 2.2vw, 1.1rem); 
+            margin-top: 2rem; 
+            text-shadow: 0 0 10px rgba(0,230,255,0.9);
+            padding: 1rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(0,230,255,0.2);
+        }
 
         /* Estilos para el contenedor del gráfico */
         .chart-container {
             position: relative;
-            margin: 2rem auto;
-            height: 40vh;
-            min-height: 300px;
-            width: 90vw;
-            max-width: 900px;
-            background: rgba(0, 20, 50, 0.4);
-            border-radius: 10px;
-            padding: 1rem;
-            border: 1px solid #00bfff;
-            box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+            margin: 2.5rem auto;
+            height: 45vh;
+            min-height: 350px;
+            width: 92vw;
+            max-width: 1000px;
+            background: rgba(0, 20, 50, 0.5);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 2px solid #00bfff;
+            box-shadow: 0 0 30px rgba(0, 191, 255, 0.4);
+            backdrop-filter: blur(10px);
+        }
+        
+        .loading-area { text-align: center; padding: 5rem 1rem; }
+        .spinner { 
+            display: inline-block; 
+            width: 70px; 
+            height: 70px; 
+            border: 6px solid rgba(255,193,7,0.3); 
+            border-top: 6px solid #ffc107; 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { 
+            margin-top: 2rem; 
+            font-size: clamp(1.2rem, 3.5vw, 1.8rem); 
+            color: #ffc107; 
+            text-shadow: 0 0 15px rgba(255,193,7,0.7);
         }
         
         @media (max-width: 768px) {
-            .header { padding: 1rem 0.5rem; }
-            .logo-top { height: 60px; margin-bottom: 0.5rem; }
-            .logo-bottom { height: 40px; }
-            .header h1 { font-size: clamp(1.5rem, 6vw, 2rem); }
+            .header-redisenado { padding: 2rem 1rem; }
+            .logo-icono-mejorado { 
+                height: 70px; 
+                width: 70px; 
+            }
+            .header-content-mejorado { gap: 1rem; }
             .container-main { padding: 0 0.5rem; }
-            .card-tirador { padding: 1rem; }
-            .nombre-principal { font-size: clamp(1.3rem, 5vw, 2rem); }
+            .card-tirador { padding: 1.5rem 1rem; }
             .tabla-mi-puesto thead { display: none; }
             .tabla-mi-puesto, .tabla-mi-puesto tbody, .tabla-mi-puesto tr { display: block; width: 100%; }
-            .tabla-mi-puesto td { display: flex; justify-content: space-between; align-items: center; text-align: right; padding: 0.8rem; border-bottom: 1px solid rgba(0, 191, 255, 0.2); }
+            .tabla-mi-puesto td { 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center; 
+                text-align: right; 
+                padding: 1rem; 
+                border-bottom: 1px solid rgba(0, 191, 255, 0.3); 
+            }
             .tabla-mi-puesto td:last-child { border-bottom: none; }
-            .tabla-mi-puesto td::before { content: attr(data-label); font-weight: 600; color: #00d8ff; text-align: left; padding-right: 1rem; }
-            .stat-total-grande, .stat-x-grande { font-size: 1.5rem !important; }
+            .tabla-mi-puesto td::before { 
+                content: attr(data-label); 
+                font-weight: 700; 
+                color: #00d8ff; 
+                text-align: left; 
+                padding-right: 1rem; 
+                text-shadow: 0 0 8px rgba(0,216,255,0.5);
+            }
+            .stat-total-grande, .stat-x-grande { font-size: 1.8rem !important; }
             .chart-container {
-                height: 35vh;
-                min-height: 250px;
-                padding: 0.5rem;
-                margin: 1rem auto;
+                height: 40vh;
+                min-height: 300px;
+                padding: 1rem;
+                margin: 2rem auto;
+            }
+            .logo-bottom {
+                height: 50px;
+                width: 50px;
+                margin: 2rem auto 0.5rem auto;
             }
         }
+        
         @media (max-width: 480px) {
-            .header { padding: 0.8rem 0.3rem; }
-            .nombre-principal { font-size: clamp(1.1rem, 5vw, 1.6rem); }
+            .header-redisenado { padding: 1.5rem 0.5rem; }
+            .logo-icono-mejorado { 
+                height: 60px; 
+                width: 60px; 
+            }
+            .titulo-principal { font-size: clamp(1.8rem, 7vw, 2.5rem); }
+            .subtitulo { font-size: clamp(0.9rem, 3vw, 1.2rem); letter-spacing: 2px; }
         }
     </style>
 </head>
@@ -250,32 +412,35 @@
 
 <!-- Contenido Principal -->
 <div id="mainContent" style="display: none;">
-    <div class="header">
-        <div class="header-content">
-            <!-- Logo grande en el header -->
-            <img src="shooting_logo.png" alt="Logo" class="logo-top" onerror="this.style.display='none'">
-            <h1><i class="bi bi-bullseye"></i> Mi Puntuación</h1>
-            <div class="disciplina-badge" id="disciplinaName"></div>
+    <!-- NUEVO HEADER REDISEÑADO -->
+    <div class="header-redisenado">
+        <div class="particulas" id="particulas"></div>
+        <div class="header-content-mejorado">
+            <img src="shooting_logo.png" alt="Logo" class="logo-icono-mejorado">
+            <div>
+                <h1 class="titulo-principal">Mi Puntuación</h1>
+                <div class="subtitulo" id="disciplinaName">Competición en Directo</div>
+            </div>
         </div>
     </div>
+    
     <div class="status-box status-connected" id="statusBox">
         <i class="bi bi-wifi"></i> Conectado
     </div>
+    
     <div class="container-main">
         <div id="loadingArea" class="loading-area">
             <div class="spinner"></div>
             <p class="loading-text">Validando y cargando...</p>
         </div>
+        
         <div id="contentArea" style="display: none;">
-            <!-- La tarjeta del tirador se insertará aquí -->
             <div id="miCard" class="card-tirador"></div>
             
-            <!-- Contenedor del gráfico -->
             <div class="chart-container">
                 <canvas id="graficoSeries"></canvas>
             </div>
             
-            <!-- Logo al final -->
             <img src="shooting_logo.png" alt="Logo" class="logo-bottom" onerror="this.style.display='none'">
             
             <div class="update-info" id="updateInfo"></div>
@@ -285,9 +450,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- ================================================================================================ -->
-<!-- SCRIPT CON LÓGICA DE GRÁFICOS INTEGRADA -->
-<!-- ================================================================================================ -->
 <script>
     // --- CONFIGURACIÓN OBLIGATORIA ---
     const PIN_BIN_ID = '6907c714d0ea881f40cf7e3d';
@@ -300,9 +462,28 @@
     let intervaloActualizacion;
     let miGrafico = null;
 
+    // Función para crear partículas
+    function crearParticulas() {
+        const contenedor = document.getElementById('particulas');
+        if (!contenedor) return;
+        
+        for (let i = 0; i < 20; i++) {
+            const particula = document.createElement('div');
+            particula.className = 'particula';
+            particula.style.width = Math.random() * 5 + 2 + 'px';
+            particula.style.height = particula.style.width;
+            particula.style.left = Math.random() * 100 + '%';
+            particula.style.animationDelay = Math.random() * 6 + 's';
+            particula.style.animationDuration = (Math.random() * 4 + 6) + 's';
+            particula.style.background = `rgba(255, 255, 255, ${Math.random() * 0.8 + 0.2})`;
+            contenedor.appendChild(particula);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         modalConfigVisor = new bootstrap.Modal('#modalConfigVisor');
         modalConfigVisor.show();
+        crearParticulas();
     });
 
     async function validarYComenzar() {
@@ -414,7 +595,7 @@
 
         const comparativaHTML = `
             <div class="mt-4">
-                <h4 style="text-align:center; color:#00d8ff; text-shadow:0 0 10px rgba(0,216,255,0.5);">Comparativa de Puestos</h4>
+                <h4 style="text-align:center; color:#00d8ff; text-shadow:0 0 15px rgba(0,216,255,0.7); margin-bottom: 1.5rem; font-size: 1.5rem;">COMPARATIVA DE PUESTOS</h4>
                 <table class="tabla-mi-puesto">
                     <thead><tr><th>Posición</th><th>Puesto</th><th>Total</th><th>X</th></tr></thead>
                     <tbody>
@@ -437,7 +618,7 @@
         const series = datos.series || [];
         return `
             <div class="text-center">
-                <div class="nombre-principal">Puesto ${datos.puesto} ( ${posicion}º Clasif. )</div>
+                <div class="nombre-principal">Puesto ${datos.puesto} • ${posicion}º Clasificación</div>
             </div>
             <table class="tabla-mi-puesto">
                 <thead><tr>${series.map((_, i) => `<th>S${i+1}</th>`).join('')}<th>Total</th><th>X</th></tr></thead>
@@ -459,7 +640,7 @@
             console.warn('No hay datos de series para mostrar en el gráfico');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#ffffff';
-            ctx.font = '16px Rajdhani';
+            ctx.font = '18px Rajdhani';
             ctx.textAlign = 'center';
             ctx.fillText('No hay datos de series disponibles', canvas.width / 2, canvas.height / 2);
             
@@ -484,10 +665,10 @@
                 datasets: [{
                     label: 'Puntuación por Serie',
                     data: datosFiltrados,
-                    backgroundColor: 'rgba(255, 193, 7, 0.6)',
+                    backgroundColor: 'rgba(255, 193, 7, 0.7)',
                     borderColor: '#ffc107',
-                    borderWidth: 2,
-                    borderRadius: 5,
+                    borderWidth: 3,
+                    borderRadius: 8,
                 }]
             },
             options: {
@@ -499,9 +680,9 @@
                     },
                     title: {
                         display: true,
-                        text: 'Evolución de Puntuación',
+                        text: 'Evolución de Puntuación por Series',
                         color: '#fff',
-                        font: { size: 18, family: "'Rajdhani', sans-serif" }
+                        font: { size: 20, family: "'Rajdhani', sans-serif", weight: 'bold' }
                     }
                 },
                 scales: {
@@ -510,16 +691,16 @@
                         max: 100,
                         ticks: {
                             color: '#00d8ff',
-                            font: { weight: 'bold' }
+                            font: { weight: 'bold', size: 14 }
                         },
                         grid: {
-                            color: 'rgba(0, 191, 255, 0.2)'
+                            color: 'rgba(0, 191, 255, 0.3)'
                         }
                     },
                     x: {
                         ticks: {
                             color: '#00d8ff',
-                            font: { weight: 'bold' }
+                            font: { weight: 'bold', size: 14 }
                         },
                         grid: {
                             display: false
