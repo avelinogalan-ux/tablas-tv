@@ -15,15 +15,137 @@
 
     <style>
         body { background: radial-gradient(circle at center, #000428 0%, #004e92 100%); color: #fff; font-family: 'Rajdhani', sans-serif; margin:0; padding:0; min-height: 100vh; }
-        .header { position: relative; background: linear-gradient(90deg, #002bff 0%, #001242 100%); padding: 1.5rem 1rem; border-bottom: 0.5vh solid #ffc107; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .logo-top { display: block; margin: 0 auto 1rem auto; height: 70px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.7)); }
-        .logo-middle { display: block; margin: 1rem auto; height: 50px; filter: drop-shadow(0 0 8px rgba(255,255,255,0.5)); }
-        .logo-bottom { display: block; margin: 1rem auto 0 auto; height: 40px; filter: drop-shadow(0 0 6px rgba(255,255,255,0.4)); }
-        .header h1 { font-size: clamp(1.8rem, 5vw, 3rem); margin: 0; text-transform: uppercase; text-shadow: 0 0 25px rgba(255,255,255,0.9); text-align: center; }
-        .disciplina-badge { text-align: center; margin-top: 0.5rem; font-size: clamp(1rem, 3vw, 1.3rem); color: #00d8ff; text-shadow: 0 0 10px rgba(0,216,255,0.5); }
-        .status-box { max-width: 90%; margin: 1rem auto; padding: 0.7rem; border-radius: 0.5rem; font-size: clamp(0.9rem, 2.5vw, 1.2rem); font-weight: bold; text-align: center; }
-        .status-connected { background: rgba(0,255,136,0.2); border: 2px solid #00ff88; color: #00ff88; text-shadow: 0 0 15px rgba(0,255,136,0.7); }
-        .status-disconnected { background: rgba(255,0,60,0.2); border: 2px solid #ff003c; color: #ff4d6d; }
+        
+        /* ENCABEZADO MEJORADO */
+        .header { 
+            position: relative; 
+            background: linear-gradient(135deg, #002bff 0%, #001242 50%, #8a2be2 100%); 
+            padding: 1.5rem 1rem; 
+            border-bottom: 0.5vh solid #ffc107; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5); 
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255,215,0,0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0,255,255,0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255,0,255,0.2) 0%, transparent 50%);
+            animation: headerShine 8s ease-in-out infinite;
+        }
+        @keyframes headerShine {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+        
+        .logo-top { 
+            display: block; 
+            margin: 0 auto 1rem auto; 
+            height: 80px; 
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.8))
+                    drop-shadow(0 0 30px rgba(255,193,7,0.6));
+            animation: logoFloat 3s ease-in-out infinite;
+            transition: transform 0.3s ease;
+        }
+        .logo-top:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .header h1 { 
+            font-size: clamp(2rem, 6vw, 3.5rem); 
+            margin: 0; 
+            text-transform: uppercase; 
+            text-shadow: 
+                0 0 20px rgba(255,255,255,0.9),
+                0 0 30px rgba(255,193,7,0.7),
+                0 0 40px rgba(255,193,7,0.5);
+            text-align: center;
+            position: relative;
+            background: linear-gradient(45deg, #ffc107, #ffeb3b, #ff9800, #ffc107);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 300% 300%;
+            animation: titleGradient 4s ease infinite;
+        }
+        @keyframes titleGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .disciplina-badge { 
+            text-align: center; 
+            margin-top: 0.8rem; 
+            font-size: clamp(1.1rem, 3vw, 1.5rem); 
+            color: #00d8ff; 
+            text-shadow: 
+                0 0 10px rgba(0,216,255,0.7),
+                0 0 20px rgba(0,216,255,0.4);
+            font-weight: 700;
+            position: relative;
+            padding: 0.3rem 1rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 25px;
+            border: 1px solid rgba(0,216,255,0.3);
+            display: inline-block;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+        
+        .status-box { 
+            max-width: 90%; 
+            margin: 1rem auto; 
+            padding: 0.7rem; 
+            border-radius: 15px; 
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem); 
+            font-weight: bold; 
+            text-align: center;
+            background: rgba(0,255,136,0.15);
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            text-shadow: 0 0 15px rgba(0,255,136,0.7);
+            box-shadow: 0 0 20px rgba(0,255,136,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .status-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0,255,136,0.1), transparent);
+            animation: statusShine 3s linear infinite;
+        }
+        @keyframes statusShine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .status-connected { 
+            background: rgba(0,255,136,0.15); 
+            border: 2px solid #00ff88; 
+            color: #00ff88; 
+        }
+        .status-disconnected { 
+            background: rgba(255,0,60,0.2); 
+            border: 2px solid #ff003c; 
+            color: #ff4d6d; 
+        }
+        
         .container-main { max-width: 1200px; margin: 0 auto; padding: 1rem; }
         .card-tirador { background: linear-gradient(135deg, rgba(255,193,7,0.2) 0%, rgba(255,152,0,0.15) 100%); border: 4px solid #ffc107; border-radius: 15px; padding: 2rem 1.5rem; margin-bottom: 2rem; box-shadow: 0 0 40px rgba(255,193,7,0.4); animation: pulseGlow 3s infinite; backdrop-filter: blur(10px); }
         @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 40px rgba(255,193,7,0.4); } 50% { box-shadow: 0 0 60px rgba(255,193,7,0.7); } }
@@ -43,11 +165,19 @@
         .comparativa-anterior { background-color: rgba(0, 191, 255, 0.15) !important; }
         .comparativa-siguiente { background-color: rgba(255, 69, 0, 0.15) !important; }
         
+        .logo-bottom { 
+            display: block; 
+            margin: 2rem auto 0 auto; 
+            height: 50px; 
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+        .logo-bottom:hover {
+            opacity: 1;
+        }
+        
         .update-info { text-align: center; color: #00e6ff; font-size: clamp(0.8rem, 2vw, 1rem); margin-top: 1.5rem; text-shadow: 0 0 8px rgba(0,230,255,0.9); }
-        .loading-area { text-align: center; padding: 4rem 1rem; }
-        .spinner { display: inline-block; width: 60px; height: 60px; border: 5px solid rgba(255,193,7,0.3); border-top: 5px solid #ffc107; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-text { margin-top: 1.5rem; font-size: clamp(1rem, 3vw, 1.5rem); color: #ffc107; }
 
         /* Estilos para el contenedor del gráfico */
         .chart-container {
@@ -66,9 +196,8 @@
         
         @media (max-width: 768px) {
             .header { padding: 1rem 0.5rem; }
-            .logo-top { height: 50px; margin-bottom: 0.5rem; }
-            .logo-middle { height: 40px; }
-            .logo-bottom { height: 35px; }
+            .logo-top { height: 60px; margin-bottom: 0.5rem; }
+            .logo-bottom { height: 40px; }
             .header h1 { font-size: clamp(1.5rem, 6vw, 2rem); }
             .container-main { padding: 0 0.5rem; }
             .card-tirador { padding: 1rem; }
@@ -89,11 +218,6 @@
         @media (max-width: 480px) {
             .header { padding: 0.8rem 0.3rem; }
             .nombre-principal { font-size: clamp(1.1rem, 5vw, 1.6rem); }
-        }
-        @media (max-width: 360px) {
-            .logo-top { height: 40px; }
-            .logo-middle { height: 35px; }
-            .logo-bottom { height: 30px; }
         }
     </style>
 </head>
@@ -127,10 +251,12 @@
 <!-- Contenido Principal -->
 <div id="mainContent" style="display: none;">
     <div class="header">
-        <!-- Logo encima del título -->
-        <img src="shooting_logo.png" alt="Logo" class="logo-top" onerror="this.style.display='none'">
-        <h1><i class="bi bi-bullseye"></i> Mi Puntuación</h1>
-        <div class="disciplina-badge" id="disciplinaName"></div>
+        <div class="header-content">
+            <!-- Logo grande en el header -->
+            <img src="shooting_logo.png" alt="Logo" class="logo-top" onerror="this.style.display='none'">
+            <h1><i class="bi bi-bullseye"></i> Mi Puntuación</h1>
+            <div class="disciplina-badge" id="disciplinaName"></div>
+        </div>
     </div>
     <div class="status-box status-connected" id="statusBox">
         <i class="bi bi-wifi"></i> Conectado
@@ -172,7 +298,7 @@
     let modalConfigVisor;
     let configuracion = { miPuesto: null };
     let intervaloActualizacion;
-    let miGrafico = null; // Variable para la instancia del gráfico
+    let miGrafico = null;
 
     document.addEventListener('DOMContentLoaded', () => {
         modalConfigVisor = new bootstrap.Modal('#modalConfigVisor');
@@ -226,7 +352,6 @@
             
             const result = await response.json();
             
-            // Validar estructura de datos
             if (!result || !result.record) {
                 throw new Error('Estructura de datos inválida');
             }
@@ -249,10 +374,7 @@
             console.error('Error cargando datos de puntuación:', error);
             document.getElementById('statusBox').className = 'status-box status-disconnected';
             document.getElementById('statusBox').innerHTML = '<i class="bi bi-wifi-off"></i> SIN CONEXIÓN';
-            
-            // Mostrar mensaje más específico
-            document.getElementById('updateInfo').innerHTML = 
-                `<i class="bi bi-exclamation-triangle"></i> Error: ${error.message}`;
+            document.getElementById('updateInfo').innerHTML = `<i class="bi bi-exclamation-triangle"></i> Error: ${error.message}`;
         }
     }
     
@@ -270,7 +392,6 @@
                     Esperando datos para el Puesto ${configuracion.miPuesto}...
                 </div>`;
             
-            // Limpiar gráfico si no hay datos
             if (miGrafico) {
                 miGrafico.destroy();
                 miGrafico = null;
@@ -281,13 +402,9 @@
         const clasificacion = [...datos].sort((a, b) => (b.total || 0) - (a.total || 0));
         const miPosicion = clasificacion.findIndex(t => String(t.puesto) === String(configuracion.miPuesto)) + 1;
 
-        // Renderizar la tarjeta principal
         document.getElementById('miCard').innerHTML = crearCardPrincipal(miDatos, miPosicion);
-
-        // Renderizar el gráfico
         renderizarGrafico(miDatos.series || []);
 
-        // Comparativa con otros tiradores
         const primero = clasificacion[0];
         const segundo = clasificacion[1] || null;
         const tercero = clasificacion[2] || null;
@@ -297,9 +414,6 @@
 
         const comparativaHTML = `
             <div class="mt-4">
-                <!-- Logo entre tablas -->
-                <img src="shooting_logo.png" alt="Logo" class="logo-middle" onerror="this.style.display='none'">
-                
                 <h4 style="text-align:center; color:#00d8ff; text-shadow:0 0 10px rgba(0,216,255,0.5);">Comparativa de Puestos</h4>
                 <table class="tabla-mi-puesto">
                     <thead><tr><th>Posición</th><th>Puesto</th><th>Total</th><th>X</th></tr></thead>
@@ -316,7 +430,6 @@
             </div>
         `;
 
-        // Añadir comparativa debajo de la tarjeta principal
         document.getElementById('miCard').innerHTML += comparativaHTML;
     }
 
@@ -342,18 +455,14 @@
         const canvas = document.getElementById('graficoSeries');
         const ctx = canvas.getContext('2d');
         
-        // Validar que seriesData existe y es un array
         if (!Array.isArray(seriesData) || seriesData.length === 0 || seriesData.every(item => item === null)) {
             console.warn('No hay datos de series para mostrar en el gráfico');
-            
-            // Limpiar canvas y mostrar mensaje
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#ffffff';
             ctx.font = '16px Rajdhani';
             ctx.textAlign = 'center';
             ctx.fillText('No hay datos de series disponibles', canvas.width / 2, canvas.height / 2);
             
-            // Destruir gráfico existente si hay uno
             if (miGrafico) {
                 miGrafico.destroy();
                 miGrafico = null;
@@ -361,11 +470,9 @@
             return;
         }
         
-        // Filtrar valores nulos o undefined para evitar errores en Chart.js
         const datosFiltrados = seriesData.map(puntaje => puntaje !== null ? puntaje : 0);
         const labels = seriesData.map((_, index) => `Serie ${index + 1}`);
 
-        // Si ya existe un gráfico, lo destruimos antes de crear uno nuevo
         if (miGrafico) {
             miGrafico.destroy();
         }
@@ -423,7 +530,6 @@
         });
     }
     
-    // Limpieza al cerrar la página
     window.addEventListener('beforeunload', () => {
         if (intervaloActualizacion) clearInterval(intervaloActualizacion);
     });
