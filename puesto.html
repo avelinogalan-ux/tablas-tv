@@ -209,21 +209,47 @@
     
     // PASO 3.2: MODIFICAR `mostrarDatos` para que llame a la función del gráfico
     function mostrarDatos(datos) {
-        const miDatos = datos.find(t => String(t.puesto) === String(configuracion.miPuesto));
-        if (!miDatos) {
-            console.warn(`No se encontraron datos para el puesto ${configuracion.miPuesto} en este ciclo.`);
-            document.getElementById('miCard').innerHTML = `<div class="text-center nombre-principal text-warning">Esperando datos para el Puesto ${configuracion.miPuesto}...</div>`;
-            return;
-        }
-        const clasificacion = [...datos].sort((a, b) => (b.total || 0) - (a.total || 0));
-        const miPosicion = clasificacion.findIndex(t => String(t.puesto) === String(configuracion.miPuesto)) + 1;
-        
-        // Renderizar la tabla (sin cambios)
-        document.getElementById('miCard').innerHTML = crearCardPrincipal(miDatos, miPosicion);
-
-        // **NUEVO**: Renderizar el gráfico con los datos de las series
-        renderizarGrafico(miDatos.series || []);
+    const miDatos = datos.find(t => String(t.puesto) === String(configuracion.miPuesto));
+    if (!miDatos) {
+        console.warn(`No se encontraron datos para el puesto ${configuracion.miPuesto} en este ciclo.`);
+        document.getElementById('miCard').innerHTML = `<div class="text-center nombre-principal text-warning">Esperando datos para el Puesto ${configuracion.miPuesto}...</div>`;
+        return;
     }
+
+    const clasificacion = [...datos].sort((a, b) => (b.total || 0) - (a.total || 0));
+    const miPosicion = clasificacion.findIndex(t => String(t.puesto) === String(configuracion.miPuesto)) + 1;
+
+    // Renderizar la tarjeta principal
+    document.getElementById('miCard').innerHTML = crearCardPrincipal(miDatos, miPosicion);
+
+    // Renderizar el gráfico
+    renderizarGrafico(miDatos.series || []);
+
+    // Comparativa con otros tiradores
+    const primero = clasificacion[0];
+    const ultimo = clasificacion[clasificacion.length - 1];
+    const anterior = clasificacion[miPosicion - 2] || null;
+    const siguiente = clasificacion[miPosicion] || null;
+
+    const comparativaHTML = `
+        <div class="mt-4">
+            <h4 style="text-align:center; color:#00d8ff; text-shadow:0 0 10px rgba(0,216,255,0.5);">Comparativa</h4>
+            <table class="tabla-mi-puesto">
+                <thead><tr><th>Posición</th><th>Puesto</th><th>Total</th><th>X</th></tr></thead>
+                <tbody>
+                    <tr><td data-label="Posición">1º</td><td data-label="Puesto">${primero.puesto}</td><td data-label="Total">${primero.total}</td><td data-label="X">${primero.xTotal}</td></tr>
+                    ${anterior ? `<tr><td data-label="Posición">${miPosicion - 1}º</td><td data-label="Puesto">${anterior.puesto}</td><td data-label="Total">${anterior.total}</td><td data-label="X">${anterior.xTotal}</td></tr>` : ''}
+                    <tr class="stat-total-grande"><td data-label="Posición">${miPosicion}º</td><td data-label="Puesto">${miDatos.puesto}</td><td data-label="Total">${miDatos.total}</td><td data-label="X">${miDatos.xTotal}</td></tr>
+                    ${siguiente ? `<tr><td data-label="Posición">${miPosicion + 1}º</td><td data-label="Puesto">${siguiente.puesto}</td><td data-label="Total">${siguiente.total}</td><td data-label="X">${siguiente.xTotal}</td></tr>` : ''}
+                    <tr><td data-label="Posición">${clasificacion.length}º</td><td data-label="Puesto">${ultimo.puesto}</td><td data-label="Total">${ultimo.total}</td><td data-label="X">${ultimo.xTotal}</td></tr>
+                </tbody>
+            </table>
+        </div>
+    `;
+
+    // Añadir comparativa debajo de la tarjeta principal
+    document.getElementById('miCard').innerHTML += comparativaHTML;
+}
 
     // La función crearCardPrincipal() no necesita cambios
     function crearCardPrincipal(datos, posicion) {
