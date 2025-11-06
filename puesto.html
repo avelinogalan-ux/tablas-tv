@@ -33,234 +33,208 @@
             overflow-x: hidden;
         }
 
-        /* HEADER MINIMALISTA Y ELEGANTE */
-        .header-minimal {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1rem 0;
+        /* HEADER CON LOGOS ORIGINALES */
+        .header-original {
+            background: linear-gradient(135deg, #002bff 0%, #001242 50%, #8a2be2 100%);
+            padding: 1.5rem 1rem;
+            border-bottom: 0.5vh solid var(--accent);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            text-align: center;
             position: relative;
         }
 
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
+        .logo-top {
+            display: block;
+            margin: 0 auto 1rem auto;
+            height: 70px;
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.8));
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .logo-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            object-fit: cover;
-            filter: drop-shadow(0 0 10px var(--accent));
-            transition: all 0.3s ease;
-        }
-
-        .logo-icon:hover {
-            transform: scale(1.05);
-            filter: drop-shadow(0 0 15px var(--accent));
-        }
-
-        .app-title {
-            font-size: 1.8rem;
+        .header-title {
+            font-size: clamp(1.8rem, 5vw, 3rem);
             font-weight: 700;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             margin: 0;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(255,255,255,0.9);
+            color: var(--accent);
         }
 
-        .competition-info {
-            text-align: right;
-        }
-
-        .competition-name {
-            font-size: 1.1rem;
+        .disciplina-badge {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: clamp(1rem, 3vw, 1.3rem);
             color: var(--secondary);
-            font-weight: 600;
-            margin: 0;
+            text-shadow: 0 0 10px rgba(0,216,255,0.5);
         }
 
-        .competition-status {
-            font-size: 0.9rem;
+        .status-box {
+            max-width: 90%;
+            margin: 1rem auto;
+            padding: 0.7rem;
+            border-radius: 0.5rem;
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            font-weight: bold;
+            text-align: center;
+            background: rgba(0,255,136,0.2);
+            border: 2px solid var(--primary);
             color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin: 0.2rem 0 0 0;
         }
 
         /* CONTENIDO PRINCIPAL */
-        .main-container {
+        .container-main {
             max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        /* TARJETA DE PUNTUACIÓN PRINCIPAL */
-        .score-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .shooter-info {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .shooter-position {
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin: 0;
-            line-height: 1;
-        }
-
-        .shooter-details {
-            font-size: 1.2rem;
-            color: var(--secondary);
-            margin: 0.5rem 0;
-        }
-
-        /* TABLA DE SERIES */
-        .series-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1.5rem 0;
-        }
-
-        .series-table th {
-            background: rgba(0, 0, 0, 0.3);
+            margin: 0 auto;
             padding: 1rem;
-            text-align: center;
-            font-weight: 600;
-            color: var(--secondary);
-            border-bottom: 2px solid var(--secondary);
         }
 
-        .series-table td {
-            padding: 1.2rem;
-            text-align: center;
-            font-size: 1.3rem;
-            font-weight: 600;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        /* TARJETA DE PUNTUACIÓN CON FORMATO ORIGINAL */
+        .card-tirador {
+            background: linear-gradient(135deg, rgba(255,193,7,0.2) 0%, rgba(255,152,0,0.15) 100%);
+            border: 4px solid var(--accent);
+            border-radius: 15px;
+            padding: 2rem 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 40px rgba(255,193,7,0.4);
+            animation: pulseGlow 3s infinite;
+            backdrop-filter: blur(10px);
         }
 
-        .total-score {
-            background: rgba(0, 255, 136, 0.1);
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 40px rgba(255,193,7,0.4); }
+            50% { box-shadow: 0 0 60px rgba(255,193,7,0.7); }
+        }
+
+        .nombre-principal {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 700;
+            margin: 1rem 0;
+            color: var(--accent);
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(255,193,7,0.7);
+            text-align: center;
+        }
+
+        /* TABLA ORIGINAL MEJORADA PARA MÚLTIPLES SERIES */
+        .tabla-series {
+            width: 100%;
+            background: rgba(0,60,150,0.3);
+            border: 2px solid var(--secondary);
+            border-radius: 10px;
+            backdrop-filter: blur(8px);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+        }
+
+        .tabla-series thead {
+            background: linear-gradient(90deg, #001f7a 0%, #0048ff 100%);
+        }
+
+        .tabla-series th {
+            padding: 1rem 0.5rem;
+            text-align: center;
+            font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+            text-transform: uppercase;
+            border-bottom: 3px solid var(--accent);
+            white-space: nowrap;
+        }
+
+        .tabla-series td {
+            padding: 1rem 0.5rem;
+            text-align: center;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            font-weight: 700;
+            border-bottom: 1px solid rgba(0, 191, 255, 0.2);
+        }
+
+        .stat-total-grande {
+            background-color: rgba(0,255,136,0.3) !important;
             color: var(--primary);
-            font-size: 1.8rem !important;
+            font-size: clamp(1.5rem, 4vw, 2.5rem) !important;
         }
 
-        .x-count {
-            background: rgba(0, 216, 255, 0.1);
+        .stat-x-grande {
+            background-color: rgba(0,229,255,0.3) !important;
             color: var(--secondary);
-            font-size: 1.8rem !important;
+            font-size: clamp(1.5rem, 4vw, 2.5rem) !important;
         }
 
         /* GRÁFICO */
-        .chart-section {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .chart-title {
-            font-size: 1.3rem;
-            color: var(--secondary);
-            margin-bottom: 1.5rem;
-            text-align: center;
-            font-weight: 600;
-        }
-
         .chart-container {
-            height: 300px;
             position: relative;
+            margin: 2rem auto;
+            height: 40vh;
+            min-height: 300px;
+            width: 90vw;
+            max-width: 900px;
+            background: rgba(0, 20, 50, 0.4);
+            border-radius: 10px;
+            padding: 1rem;
+            border: 1px solid var(--secondary);
         }
 
-        /* TABLA COMPARATIVA */
-        .comparison-section {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .comparison-title {
-            font-size: 1.3rem;
-            color: var(--secondary);
-            margin-bottom: 1.5rem;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        .comparison-table {
+        /* TABLA COMPARATIVA MEJORADA */
+        .tabla-comparativa {
             width: 100%;
-            border-collapse: collapse;
+            background: rgba(0,60,150,0.3);
+            border: 2px solid var(--secondary);
+            border-radius: 10px;
+            backdrop-filter: blur(8px);
+            overflow: hidden;
+            margin-bottom: 2rem;
         }
 
-        .comparison-table th {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 1rem;
+        .tabla-comparativa thead {
+            background: linear-gradient(90deg, #001f7a 0%, #0048ff 100%);
+        }
+
+        .tabla-comparativa th {
+            padding: 1rem 0.5rem;
             text-align: center;
-            font-weight: 600;
-            color: var(--secondary);
-            border-bottom: 2px solid var(--secondary);
+            font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+            text-transform: uppercase;
+            border-bottom: 3px solid var(--accent);
         }
 
-        .comparison-table td {
-            padding: 1rem;
+        .tabla-comparativa td {
+            padding: 1rem 0.5rem;
             text-align: center;
-            font-weight: 500;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .position-1 { background: rgba(255, 215, 0, 0.1); color: #ffd700; }
-        .position-2 { background: rgba(192, 192, 192, 0.1); color: #c0c0c0; }
-        .position-3 { background: rgba(205, 127, 50, 0.1); color: #cd7f32; }
-        .current-shooter { 
-            background: rgba(0, 255, 136, 0.2); 
-            color: var(--primary);
+            font-size: clamp(1rem, 3vw, 1.5rem);
             font-weight: 700;
         }
-        .adjacent-shooter { background: rgba(255, 255, 255, 0.05); }
 
-        /* LOADING Y ESTADOS */
-        .loading-container {
-            text-align: center;
-            padding: 4rem 2rem;
+        .comparativa-primero { background-color: rgba(255, 215, 0, 0.2) !important; color: #ffd700 !important; }
+        .comparativa-segundo { background-color: rgba(192, 192, 192, 0.2) !important; color: #c0c0c0 !important; }
+        .comparativa-tercero { background-color: rgba(205, 127, 50, 0.2) !important; color: #cd7f32 !important; }
+        .comparativa-mi-puesto { background-color: rgba(0, 255, 136, 0.3) !important; color: var(--primary) !important; font-weight: 900; }
+
+        .logo-bottom {
+            display: block;
+            margin: 2rem auto 0 auto;
+            height: 50px;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
         }
 
-        .loading-spinner {
+        .update-info {
+            text-align: center;
+            color: var(--secondary);
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            margin-top: 1.5rem;
+        }
+
+        .loading-area {
+            text-align: center;
+            padding: 4rem 1rem;
+        }
+
+        .spinner {
+            display: inline-block;
             width: 60px;
             height: 60px;
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid var(--primary);
+            border: 5px solid rgba(255,193,7,0.3);
+            border-top: 5px solid var(--accent);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 1.5rem;
         }
 
         @keyframes spin {
@@ -268,84 +242,50 @@
         }
 
         .loading-text {
-            color: var(--secondary);
-            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: var(--accent);
         }
 
-        .update-info {
-            text-align: center;
-            color: var(--secondary);
-            font-size: 0.9rem;
-            margin-top: 2rem;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-
-        /* RESPONSIVE */
+        /* RESPONSIVE PARA TABLAS CON MÚLTIPLES SERIES */
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
+            .header-original { padding: 1rem 0.5rem; }
+            .logo-top { height: 50px; margin-bottom: 0.5rem; }
+            .container-main { padding: 0 0.5rem; }
+            .card-tirador { padding: 1rem; }
+            
+            .tabla-series, .tabla-comparativa {
+                font-size: 0.8rem;
             }
-
-            .competition-info {
-                text-align: center;
+            
+            .tabla-series th, 
+            .tabla-series td,
+            .tabla-comparativa th,
+            .tabla-comparativa td {
+                padding: 0.5rem 0.3rem;
             }
-
-            .shooter-position {
-                font-size: 2.5rem;
+            
+            /* Scroll horizontal para tablas con muchas series */
+            .tabla-container {
+                overflow-x: auto;
+                margin-bottom: 1rem;
             }
-
-            .series-table th,
-            .series-table td {
-                padding: 0.8rem 0.5rem;
-                font-size: 1.1rem;
-            }
-
-            .total-score,
-            .x-count {
+            
+            .stat-total-grande, .stat-x-grande {
                 font-size: 1.5rem !important;
-            }
-
-            .main-container {
-                margin: 1rem auto;
-                padding: 0 0.5rem;
-            }
-
-            .score-card,
-            .chart-section,
-            .comparison-section {
-                padding: 1.5rem;
-                margin-bottom: 1.5rem;
             }
         }
 
         @media (max-width: 480px) {
-            .app-title {
-                font-size: 1.5rem;
-            }
-
-            .logo-icon {
-                width: 40px;
-                height: 40px;
-            }
-
-            .shooter-position {
-                font-size: 2rem;
-            }
-
-            .series-table {
+            .header-original { padding: 0.8rem 0.3rem; }
+            .nombre-principal { font-size: clamp(1.1rem, 5vw, 1.6rem); }
+            
+            .tabla-series th, 
+            .tabla-series td {
+                padding: 0.4rem 0.2rem;
                 font-size: 0.9rem;
             }
         }
-
-        /* UTILITIES */
-        .text-accent { color: var(--accent); }
-        .text-primary { color: var(--primary); }
-        .text-secondary { color: var(--secondary); }
-        .bg-dark { background: var(--dark); }
     </style>
 </head>
 <body>
@@ -353,23 +293,23 @@
 <!-- Modal de Acceso -->
 <div class="modal fade" id="modalConfigVisor" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark text-white" style="border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px); background: rgba(0,20,50,0.9) !important;">
-            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <h5 class="modal-title" style="font-size: 1.3rem;"><i class="bi bi-shield-lock-fill text-accent"></i> Acceso Tirador</h5>
+        <div class="modal-content bg-dark text-white" style="backdrop-filter: blur(10px); background: rgba(0,20,50,0.95) !important; border: 3px solid #007bff;">
+            <div class="modal-header" style="border-bottom: 3px solid #ffc107;">
+                <h5 class="modal-title" style="font-size: 1.5rem;"><i class="bi bi-shield-lock-fill"></i> Acceso Tirador</h5>
             </div>
             <div class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label fw-bold">👤 Tu Número de Puesto</label>
-                    <input type="number" id="miPuestoInput" class="form-control form-control-lg text-center" placeholder="Ej: 7" required style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff;">
+                <div class="mb-4">
+                    <label class="form-label fw-bold" style="font-size: 1.1rem;">👤 Tu Número de Puesto</label>
+                    <input type="number" id="miPuestoInput" class="form-control form-control-lg text-center" placeholder="Ej: 7" required style="background: rgba(255,255,255,0.1); border: 2px solid #ffc107; color: #fff; font-size: 1.5rem;">
                 </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">🔐 Tu PIN Secreto</label>
-                    <input type="password" id="miPinInput" class="form-control form-control-lg text-center" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" required style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff;">
+                <div class="mb-4">
+                    <label class="form-label fw-bold" style="font-size: 1.1rem;">🔐 Tu PIN Secreto (4 dígitos)</label>
+                    <input type="password" id="miPinInput" class="form-control form-control-lg text-center" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="••••" required style="background: rgba(255,255,255,0.1); border: 2px solid #007bff; color: #fff; font-size: 1.5rem;">
                 </div>
-                <button class="btn w-100 mt-3" onclick="validarYComenzar()" style="background: linear-gradient(45deg, var(--primary), var(--secondary)); border: none; color: #000; font-weight: 600; padding: 0.8rem;">
-                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                <button class="btn w-100 mt-4" onclick="validarYComenzar()" style="background: linear-gradient(90deg, #ffc107, #ff9800); border: none; color: #000; font-weight: 700; font-size: 1.2rem; padding: 0.8rem;">
+                    <i class="bi bi-box-arrow-in-right"></i> Entrar
                 </button>
-                <div id="errorConfig" class="text-danger text-center mt-2 fw-bold" style="min-height: 24px;"></div>
+                <div id="errorConfig" class="text-danger text-center mt-3 fw-bold" style="min-height: 24px;"></div>
             </div>
         </div>
     </div>
@@ -377,91 +317,36 @@
 
 <!-- Contenido Principal -->
 <div id="mainContent" style="display: none;">
-    <!-- Header Minimalista -->
-    <header class="header-minimal">
-        <div class="header-content">
-            <div class="brand">
-                <img src="shooting_logo.png" alt="Logo" class="logo-icon" onerror="this.style.display='none'">
-                <h1 class="app-title">ScoreView</h1>
-            </div>
-            <div class="competition-info">
-                <h2 class="competition-name" id="disciplinaName">Competición Activa</h2>
-                <div class="competition-status">
-                    <i class="bi bi-circle-fill" style="color: var(--primary);"></i>
-                    <span>EN DIRECTO</span>
-                </div>
-            </div>
+    <!-- Header con logos originales -->
+    <div class="header-original">
+        <img src="shooting_logo.png" alt="Logo" class="logo-top" onerror="this.style.display='none'">
+        <h1 class="header-title"><i class="bi bi-bullseye"></i> Mi Puntuación</h1>
+        <div class="disciplina-badge" id="disciplinaName"></div>
+    </div>
+    
+    <div class="status-box status-connected" id="statusBox">
+        <i class="bi bi-wifi"></i> Conectado
+    </div>
+    
+    <div class="container-main">
+        <div id="loadingArea" class="loading-area">
+            <div class="spinner"></div>
+            <p class="loading-text">Validando y cargando...</p>
         </div>
-    </header>
-
-    <!-- Contenido Principal -->
-    <div class="main-container">
-        <!-- Loading -->
-        <div id="loadingArea" class="loading-container">
-            <div class="loading-spinner"></div>
-            <p class="loading-text">Cargando datos en tiempo real...</p>
-        </div>
-
-        <!-- Contenido Dinámico -->
+        
         <div id="contentArea" style="display: none;">
-            <!-- Tarjeta de Puntuación Principal -->
-            <div class="score-card">
-                <div class="shooter-info">
-                    <h2 class="shooter-position" id="currentPosition">-</h2>
-                    <p class="shooter-details" id="shooterDetails">Puesto • Clasificación</p>
-                </div>
-                
-                <table class="series-table">
-                    <thead>
-                        <tr>
-                            <th>S1</th>
-                            <th>S2</th>
-                            <th>S3</th>
-                            <th>S4</th>
-                            <th>S5</th>
-                            <th>S6</th>
-                            <th>Total</th>
-                            <th>X</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr id="seriesData">
-                            <!-- Los datos se insertarán aquí -->
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
+            <!-- Tarjeta del tirador -->
+            <div id="miCard" class="card-tirador"></div>
+            
             <!-- Gráfico -->
-            <div class="chart-section">
-                <h3 class="chart-title">Evolución por Series</h3>
-                <div class="chart-container">
-                    <canvas id="graficoSeries"></canvas>
-                </div>
+            <div class="chart-container">
+                <canvas id="graficoSeries"></canvas>
             </div>
-
-            <!-- Comparativa -->
-            <div class="comparison-section">
-                <h3 class="comparison-title">Comparativa de Posiciones</h3>
-                <table class="comparison-table" id="comparisonTable">
-                    <thead>
-                        <tr>
-                            <th>Pos</th>
-                            <th>Puesto</th>
-                            <th>Total</th>
-                            <th>X</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Los datos de comparación se insertarán aquí -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Información de Actualización -->
-            <div class="update-info" id="updateInfo">
-                <i class="bi bi-clock"></i> Última actualización: --
-            </div>
+            
+            <!-- Logo al final -->
+            <img src="shooting_logo.png" alt="Logo" class="logo-bottom" onerror="this.style.display='none'">
+            
+            <div class="update-info" id="updateInfo"></div>
         </div>
     </div>
 </div>
@@ -469,12 +354,12 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // Configuración
+    // --- CONFIGURACIÓN OBLIGATORIA ---
     const PIN_BIN_ID = '6907c714d0ea881f40cf7e3d';
     const DATOS_COMPETICION_BIN_ID = '68ed56de43b1c97be96636cc';
     const INTERVALO_ACTUALIZACION = 10000;
 
-    // Variables Globales
+    // --- Variables Globales ---
     let modalConfigVisor;
     let configuracion = { miPuesto: null };
     let intervaloActualizacion;
@@ -541,7 +426,9 @@
             }
             
             const data = result.record;
-            document.getElementById('disciplinaName').textContent = data.disciplina || 'Competición Activa';
+            document.getElementById('disciplinaName').textContent = data.disciplina || 'Competición en Directo';
+            document.getElementById('statusBox').className = 'status-box status-connected';
+            document.getElementById('statusBox').innerHTML = '<i class="bi bi-check-circle-fill"></i> EN DIRECTO';
             
             if (data.datos && data.datos.length > 0) {
                 mostrarDatos(data.datos);
@@ -550,11 +437,13 @@
             }
             
             const ahora = new Date();
-            document.getElementById('updateInfo').innerHTML = `<i class="bi bi-clock"></i> Actualizado: ${ahora.toLocaleTimeString()}`;
+            document.getElementById('updateInfo').innerHTML = `<i class="bi bi-clock-fill"></i> Actualizado: ${ahora.toLocaleTimeString()}`;
             
         } catch (error) {
             console.error('Error cargando datos:', error);
-            document.getElementById('updateInfo').innerHTML = `<i class="bi bi-exclamation-triangle"></i> Error de conexión`;
+            document.getElementById('statusBox').className = 'status-box status-disconnected';
+            document.getElementById('statusBox').innerHTML = '<i class="bi bi-wifi-off"></i> SIN CONEXIÓN';
+            document.getElementById('updateInfo').innerHTML = `<i class="bi bi-exclamation-triangle"></i> Error: ${error.message}`;
         }
     }
     
@@ -567,87 +456,83 @@
         const miDatos = datos.find(t => String(t.puesto) === String(configuracion.miPuesto));
         if (!miDatos) {
             console.warn(`No se encontraron datos para el puesto ${configuracion.miPuesto}`);
+            document.getElementById('miCard').innerHTML = 
+                `<div class="text-center nombre-principal text-warning">
+                    Esperando datos para el Puesto ${configuracion.miPuesto}...
+                </div>`;
             return;
         }
 
         const clasificacion = [...datos].sort((a, b) => (b.total || 0) - (a.total || 0));
         const miPosicion = clasificacion.findIndex(t => String(t.puesto) === String(configuracion.miPuesto)) + 1;
 
-        // Actualizar información principal
-        document.getElementById('currentPosition').textContent = `${miPosicion}º`;
-        document.getElementById('shooterDetails').textContent = `Puesto ${miDatos.puesto} • Clasificación General`;
+        // Renderizar la tarjeta principal con tabla de series
+        document.getElementById('miCard').innerHTML = crearCardPrincipal(miDatos, miPosicion);
 
-        // Actualizar tabla de series
-        const series = miDatos.series || [];
-        let seriesHTML = '';
-        for (let i = 0; i < 6; i++) {
-            seriesHTML += `<td>${series[i] !== null ? series[i] : '-'}</td>`;
-        }
-        seriesHTML += `<td class="total-score">${miDatos.total || 0}</td>`;
-        seriesHTML += `<td class="x-count">${miDatos.xTotal || 0}</td>`;
-        document.getElementById('seriesData').innerHTML = seriesHTML;
+        // Renderizar el gráfico
+        renderizarGrafico(miDatos.series || []);
 
-        // Actualizar gráfico
-        renderizarGrafico(series);
-
-        // Actualizar tabla comparativa
-        actualizarTablaComparativa(clasificacion, miPosicion);
+        // Añadir tabla comparativa
+        const comparativaHTML = crearTablaComparativa(clasificacion, miPosicion, miDatos);
+        document.getElementById('miCard').innerHTML += comparativaHTML;
     }
 
-    function actualizarTablaComparativa(clasificacion, miPosicion) {
-        const tabla = document.querySelector('#comparisonTable tbody');
-        let html = '';
+    function crearCardPrincipal(datos, posicion) {
+        const series = datos.series || [];
         
-        // Primer puesto
-        if (clasificacion[0]) {
-            html += `<tr class="position-1">
-                <td>🥇 1º</td>
-                <td>${clasificacion[0].puesto}</td>
-                <td>${clasificacion[0].total}</td>
-                <td>${clasificacion[0].xTotal}</td>
-            </tr>`;
+        // Crear encabezados dinámicos para las series
+        let headers = '';
+        for (let i = 0; i < series.length; i++) {
+            headers += `<th>S${i+1}</th>`;
         }
-
-        // Puestos adyacentes y actual
-        const inicio = Math.max(0, miPosicion - 3);
-        const fin = Math.min(clasificacion.length, miPosicion + 2);
+        headers += '<th>Total</th><th>X</th>';
         
-        for (let i = inicio; i < fin; i++) {
-            const tirador = clasificacion[i];
-            const posicion = i + 1;
-            
-            let clase = 'adjacent-shooter';
-            if (posicion === 1) clase = 'position-1';
-            else if (posicion === 2) clase = 'position-2';
-            else if (posicion === 3) clase = 'position-3';
-            else if (posicion === miPosicion) clase = 'current-shooter';
-            
-            let emoji = '';
-            if (posicion === 1) emoji = '🥇 ';
-            else if (posicion === 2) emoji = '🥈 ';
-            else if (posicion === 3) emoji = '🥉 ';
-            else if (posicion === miPosicion) emoji = '🎯 ';
-            
-            html += `<tr class="${clase}">
-                <td>${emoji}${posicion}º</td>
-                <td>${tirador.puesto}</td>
-                <td>${tirador.total}</td>
-                <td>${tirador.xTotal}</td>
-            </tr>`;
+        // Crear celdas de datos para las series
+        let cells = '';
+        for (let i = 0; i < series.length; i++) {
+            cells += `<td data-label="S${i+1}">${series[i] !== null ? series[i] : '-'}</td>`;
         }
+        cells += `<td class="stat-total-grande" data-label="Total">${datos.total || 0}</td>`;
+        cells += `<td class="stat-x-grande" data-label="X">${datos.xTotal || 0}</td>`;
+        
+        return `
+            <div class="text-center">
+                <div class="nombre-principal">Puesto ${datos.puesto} ( ${posicion}º Clasif. )</div>
+            </div>
+            <div class="tabla-container">
+                <table class="tabla-series">
+                    <thead><tr>${headers}</tr></thead>
+                    <tbody>
+                        <tr>${cells}</tr>
+                    </tbody>
+                </table>
+            </div>`;
+    }
 
-        // Último puesto
-        if (clasificacion.length > 0) {
-            const ultimo = clasificacion[clasificacion.length - 1];
-            html += `<tr class="adjacent-shooter">
-                <td>${clasificacion.length}º</td>
-                <td>${ultimo.puesto}</td>
-                <td>${ultimo.total}</td>
-                <td>${ultimo.xTotal}</td>
-            </tr>`;
-        }
+    function crearTablaComparativa(clasificacion, miPosicion, miDatos) {
+        const primero = clasificacion[0];
+        const segundo = clasificacion[1] || null;
+        const tercero = clasificacion[2] || null;
+        const ultimo = clasificacion[clasificacion.length - 1];
+        const anterior = clasificacion[miPosicion - 2] || null;
+        const siguiente = clasificacion[miPosicion] || null;
 
-        tabla.innerHTML = html;
+        return `
+            <div class="mt-4">
+                <h4 style="text-align:center; color:#00d8ff; text-shadow:0 0 10px rgba(0,216,255,0.5);">Comparativa</h4>
+                <table class="tabla-comparativa">
+                    <thead><tr><th>Posición</th><th>Puesto</th><th>Total</th><th>X</th></tr></thead>
+                    <tbody>
+                        <tr class="comparativa-primero"><td data-label="Posición">1º</td><td data-label="Puesto">${primero.puesto}</td><td data-label="Total">${primero.total}</td><td data-label="X">${primero.xTotal}</td></tr>
+                        ${segundo ? `<tr class="comparativa-segundo"><td data-label="Posición">2º</td><td data-label="Puesto">${segundo.puesto}</td><td data-label="Total">${segundo.total}</td><td data-label="X">${segundo.xTotal}</td></tr>` : ''}
+                        ${tercero ? `<tr class="comparativa-tercero"><td data-label="Posición">3º</td><td data-label="Puesto">${tercero.puesto}</td><td data-label="Total">${tercero.total}</td><td data-label="X">${tercero.xTotal}</td></tr>` : ''}
+                        ${anterior ? `<tr><td data-label="Posición">${miPosicion - 1}º</td><td data-label="Puesto">${anterior.puesto}</td><td data-label="Total">${anterior.total}</td><td data-label="X">${anterior.xTotal}</td></tr>` : ''}
+                        <tr class="comparativa-mi-puesto"><td data-label="Posición">${miPosicion}º</td><td data-label="Puesto">${miDatos.puesto}</td><td data-label="Total">${miDatos.total}</td><td data-label="X">${miDatos.xTotal}</td></tr>
+                        ${siguiente ? `<tr><td data-label="Posición">${miPosicion + 1}º</td><td data-label="Puesto">${siguiente.puesto}</td><td data-label="Total">${siguiente.total}</td><td data-label="X">${siguiente.xTotal}</td></tr>` : ''}
+                        <tr><td data-label="Posición">${clasificacion.length}º</td><td data-label="Puesto">${ultimo.puesto}</td><td data-label="Total">${ultimo.total}</td><td data-label="X">${ultimo.xTotal}</td></tr>
+                    </tbody>
+                </table>
+            </div>`;
     }
 
     function renderizarGrafico(seriesData) {
@@ -663,24 +548,23 @@
         }
         
         const datosFiltrados = seriesData.map(puntaje => puntaje !== null ? puntaje : 0);
-        const labels = seriesData.map((_, index) => `S${index + 1}`);
+        const labels = seriesData.map((_, index) => `Serie ${index + 1}`);
 
         if (miGrafico) {
             miGrafico.destroy();
         }
 
         miGrafico = new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Puntuación',
+                    label: 'Puntuación por Serie',
                     data: datosFiltrados,
-                    borderColor: '#00ff88',
-                    backgroundColor: 'rgba(0, 255, 136, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4
+                    backgroundColor: 'rgba(255, 193, 7, 0.6)',
+                    borderColor: '#ffc107',
+                    borderWidth: 2,
+                    borderRadius: 5,
                 }]
             },
             options: {
@@ -689,25 +573,33 @@
                 plugins: {
                     legend: {
                         display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Evolución de Puntuación',
+                        color: '#fff',
+                        font: { size: 18, family: "'Rajdhani', sans-serif" }
                     }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
                         max: 100,
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
                         ticks: {
-                            color: '#00d8ff'
+                            color: '#00d8ff',
+                            font: { weight: 'bold' }
+                        },
+                        grid: {
+                            color: 'rgba(0, 191, 255, 0.2)'
                         }
                     },
                     x: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
                         ticks: {
-                            color: '#00d8ff'
+                            color: '#00d8ff',
+                            font: { weight: 'bold' }
+                        },
+                        grid: {
+                            display: false
                         }
                     }
                 }
